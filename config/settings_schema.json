@@ -2653,25 +2653,5 @@
         "default": "equal-width-buttons"
       }
     ]
-  },
-  {
-    "name": "Footer",
-    "settings": [
-      {
-        "type": "paragraph",
-        "content": "Applies a shared background to the whole footer so the main footer row and the bottom utilities row appear as one continuous block."
-      },
-      {
-        "type": "image_picker",
-        "id": "footer_background_image",
-        "label": "Background image"
-      },
-      {
-        "type": "color",
-        "id": "footer_background_color",
-        "label": "Background color",
-        "default": "#3A3A38"
-      }
-    ]
   }
 ]
