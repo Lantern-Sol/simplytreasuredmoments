@@ -1,0 +1,17 @@
+# Transient atomic-write / OneDrive temp files — the Shopify CLI watcher
+# otherwise tries to upload these and Shopify rejects the filename
+# ("contains illegal characters"), 500-ing the dev preview.
+*.tmp
+*.tmp.*
+**/*.tmp
+**/*.tmp.*
+*.liquid.tmp.*
+*.json.tmp.*
+*.css.tmp.*
+
+# Local tooling / scratch (not part of the theme)
+
+.claude/* 
+.tmp-figma/*
+shopify_dev.log
+shopify_errors.log
