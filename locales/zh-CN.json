@@ -1,12 +1,3 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin language editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "blocks": {
     "load_video": "加载视频：{{ description }}",
@@ -25,8 +16,7 @@
       "comment": "评论",
       "post_success": "感谢您联系我们。我们会尽快回复您。",
       "error_heading": "请调整以下内容："
-    },
-    "slider_label": "滑块"
+    }
   },
   "accessibility": {
     "play_model": "演示 3D 模型",
@@ -47,7 +37,7 @@
     "search_results_count": "找到“{{ query }}”的 {{ count }} 条搜索结果",
     "search_results_no_results": "未找到“{{ query }}”的相关结果",
     "filters": "筛选条件",
-    "account": "账户",
+    "account": "打开账户菜单",
     "cart": "购物车",
     "cart_count": "购物车中的商品总数",
     "filter_count": {
@@ -60,35 +50,23 @@
     "scroll_to": "滚动到 {{ title }}",
     "loading_product_recommendations": "加载产品推荐",
     "discount": "应用折扣码",
-    "discount_menu": "折扣码",
     "discount_applied": "已应用折扣码：{{ code }}",
+    "open_cart_drawer": "打开购物车",
     "inventory_status": "库存状态",
     "pause_video": "暂停视频",
-    "localization_region_and_language": "区域和语言选择器",
+    "localization_region_and_language": "打开区域和语言选择器",
+    "open_search_modal": "打开搜索",
     "find_country": "查找国家/地区",
     "decrease_quantity": "减少数量",
     "increase_quantity": "增加数量",
     "quantity": "数量",
     "rating": "此产品的评分是 {{ rating }}/5",
-    "nested_product": "{{ product_title }}（{{ parent_title }}）",
-    "remove": "删除",
-    "view_pricing_info": "查看定价信息",
-    "slideshow": "幻灯片",
-    "header_navigation_label": "主要",
-    "home_logo_alt": "{{ store_name }} - 主页",
-    "active_filters": "有效筛选条件：",
-    "product_details": "产品详细信息",
-    "show_product_details": "显示 {{ product_name }} 的产品详细信息",
-    "featured_product": "特色产品",
-    "search_suggestions_available": "针对“{{ query }}”的搜索建议",
-    "price_filter_low": "低价",
-    "price_filter_high": "高价",
-    "view_disclosure_information_for_product": "查看 {{ product_title }} 的披露信息"
+    "nested_product": "{{ product_title }}（{{ parent_title }}）"
   },
   "actions": {
     "add_to_cart": "添加到购物车",
     "clear_all": "全部清除",
-    "remove": "移除",
+    "remove": "删除",
     "view_in_your_space": "在您的空间中查看",
     "show_filters": "筛选条件",
     "clear": "清除",
@@ -122,10 +100,7 @@
     "sign_up": "注册",
     "open_image_in_full_screen": "全屏打开图片",
     "sort": "排序",
-    "show_all_options": "显示所有选项",
-    "open": "打开",
-    "back_to": "返回 {{ title }}",
-    "zoom_media": "缩放媒体文件 {{ index }}"
+    "show_all_options": "显示所有选项"
   },
   "content": {
     "reviews": "评价",
@@ -139,7 +114,7 @@
     "quantity": "数量",
     "product_total": "产品总计",
     "cart_estimated_total": "预计总额",
-    "seller_note": "特别说明",
+    "seller_note": "特殊说明",
     "cart_subtotal": "小计",
     "discounts": "折扣",
     "discount": "折扣",
@@ -239,51 +214,17 @@
     "shipping_policy": "结账时计算运费。",
     "powered_by": "此商店依托",
     "store_owner_link_html": "您是否为店主？<a href=\"{{ link }}\">在此处登录</a>",
-    "recipient_form_send_to": "发送给",
+    "recipient_form_send_to": "发送至",
     "recipient_form_email_label": "收件人电子邮件",
     "recipient_form_email_label_my_email": "我的电子邮件",
+    "recipient_form_email_label_optional_for_no_js_behavior": "收件人电子邮件（可选）",
     "recipient_form_email_address": "收件人电子邮件地址",
     "recipient_form_name_label": "收件人姓名（可选）",
+    "recipient_form_message_label": "消息（可选）",
     "recipient_form_message": "消息（可选）",
     "recipient_form_characters_used": "已输入 {{ used_chars }} 个字符，最多 {{ max_chars }} 个",
     "recipient_form_send_on": "年-月-日",
-    "recipient_form_send_on_label": "发送日期（可选）",
-    "recipient_form_fields_visible": "收件人表单字段现在可见",
-    "recipient_form_fields_hidden": "收件人表单字段现已隐藏",
-    "recipient_form_error": "提交表单时出现错误",
-    "product_custom_property_character_count": "已输入 {{ used_chars }} 个字符，最多 {{ max_chars }} 个",
-    "terms_and_policies": "条款和政策",
-    "pagination": {
-      "nav_label": "分页",
-      "previous": "上一页",
-      "next": "下一页",
-      "page": "第 {{ page }} 页"
-    },
-    "volume_pricing_available": "提供批量定价",
-    "volume_pricing": "批量定价",
-    "at_price_each": "{{ price }}/件",
-    "each": "{{ price }}/件",
-    "each_abbreviation": "单件",
-    "price_at": "价格",
-    "price_range": "价格范围",
-    "item_count_cutoff": "超过 {{ count }} 件商品",
-    "cancel": "取消",
-    "product_subtotal": "产品小计",
-    "quantity_per_item": "/件",
-    "remove_all": "全部删除",
-    "remove_all_items_confirmation": "删除您购物车中的全部 {{ count }} 件商品？",
-    "remove_one_item_confirmation": "从购物车中删除 1 件商品？",
-    "total_items": "商品总数",
-    "variant": "多属性",
-    "variant_total": "多属性总计",
-    "view_cart": "查看购物车",
-    "your_cart": "您的购物车",
-    "items_added_to_cart": {
-      "one": "1 件商品已加入购物车",
-      "other": "{{ count }} 件商品已加入购物车"
-    },
-    "quick_order_list": "快速订购列表",
-    "product_disclosures": "产品披露信息"
+    "recipient_form_send_on_label": "发送日期（可选）"
   },
   "gift_cards": {
     "issued": {
@@ -303,12 +244,7 @@
     "password": "密码",
     "search": "搜索",
     "product_title": "产品标题",
-    "collection_title": "产品系列标题",
-    "blog_posts": "博客文章",
-    "blog_post_title": "标题",
-    "blog_post_author": "作者",
-    "blog_post_date": "日期",
-    "blog_post_description": "博客文章内容摘录"
+    "collection_title": "产品系列标题"
   },
   "products": {
     "product": {
@@ -317,19 +253,11 @@
       "adding_to_cart": "正在添加...",
       "add_to_cart_error": "添加到购物车时出错",
       "sold_out": "售罄",
-      "unavailable": "不可售",
-      "quantity_error_max": "此商品上限为 {{ maximum }}",
-      "quantity": "数量",
-      "quantity_increments": "增量为 {{ increment }}",
-      "quantity_minimum": "最少 {{ minimum }} 个",
-      "quantity_maximum": "最多 {{ maximum }} 个",
-      "in_cart": "在购物车中",
-      "default_title": "默认标题",
-      "sticky_add_to_cart": "快速添加到购物车栏"
+      "unavailable": "不可售"
     }
   },
   "fields": {
-    "separator": "至"
+    "separator": "到"
   },
   "blogs": {
     "article": {

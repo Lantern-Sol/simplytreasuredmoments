@@ -1,3 +1,5 @@
+
+
 {% assign block_settings = block.settings %}
 
 <div
@@ -6,9 +8,6 @@
     spacer-block--size-{{ block_settings.size }}
     {% if block_settings.custom_mobile_size %}
       spacer-block--size-mobile-{{ block_settings.size_mobile }}
-      {% if block_settings.pixel_size_mobile == 0 %}
-        hidden--mobile
-      {% endif %}
     {% endif %}
   "
   style="
@@ -55,7 +54,7 @@
   }
 
   /* Mobile */
-  @media screen and (max-width: 749px) {
+  @media screen and (max-width: 750px) {
     /* Percent */
     .layout-panel-flex--row:not(.mobile-column) > .spacer-block--size-mobile-percent {
       flex: var(--spacer-size-mobile);

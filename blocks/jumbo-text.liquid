@@ -1,3 +1,5 @@
+
+
 {% render 'jumbo-text' %}
 
 {% schema %}
@@ -100,7 +102,7 @@
     {
       "type": "select",
       "id": "text_effect",
-      "label": "t:settings.animation",
+      "label": "t:settings.effects",
       "options": [
         {
           "value": "none",
@@ -123,15 +125,6 @@
       "label": "t:settings.animation_repeat",
       "default": false,
       "visible_if": "{{ block.settings.text_effect == \"blur\" or block.settings.text_effect == \"reveal\" }}"
-    },
-    {
-      "type": "header",
-      "content": "t:content.appearance"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:settings.text_color"
     }
   ],
   "presets": [

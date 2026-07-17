@@ -1,0 +1,498 @@
+{% doc %}
+  @prompt
+    “Who We Are” section consisting of three paragraphs, and also create a “Why Choose Us” section featuring a list of points—each with a title and a brief one-line description.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-why-choose-us-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    padding: {{ block.settings.padding_top }}px {{ block.settings.padding_horizontal }}px {{ block.settings.padding_bottom }}px;
+    background-color: {{ block.settings.background_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+  }
+
+  .ai-why-choose-us__heading-{{ ai_gen_id }} {
+    color: {{ block.settings.heading_color }};
+    font-size: {{ block.settings.heading_size }}px;
+    margin: 0 0 {{ block.settings.heading_spacing }}px;
+    text-align: {{ block.settings.text_alignment }};
+  }
+
+  .ai-why-choose-us__list-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.item_spacing }}px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .ai-why-choose-us__item-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.title_description_spacing }}px;
+    padding: {{ block.settings.item_padding }}px;
+    background-color: {{ block.settings.item_background_color }};
+    border-radius: {{ block.settings.item_border_radius }}px;
+    border: {{ block.settings.item_border_width }}px solid {{ block.settings.item_border_color }};
+  }
+
+  .ai-why-choose-us__item-title-{{ ai_gen_id }} {
+    color: {{ block.settings.title_color }};
+    font-size: {{ block.settings.title_size }}px;
+    margin: 0;
+    text-align: {{ block.settings.text_alignment }};
+  }
+
+  .ai-why-choose-us__item-description-{{ ai_gen_id }} {
+    color: {{ block.settings.description_color }};
+    font-size: {{ block.settings.description_size }}px;
+    line-height: {{ block.settings.line_height }};
+    margin: 0;
+    text-align: {{ block.settings.text_alignment }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-why-choose-us-{{ ai_gen_id }} {
+      width: 100%;
+      padding: {{ block.settings.padding_top | times: 0.7 }}px {{ block.settings.padding_horizontal | times: 0.7 }}px {{ block.settings.padding_bottom | times: 0.7 }}px;
+    }
+
+    .ai-why-choose-us__heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size | times: 0.8 }}px;
+    }
+
+    .ai-why-choose-us__item-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size | times: 0.9 }}px;
+    }
+
+    .ai-why-choose-us__item-description-{{ ai_gen_id }} {
+      font-size: {{ block.settings.description_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-why-choose-us-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if block.settings.heading != blank %}
+    <h2 class="ai-why-choose-us__heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+  {% endif %}
+
+  <ul class="ai-why-choose-us__list-{{ ai_gen_id }}">
+    {% if block.settings.item_1_title != blank %}
+      <li class="ai-why-choose-us__item-{{ ai_gen_id }}">
+        <h3 class="ai-why-choose-us__item-title-{{ ai_gen_id }}">{{ block.settings.item_1_title }}</h3>
+        {% if block.settings.item_1_description != blank %}
+          <p class="ai-why-choose-us__item-description-{{ ai_gen_id }}">{{ block.settings.item_1_description }}</p>
+        {% endif %}
+      </li>
+    {% endif %}
+
+    {% if block.settings.item_2_title != blank %}
+      <li class="ai-why-choose-us__item-{{ ai_gen_id }}">
+        <h3 class="ai-why-choose-us__item-title-{{ ai_gen_id }}">{{ block.settings.item_2_title }}</h3>
+        {% if block.settings.item_2_description != blank %}
+          <p class="ai-why-choose-us__item-description-{{ ai_gen_id }}">{{ block.settings.item_2_description }}</p>
+        {% endif %}
+      </li>
+    {% endif %}
+
+    {% if block.settings.item_3_title != blank %}
+      <li class="ai-why-choose-us__item-{{ ai_gen_id }}">
+        <h3 class="ai-why-choose-us__item-title-{{ ai_gen_id }}">{{ block.settings.item_3_title }}</h3>
+        {% if block.settings.item_3_description != blank %}
+          <p class="ai-why-choose-us__item-description-{{ ai_gen_id }}">{{ block.settings.item_3_description }}</p>
+        {% endif %}
+      </li>
+    {% endif %}
+
+    {% if block.settings.item_4_title != blank %}
+      <li class="ai-why-choose-us__item-{{ ai_gen_id }}">
+        <h3 class="ai-why-choose-us__item-title-{{ ai_gen_id }}">{{ block.settings.item_4_title }}</h3>
+        {% if block.settings.item_4_description != blank %}
+          <p class="ai-why-choose-us__item-description-{{ ai_gen_id }}">{{ block.settings.item_4_description }}</p>
+        {% endif %}
+      </li>
+    {% endif %}
+
+    {% if block.settings.item_5_title != blank %}
+      <li class="ai-why-choose-us__item-{{ ai_gen_id }}">
+        <h3 class="ai-why-choose-us__item-title-{{ ai_gen_id }}">{{ block.settings.item_5_title }}</h3>
+        {% if block.settings.item_5_description != blank %}
+          <p class="ai-why-choose-us__item-description-{{ ai_gen_id }}">{{ block.settings.item_5_description }}</p>
+        {% endif %}
+      </li>
+    {% endif %}
+     {% if block.settings.item_6_title != blank %}
+      <li class="ai-why-choose-us__item-{{ ai_gen_id }}">
+        <h3 class="ai-why-choose-us__item-title-{{ ai_gen_id }}">{{ block.settings.item_6_title }}</h3>
+        {% if block.settings.item_6_description != blank %}
+          <p class="ai-why-choose-us__item-description-{{ ai_gen_id }}">{{ block.settings.item_6_description }}</p>
+        {% endif %}
+      </li>
+    {% endif %}
+     {% if block.settings.item_7_title != blank %}
+      <li class="ai-why-choose-us__item-{{ ai_gen_id }}">
+        <h3 class="ai-why-choose-us__item-title-{{ ai_gen_id }}">{{ block.settings.item_7_title }}</h3>
+        {% if block.settings.item_7_description != blank %}
+          <p class="ai-why-choose-us__item-description-{{ ai_gen_id }}">{{ block.settings.item_7_description }}</p>
+        {% endif %}
+      </li>
+    {% endif %}
+  </ul>
+</div>
+
+{% schema %}
+{
+  "name": "Why choose us",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Why choose us"
+    },
+    {
+      "type": "header",
+      "content": "Item 1"
+    },
+    {
+      "type": "text",
+      "id": "item_1_title",
+      "label": "Title",
+      "default": "Expert team"
+    },
+    {
+      "type": "text",
+      "id": "item_1_description",
+      "label": "Description",
+      "default": "Our experienced professionals bring years of expertise to every project."
+    },
+    {
+      "type": "header",
+      "content": "Item 2"
+    },
+    {
+      "type": "text",
+      "id": "item_2_title",
+      "label": "Title",
+      "default": "Quality guaranteed"
+    },
+    {
+      "type": "text",
+      "id": "item_2_description",
+      "label": "Description",
+      "default": "We stand behind our work with a commitment to excellence and satisfaction."
+    },
+    {
+      "type": "header",
+      "content": "Item 3"
+    },
+    {
+      "type": "text",
+      "id": "item_3_title",
+      "label": "Title",
+      "default": "Customer focused"
+    },
+    {
+      "type": "text",
+      "id": "item_3_description",
+      "label": "Description",
+      "default": "Your needs and goals are at the center of everything we do."
+    },
+    {
+      "type": "header",
+      "content": "Item 4"
+    },
+    {
+      "type": "text",
+      "id": "item_4_title",
+      "label": "Title",
+      "default": "Innovative solutions"
+    },
+    {
+      "type": "text",
+      "id": "item_4_description",
+      "label": "Description",
+      "default": "We use cutting-edge approaches to solve complex challenges."
+    },
+    {
+      "type": "header",
+      "content": "Item 5"
+    },
+    {
+      "type": "text",
+      "id": "item_5_title",
+      "label": "Title",
+      "default": "Proven results"
+    },
+    {
+      "type": "text",
+      "id": "item_5_description",
+      "label": "Description",
+      "default": "Our track record speaks for itself with countless successful outcomes."
+    },
+     {
+      "type": "header",
+      "content": "Item 6"
+    },
+    {
+      "type": "text",
+      "id": "item_6_title",
+      "label": "Title",
+      "default": "Proven results"
+    },
+    {
+      "type": "text",
+      "id": "item_6_description",
+      "label": "Description",
+      "default": "Our track record speaks for itself with countless successful outcomes."
+    },
+      {
+      "type": "header",
+      "content": "Item 7"
+    },
+    {
+      "type": "text",
+      "id": "item_7_title",
+      "label": "Title",
+      "default": "Proven results"
+    },
+    {
+      "type": "text",
+      "id": "item_7_description",
+      "label": "Description",
+      "default": "Our track record speaks for itself with countless successful outcomes."
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "item_spacing",
+      "label": "Item spacing",
+      "min": 5,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "title_description_spacing",
+      "label": "Title spacing",
+      "min": 5,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "label": "Heading spacing",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "item_padding",
+      "label": "Item padding",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "item_background_color",
+      "label": "Item background",
+      "default": "#f9f9f9"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Item title",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Item description",
+      "default": "#2f2f2f"
+    },
+    {
+      "type": "color",
+      "id": "item_border_color",
+      "label": "Item border",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Item title size",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "label": "Item description size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "line_height",
+      "label": "Line height",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "default": 1.5
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "item_border_radius",
+      "label": "Item border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "item_border_width",
+      "label": "Item border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    }
+  ],
+  "presets": [
+    {
+      "name": "Why choose us"
+    }
+  ]
+}
+{% endschema %}

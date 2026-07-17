@@ -1,3 +1,5 @@
+
+
 {%- doc -%}
   Display an image of a collection inside a collection card.
   Intended for collection-card.liquid block.
@@ -8,15 +10,125 @@
   {% content_for 'block', type: '_collection-card-image', id: 'collection-card-image', parent_block_id: block.id %}
 {%- enddoc -%}
 
-{% comment %} Render using unified resource image component {% endcomment %}
-{% comment %} Note: image_source auto-determined from closest.collection for collections {% endcomment %}
-{% render 'resource-image',
-  content_type: 'collections',
-  parent_block_id: parent_block_id,
-  block_settings: block.settings,
-  section_settings: section.settings,
-  block_attributes: block.shopify_attributes
+{% liquid
+  assign collection = closest.collection
+  assign block_settings = block.settings
+-%}
+
+{% liquid
+  assign image_source = collection.image
+  if image_source == blank
+    assign image_source = collection.products.first.featured_image
+  endif
+
+  assign ratio = 1
+
+  case block_settings.image_ratio
+    when 'landscape'
+      assign ratio = '16 / 9'
+    when 'portrait'
+      assign ratio = '4 / 5'
+    when 'adapt'
+      assign ratio = image_source.aspect_ratio
+  endcase
+
+  if ratio == 0 or ratio == null
+    assign ratio = 1
+  endif
 %}
+
+{% liquid
+  assign sizes = '(min-width: 750px) 50vw, 100vw'
+  assign lazy_sizes = 'auto, ' | append: sizes
+  assign loading = 'eager'
+
+  # when _collection-card-image is inside a Collection List section, specific layout types
+  # can determine the `sizes` and `loading` attributes
+
+  case section.settings.layout_type
+    when 'grid', 'carousel'
+      assign calculated_width = 100 | divided_by: section.settings.columns | append: 'vw'
+      assign sizes = '(min-width: 750px) [calc-width], 100vw' | replace: '[calc-width]', calculated_width
+    when 'editorial', 'bento'
+      assign loading = 'lazy'
+      assign sizes = lazy_sizes
+  endcase
+
+  assign widths = '240, 352, 832, 1200, 1600, 1920, 2560, 3840'
+%}
+
+{% style %}
+  .collection-card[data-block-id="{{ parent_block_id }}"] {
+    --ratio: {{ ratio }};
+  }
+{% endstyle %}
+
+{% if image_source != blank %}
+  <div
+    class="
+      image-block
+      collection-card__image
+      border-style
+      {% if block_settings.inherit_color_scheme == false %} color-{{ block_settings.color_scheme }}{% endif %}
+    "
+    style="{% render 'border-override', settings: block_settings %}"
+  >
+    {%- if block_settings.toggle_overlay -%}
+      {% render 'overlay', settings: block_settings %}
+    {%- endif -%}
+
+    {{
+      image_source
+      | image_url: width: 3840
+      | image_tag:
+        width: block_settings.image.width,
+        widths: widths,
+        height: block_settings.image.height,
+        class: 'image-block__image',
+        sizes: sizes,
+        loading: loading
+    }}
+  </div>
+{% else %}
+  <div
+    class="
+      image-block
+      collection-card__image
+      collection-card__image--placeholder
+      border-style
+      {% if block_settings.inherit_color_scheme == false %} color-{{ block_settings.color_scheme }}{% endif %}
+    "
+    style="{% render 'border-override', settings: block_settings %}"
+  >
+    {% liquid
+      # Simple rotation through collection apparel placeholders (1-4)
+      # Extract index from parent block ID (e.g., "collection-card-3" -> "3")
+      assign block_parts = parent_block_id | split: '-'
+      assign collection_index = block_parts.last | default: 0
+      assign variant = collection_index | modulo: 4 | plus: 1
+      assign placeholder_name = 'collection-apparel-' | append: variant
+    %}
+    {{ placeholder_name | placeholder_svg_tag }}
+  </div>
+{% endif %}
+
+{% stylesheet %}
+  .collection-card__image {
+    position: relative;
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    aspect-ratio: var(--ratio);
+    z-index: var(--layer-base);
+    overflow: hidden;
+  }
+
+  .collection-card__image--placeholder {
+    width: 100%;
+    height: 100%;
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
@@ -51,46 +163,6 @@
         }
       ],
       "default": "portrait"
-    },
-    {
-      "type": "select",
-      "id": "image_ratio_mobile",
-      "label": "Mobile aspect ratio",
-      "options": [
-        {
-          "value": "inherit",
-          "label": "Same as desktop"
-        },
-        {
-          "value": "adapt",
-          "label": "t:options.auto"
-        },
-        {
-          "value": "portrait",
-          "label": "t:options.portrait"
-        },
-        {
-          "value": "square",
-          "label": "t:options.square"
-        },
-        {
-          "value": "landscape",
-          "label": "t:options.landscape"
-        },
-        {
-          "value": "custom",
-          "label": "t:options.custom"
-        }
-      ],
-      "default": "inherit"
-    },
-    {
-      "type": "text",
-      "id": "image_ratio_mobile_custom",
-      "label": "Custom mobile aspect ratio",
-      "info": "Format: width / height (e.g. 360 / 300)",
-      "default": "360 / 300",
-      "visible_if": "{{ block.settings.image_ratio_mobile == 'custom' }}"
     },
     {
       "type": "checkbox",
@@ -179,13 +251,6 @@
       "unit": "%",
       "label": "t:settings.opacity",
       "default": 100,
-      "visible_if": "{{ block.settings.border != 'none' }}"
-    },
-    {
-      "type": "color",
-      "id": "border_color",
-      "label": "t:settings.color",
-      "placeholder": "t:settings.default",
       "visible_if": "{{ block.settings.border != 'none' }}"
     },
     {

@@ -1,12 +1,3 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin language editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "blocks": {
     "load_video": "Videoyu yükle: {{ description }}",
@@ -25,8 +16,7 @@
       "comment": "Yorum",
       "post_success": "Bizimle iletişime geçtiğiniz için teşekkür ederiz. Mümkün olan en kısa sürede size dönüş yapacağız.",
       "error_heading": "Lütfen aşağıdakileri düzenleyin:"
-    },
-    "slider_label": "Kaydırıcı"
+    }
   },
   "accessibility": {
     "play_model": "3B modeli oynat",
@@ -47,7 +37,7 @@
     "search_results_count": "\"{{ query }}\" için {{ count }} arama sonucu bulundu",
     "search_results_no_results": "\"{{ query }}\" için sonuç bulunamadı",
     "filters": "Filtreler",
-    "account": "Hesap",
+    "account": "Hesap menüsünü aç",
     "cart": "Sepet",
     "cart_count": "Sepetteki toplam ürün sayısı",
     "filter_count": {
@@ -60,43 +50,31 @@
     "scroll_to": "{{ title }} bölümüne git",
     "loading_product_recommendations": "Ürün önerileri yükleniyor",
     "discount": "İndirim kodu uygula",
-    "discount_menu": "İndirim Kodları",
     "discount_applied": "Uygulanan indirim kodu: {{ code }}",
+    "open_cart_drawer": "Sepeti aç",
     "pause_video": "Videoyu duraklat",
     "inventory_status": "Envanter durumu",
     "find_country": "Ülke bul",
-    "localization_region_and_language": "Bölge ve dil seçici",
+    "localization_region_and_language": "Bölge ve dil seçiciyi aç",
+    "open_search_modal": "Aramayı aç",
     "decrease_quantity": "Adedi azalt",
     "increase_quantity": "Adedi artır",
     "quantity": "Adet",
     "rating": "Bu ürünün puanı 5 üzerinden {{ rating }}",
-    "nested_product": "{{ parent_title }} için {{ product_title }}",
-    "remove": "Kaldır",
-    "view_pricing_info": "Fiyatlandırma bilgilerini görüntüle",
-    "slideshow": "Slayt gösterisi",
-    "header_navigation_label": "Birincil",
-    "home_logo_alt": "{{ store_name }} ana sayfası",
-    "active_filters": "Etkin filtreler:",
-    "featured_product": "Öne çıkan ürün",
-    "product_details": "Ürün ayrıntıları",
-    "show_product_details": "{{ product_name }} için ürün ayrıntılarını göster",
-    "search_suggestions_available": "\"{{ query }}\" için kullanılabilir arama önerileri",
-    "price_filter_low": "Düşük fiyat",
-    "price_filter_high": "Yüksek fiyat",
-    "view_disclosure_information_for_product": "{{ product_title }} için bildirim bilgilerini görüntüleyin"
+    "nested_product": "{{ parent_title }} için {{ product_title }}"
   },
   "actions": {
     "add_to_cart": "Sepete ekle",
     "clear_all": "Tümünü temizle",
     "remove": "Kaldır",
-    "view_in_your_space": "Alanınızda görüntüleyin",
+    "view_in_your_space": "Kendi alanınızda görüntüleyin",
     "show_filters": "Filtrele",
     "clear": "Temizle",
     "continue_shopping": "Alışverişe devam et",
     "log_in_html": "Hesabınız var mı? Daha hızlı ödeme yapmak için <a href=\"{{ link }}\">oturum açın</a>.",
     "see_items": {
       "one": "{{ count }} ürün görüntüle",
-      "other": "{{ count }} ürünü gör"
+      "other": "{{ count }} ürün görüntüle"
     },
     "view_all": "Tümünü görüntüle",
     "add": "Ekle",
@@ -122,10 +100,7 @@
     "sign_in_options": "Diğer giriş yapma seçenekleri",
     "sign_up": "Kaydol",
     "sort": "Sırala",
-    "show_all_options": "Tüm seçenekleri göster",
-    "open": "Açık",
-    "back_to": "Geri dön: {{ title }}",
-    "zoom_media": "Medyayı yakınlaştır: {{ index }}"
+    "show_all_options": "Tüm seçenekleri göster"
   },
   "content": {
     "reviews": "değerlendirme",
@@ -223,7 +198,7 @@
     "taxes_included_shipping_at_checkout_with_policy_without_discounts_html": "Vergiler dahil. Kargo, ödeme sayfasında hesaplanır.",
     "taxes_included_shipping_at_checkout_without_policy_without_discounts": "Vergiler dahil. Kargo, ödeme sayfasında hesaplanır.",
     "wrong_password": "Yanlış parola",
-    "view_more_details": "Daha fazla bilgi görüntüle",
+    "view_more_details": "Daha fazla ayrıntı görüntüle",
     "powered_by": "Bu mağaza için destek sağlayan:",
     "store_owner_link_html": "Mağaza sahibi misiniz? <a href=\"{{ link }}\">Buradan oturum açın</a>",
     "shipping_discount_error": "Kargo indirimleri, adres eklendikten sonra ödeme sayfasında gösterilir",
@@ -239,7 +214,7 @@
       "one": "{{ count }} kaldı",
       "other": "{{ count }} kaldı"
     },
-    "recipient_form_send_to": "Şuraya gönder",
+    "recipient_form_send_to": "Şuraya gönder:",
     "recipient_form_email_label": "Alıcının e-posta adresi",
     "recipient_form_email_label_my_email": "E-posta adresim",
     "recipient_form_email_address": "Alıcı e-posta adresi",
@@ -247,43 +222,7 @@
     "recipient_form_characters_used": "{{ used_chars }}/{{ max_chars }} karakter kullanıldı",
     "recipient_form_send_on": "GG.AA.YYYY",
     "recipient_form_send_on_label": "Şu tarihte gönder (isteğe bağlı)",
-    "recipient_form_message": "Mesaj (isteğe bağlı)",
-    "recipient_form_fields_visible": "Alıcı form alanları artık görünür",
-    "recipient_form_fields_hidden": "Alıcı form alanları artık gizli",
-    "recipient_form_error": "Form gönderimi ile ilgili bir hata oluştu",
-    "product_custom_property_character_count": "{{ used_chars }}/{{ max_chars }} karakter kullanıldı",
-    "terms_and_policies": "Şartlar ve Politikalar",
-    "pagination": {
-      "nav_label": "Sayfalara ayırma",
-      "previous": "Önceki",
-      "next": "Sonraki",
-      "page": "Sayfa {{ page }}"
-    },
-    "volume_pricing_available": "Hacim bazlı fiyatlandırma kullanılabilir",
-    "volume_pricing": "Hacim bazlı fiyatlandırma",
-    "at_price_each": "{{ price }}/adet üzerinden",
-    "each": "{{ price }}/adet",
-    "each_abbreviation": "adet",
-    "price_at": "üzerinden",
-    "price_range": "Fiyat aralığı",
-    "cancel": "İptal",
-    "product_subtotal": "Ürün alt toplamı",
-    "quantity_per_item": "ürün başına",
-    "remove_all": "Tümünü kaldır",
-    "remove_all_items_confirmation": "{{ count }} ürünün tamamı sepetten kaldırılsın mı?",
-    "remove_one_item_confirmation": "1 ürün sepetten kaldırılsın mı?",
-    "total_items": "Toplam ürün sayısı",
-    "variant": "Varyasyon",
-    "variant_total": "Varyasyon toplamı",
-    "view_cart": "Sepeti görüntüle",
-    "your_cart": "Sepetiniz",
-    "items_added_to_cart": {
-      "one": "1 ürün sepete eklendi",
-      "other": "{{ count }} ürün sepete eklendi"
-    },
-    "item_count_cutoff": "{{ count }} adetten fazla ürün",
-    "quick_order_list": "Hızlı sipariş listesi",
-    "product_disclosures": "Ürün bildirimleri"
+    "recipient_form_message": "Mesaj (isteğe bağlı)"
   },
   "gift_cards": {
     "issued": {
@@ -298,6 +237,25 @@
       "copy_code_success": "Kod başarıyla kopyalandı",
       "expired": "Son kullanma tarihi dolmuş"
     }
+  },
+  "placeholders": {
+    "password": "Parola",
+    "search": "Ara",
+    "product_title": "Ürün başlığı",
+    "collection_title": "Koleksiyon başlığı"
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Sepete ekle",
+      "added_to_cart": "Sepete eklendi",
+      "adding_to_cart": "Ekleniyor...",
+      "add_to_cart_error": "Sepete eklenirken hata oluştu",
+      "sold_out": "Tükendi",
+      "unavailable": "Kullanılamıyor"
+    }
+  },
+  "fields": {
+    "separator": "-"
   },
   "blogs": {
     "article": {
@@ -317,38 +275,6 @@
       "post": "Yorumu gönder",
       "success_moderated": "Yorum gönderildi, onay bekliyor",
       "success": "Yorum gönderildi"
-    }
-  },
-  "fields": {
-    "separator": "ile"
-  },
-  "placeholders": {
-    "password": "Parola",
-    "search": "Ara",
-    "product_title": "Ürün başlığı",
-    "collection_title": "Koleksiyon başlığı",
-    "blog_posts": "Blog gönderileri",
-    "blog_post_title": "Başlık",
-    "blog_post_author": "Yazar",
-    "blog_post_date": "Tarih",
-    "blog_post_description": "Blog gönderinizin içeriğinden bir alıntı"
-  },
-  "products": {
-    "product": {
-      "add_to_cart": "Sepete ekle",
-      "adding_to_cart": "Ekleniyor...",
-      "added_to_cart": "Sepete eklendi",
-      "add_to_cart_error": "Sepete eklenirken hata oluştu",
-      "quantity_error_max": "Bu ürün için maksimum değer: {{ maximum }}",
-      "sold_out": "Tükendi",
-      "unavailable": "Kullanılamıyor",
-      "quantity": "Adet",
-      "quantity_increments": "Artış değeri: {{ increment }}",
-      "quantity_minimum": "Minimum: {{ minimum }}",
-      "quantity_maximum": "Maksimum: {{ maximum }}",
-      "in_cart": "sepette",
-      "default_title": "Varsayılan Başlık",
-      "sticky_add_to_cart": "Sepete hızlı ekle çubuğu"
     }
   }
 }

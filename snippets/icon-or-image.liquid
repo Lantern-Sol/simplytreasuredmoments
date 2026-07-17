@@ -10,7 +10,7 @@
 
 {%- if icon != 'none' and image_upload == blank -%}
   <svg
-    class="{{ class_name | append: ' icon-default' | strip }}"
+    class="{{ class_name }}"
     aria-hidden="true"
     focusable="false"
     xmlns="http://www.w3.org/2000/svg"
@@ -31,9 +31,7 @@
     assign widths = '240, 352, 832, 1200'
   %}
 
-  {% assign width = width |  divided_by: 16.0 %}
-  {% assign mobile_width = mobile_width | divided_by: 16.0 %}
-  {% assign image_style = '--width: ' | append: width | append: 'rem;--mobile-width: ' | append: mobile_width | append: 'rem;' %}
+  {% assign image_style = 'width: ' | append: width | append: 'px;' %}
   {{
     image_upload
     | image_url: width: 1200

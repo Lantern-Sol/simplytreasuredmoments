@@ -6,8 +6,7 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */
-{
+ */{
   "sections": {
     "main": {
       "type": "main-blog",
@@ -16,7 +15,7 @@
           "type": "text",
           "name": "Title",
           "settings": {
-            "text": "<h1>{{ closest.blog.title }}</h1>",
+            "text": "<p>{{ closest.blog.title }}</p>",
             "width": "fit-content",
             "max_width": "narrow",
             "alignment": "left",
@@ -27,6 +26,7 @@
             "letter_spacing": "normal",
             "case": "none",
             "wrap": "pretty",
+            "color": "",
             "background": false,
             "background_color": "#00000026",
             "corner_radius": 0,
@@ -56,6 +56,7 @@
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
+                "color": "",
                 "text": "",
                 "read_only": true,
                 "alignment": "left",
@@ -102,6 +103,7 @@
         "title"
       ],
       "settings": {
+        "color_scheme": "",
         "padding-block-start": 0,
         "padding-block-end": 48
       }

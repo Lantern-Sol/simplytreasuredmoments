@@ -1,12 +1,15 @@
+
 {% assign block_settings = block.settings %}
 
-{% capture accordion_row_children %}
+<accordion-custom
+  {% if block_settings.open_by_default %}
+    open-by-default-on-desktop
+    open-by-default-on-mobile
+  {% endif %}
+>
   <details
     class="details"
     data-testid="accordion-details"
-    {% if block_settings.open_by_default %}
-      open
-    {% endif %}
     {{ block.shopify_attributes }}
   >
     <summary class="details__header">
@@ -29,12 +32,14 @@
       {% content_for 'blocks' %}
     </div>
   </details>
-{% endcapture %}
-{% render 'accordion-custom-component',
-  children: accordion_row_children,
-  open_by_default_on_desktop: block_settings.open_by_default,
-  open_by_default_on_mobile: block_settings.open_by_default
-%}
+</accordion-custom>
+
+{% stylesheet %}
+  .details__icon {
+    height: auto;
+    margin-inline-end: var(--margin-xs);
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
@@ -332,14 +337,14 @@
         "text-1": {
           "type": "text",
           "settings": {
-            "text": "t:html_defaults.work_quickly_to_ship",
+            "text": "<p>We will work quickly to ship your order as soon as possible. Once your order has shipped, you will receive an email with further information. Delivery times vary depending on your location.</p>",
             "width": "100%"
           }
         }
       },
       "block_order": ["text-1"],
       "settings": {
-        "heading": "t:text_defaults.when_will_order_arrive"
+        "heading": "When will I get my order?"
       }
     }
   ]

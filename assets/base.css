@@ -19,10 +19,6 @@ body {
   --hover-shadow-color: var(--color-shadow);
   --hover-transition-duration: 0.25s;
   --hover-transition-timing: ease-out;
-  --surface-transition-duration: 0.3s;
-  --surface-transition-timing: var(--ease-out-quad);
-  --submenu-animation-speed: 360ms;
-  --submenu-animation-easing: cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 html {
@@ -32,43 +28,12 @@ html {
   scroll-behavior: smooth;
 }
 
-@media (min-width: 990px) {
-  html:has(.page-wrapper),
-  html:has(.page-wrapper) body {
-    height: 100dvh;
-    overflow: hidden;
-  }
-}
-
-html[scroll-lock],
-html[scroll-lock] .page-wrapper {
+html[scroll-lock] {
   overflow: hidden;
 }
 
-.page-wrapper {
-  display: flex;
-  flex-direction: column;
-  min-height: 100dvh;
-  transition: margin-right var(--animation-speed) var(--animation-timing-fade-out);
-}
-
-@media (min-width: 990px) {
-  .page-wrapper {
-    height: 100dvh;
-    overflow-y: auto;
-    scroll-behavior: smooth;
-    scrollbar-width: thin;
-    scrollbar-color: rgb(var(--color-foreground-rgb) / var(--opacity-40)) var(--color-background);
-  }
-
-  .page-wrapper--drawer-open shopify-account::part(dialog) {
-    translate: calc(-1 * var(--theme-drawer-width, var(--sidebar-width)));
-  }
-}
-
-.page-wrapper--drawer-open {
-  margin-right: var(--theme-drawer-width, var(--sidebar-width));
-  transition-timing-function: var(--animation-timing-fade-in);
+[popover]:not(:popover-open, dialog[open]) {
+  display: none;
 }
 
 img,
@@ -92,84 +57,25 @@ select {
   border-radius: var(--style-border-radius-inputs);
 }
 
+input:hover {
+  background-color: var(--color-input-hover-background);
+}
+
 /** override ios and firefox defaults */
 select {
   background-color: var(--color-background);
   color: currentcolor;
 }
 
-.collection-card,
-.featured-blog-posts-card {
-  width: 100%;
-  position: relative;
-  height: 100%;
-}
-
-/* Editorial layout */
-.resource-list:not(.hidden--desktop) .collection-card--flexible-aspect-ratio,
-.resource-list:not(.hidden--desktop) .blog-post-card--flexible-aspect-ratio {
-
-  .collection-card__image,
-  .featured-blog-posts-card__image,
-  .blog-placeholder-svg {
-    aspect-ratio: 99;
-    height: 100%;
-  }
-
-  .collection-card__inner,
-  .featured-blog-posts-card__inner {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-  }
-
-  .collection-card__content,
-  .featured-blog-posts-card__content {
-    flex-shrink: 0;
-  }
-
-  &:not(.collection-card--image-bg) .collection-card__content,
-  .featured-blog-posts-card__content {
-    height: auto;
-  }
-}
-
-.collection-card__inner,
-.featured-blog-posts-card__inner {
-  width: 100%;
-  overflow: hidden;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  z-index: var(--layer-flat);
-  pointer-events: none;
-}
-
-.collection-card__content,
-.featured-blog-posts-card__content {
-  display: flex;
-  position: relative;
-  height: 100%;
-  width: 100%;
-  gap: var(--gap);
-}
-
-.collection-card__link,
-.featured-blog-posts-card__link {
-  position: absolute;
-  inset: 0;
-
-  /* allows focus outline to have radius in supported browsers */
-  border-radius: var(--border-radius);
-}
-
 .product-card,
 .collection-card,
+.resource-card,
 .predictive-search-results__card--product,
 .predictive-search-results__card {
   position: relative;
   transition: transform var(--hover-transition-duration) var(--hover-transition-timing),
     box-shadow var(--hover-transition-duration) var(--hover-transition-timing);
+  will-change: transform, box-shadow;
   z-index: var(--layer-flat);
 }
 
@@ -186,32 +92,95 @@ select {
   cursor: pointer;
 }
 
-@media (any-pointer: fine) and (prefers-reduced-motion: no-preference) {
+.product-card__content slideshow-component {
+  --cursor: pointer;
+}
 
+.predictive-search-results__card .product-card,
+.predictive-search-results__card .collection-card,
+.predictive-search-results__card .resource-card {
+  transition: none;
+  will-change: auto;
+}
+
+@media (any-pointer: fine) and (prefers-reduced-motion: no-preference) {
   .card-hover-effect-lift .product-card:hover,
   .card-hover-effect-lift .collection-card:hover,
+  .card-hover-effect-lift .resource-card:hover,
   .card-hover-effect-lift .predictive-search-results__card:hover {
     transform: translateY(calc(-1 * var(--hover-lift-amount)));
   }
 
+  .card-hover-effect-lift .header .product-card:hover,
+  .card-hover-effect-lift .header .collection-card:hover,
+  .card-hover-effect-lift .header .resource-card:hover,
+  .card-hover-effect-lift .header-drawer .product-card:hover,
+  .card-hover-effect-lift .header-drawer .collection-card:hover,
+  .card-hover-effect-lift .header-drawer .resource-card:hover {
+    transform: none;
+  }
+
   .card-hover-effect-scale .product-card:hover,
   .card-hover-effect-scale .collection-card:hover,
+  .card-hover-effect-scale .resource-card:hover,
   .card-hover-effect-scale .predictive-search-results__card:hover {
     transform: scale(var(--hover-scale-amount));
   }
 
+  .card-hover-effect-scale .header .product-card:hover,
+  .card-hover-effect-scale .header .collection-card:hover,
+  .card-hover-effect-scale .header .resource-card:hover,
+  .card-hover-effect-scale .header-drawer .product-card:hover,
+  .card-hover-effect-scale .header-drawer .collection-card:hover,
+  .card-hover-effect-scale .header-drawer .resource-card:hover {
+    transform: none;
+  }
+
   .card-hover-effect-subtle-zoom .card-gallery,
   .card-hover-effect-subtle-zoom .collection-card__image,
-  .card-hover-effect-subtle-zoom .product-card__image {
+  .card-hover-effect-subtle-zoom .product-card__image,
+  .card-hover-effect-subtle-zoom .resource-card__image {
     overflow: hidden;
     transition: transform var(--hover-transition-duration) var(--hover-transition-timing);
+  }
+
+  .predictive-search-results__card .card-gallery,
+  .predictive-search-results__card .collection-card__image,
+  .predictive-search-results__card .product-card__image,
+  .predictive-search-results__card .resource-card__image {
+    transition: none;
   }
 
   .card-hover-effect-subtle-zoom .product-card:hover .card-gallery,
   .card-hover-effect-subtle-zoom .collection-card:hover .collection-card__image,
   .card-hover-effect-subtle-zoom .product-card:hover .product-card__image,
+  .card-hover-effect-subtle-zoom .resource-card:hover .resource-card__image,
   .card-hover-effect-subtle-zoom .predictive-search-results__card:hover {
     transform: scale(var(--hover-subtle-zoom-amount));
+  }
+
+  .card-hover-effect-subtle-zoom .header .product-card:hover .card-gallery,
+  .card-hover-effect-subtle-zoom .header .collection-card:hover .collection-card__image,
+  .card-hover-effect-subtle-zoom .header .product-card:hover .product-card__image,
+  .card-hover-effect-subtle-zoom .header .resource-card:hover .resource-card__image,
+  .card-hover-effect-subtle-zoom .header-drawer .product-card:hover .card-gallery,
+  .card-hover-effect-subtle-zoom .header-drawer .collection-card:hover .collection-card__image,
+  .card-hover-effect-subtle-zoom .header-drawer .product-card:hover .product-card__image,
+  .card-hover-effect-subtle-zoom .header-drawer .resource-card:hover .resource-card__image {
+    transform: none;
+  }
+
+  .predictive-search-results__card .product-card:hover,
+  .predictive-search-results__card .collection-card:hover,
+  .predictive-search-results__card .resource-card:hover,
+  .header .product-card:hover,
+  .header .collection-card:hover,
+  .header .resource-card:hover,
+  .header-drawer .product-card:hover,
+  .header-drawer .collection-card:hover,
+  .header-drawer .resource-card:hover {
+    transform: none;
+    box-shadow: none;
   }
 }
 
@@ -233,22 +202,12 @@ h6 {
   overflow-wrap: break-word;
 }
 
-sup {
-  font-size: calc(var(--font-size-mobile, var(--font-size)) - 0.5625rem);
-}
-
-.wrap-text {
-  overflow-wrap: break-word;
-  word-break: break-word;
-  hyphens: auto;
-}
-
 p:empty {
   display: none;
 }
 
 :first-child:is(p, h1, h2, h3, h4, h5, h6),
-:first-child:empty+ :where(p, h1, h2, h3, h4, h5, h6) {
+:first-child:empty + :where(p, h1, h2, h3, h4, h5, h6) {
   margin-block-start: 0;
 }
 
@@ -349,12 +308,6 @@ p:empty {
 /* Layout */
 .content-for-layout {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.content-for-layout > .shopify-section:last-child {
-  flex-grow: 1;
 }
 
 /* Set up page widths & margins */
@@ -362,16 +315,15 @@ p:empty {
 .page-width-normal,
 .page-width-narrow,
 .page-width-content {
-  --page-margin: 12px;
+  --page-margin: 16px;
 }
 
 @media screen and (min-width: 750px) {
-
   .page-width-wide,
   .page-width-normal,
   .page-width-narrow,
   .page-width-content {
-    --page-margin: 50px;
+    --page-margin: 40px;
   }
 }
 
@@ -403,14 +355,19 @@ p:empty {
    full-width background image even if the section content is constrained by the page width. Do not try
    to rewrite this to max-width: --page-width; margin: 0 auto;, it doesn't work. */
 .section {
-  --full-page-grid-central-column-width: min(var(--page-width) - var(--page-margin) * 2,
-      calc(100% - var(--page-margin) * 2));
+  --full-page-grid-central-column-width: min(
+    var(--page-width) - var(--page-margin) * 2,
+    calc(100% - var(--page-margin) * 2)
+  );
   --full-page-grid-margin: minmax(var(--page-margin), 1fr);
-  --full-page-grid-with-margins: var(--full-page-grid-margin) var(--full-page-grid-central-column-width) var(--full-page-grid-margin);
+  --full-page-grid-with-margins: var(--full-page-grid-margin) var(--full-page-grid-central-column-width)
+    var(--full-page-grid-margin);
 
   /* Utility variable gives the grid's first column width. Provides an offset width for components like carousels */
-  --util-page-margin-offset: max(var(--page-margin),
-      calc((100% - min(var(--page-content-width), 100% - var(--page-margin) * 2)) / 2));
+  --util-page-margin-offset: max(
+    var(--page-margin),
+    calc((100% - min(var(--page-content-width), calc(100% - (var(--page-margin) * 2)))) / 2)
+  );
 
   /* Offset for full-width sections to account for the page margin,
   used for Marquee — note that --util-page-margin-offset doesn't work here */
@@ -428,12 +385,12 @@ p:empty {
 }
 
 /* Place all direct children in the center column by default */
-.section>* {
+.section > * {
   grid-column: 2;
 }
 
 /* Make the actual section background transparent, and instead apply it to a separate sibling element to enable stacking with hero shadow  */
-.shopify-section:not(.header-section) :is(.section, .cart-summary) {
+.shopify-section:not(.header-section) :is(.section, .cart__summary-container) {
   background: transparent;
 }
 
@@ -446,41 +403,25 @@ p:empty {
   position: absolute;
   inset: 0;
   z-index: var(--layer-section-background);
-  background-color: var(--color-background);
 }
 
 /* For page-width sections, all content goes in the center column */
-.section--page-width>* {
-  grid-column: 2;
-}
-
-/* Narrow sections cap the center column at 720px (still shrinks to viewport on small screens). */
-.section--narrow {
-  --full-page-grid-central-column-width: min(720px, calc(100% - var(--page-margin) * 2));
-}
-
-.section--narrow>* {
+.section--page-width > * {
   grid-column: 2;
 }
 
 /* For full-width sections, content spans all columns */
-.section--full-width>* {
+.section--full-width > * {
   grid-column: 1 / -1;
 }
 
-@media screen and (max-width: 749px) {
-  .section--mobile-full-width>* {
-    grid-column: 1 / -1;
-  }
-}
-
 /* Some page-width sections should still extend all the way to the right edge of the page, e.g. collection carousel */
-.section--page-width.section--full-width-right>* {
+.section--page-width.section--full-width-right > * {
   grid-column: 2 / 4;
 }
 
 /* For full-width sections with margin, content still spans full width but with space on the sides */
-.section--full-width.section--full-width-margin>* {
+.section--full-width.section--full-width-margin > * {
   grid-column: 1 / -1;
 
   @media screen and (min-width: 750px) {
@@ -490,7 +431,7 @@ p:empty {
 }
 
 /* Some section content break out to full width of the page */
-.section>.force-full-width {
+.section > .force-full-width {
   grid-column: 1 / -1;
 }
 
@@ -525,7 +466,6 @@ p:empty {
 }
 
 @media screen and (max-width: 749px) {
-
   .hidden--mobile,
   .mobile\:hidden {
     /* stylelint-disable-next-line declaration-no-important */
@@ -534,7 +474,6 @@ p:empty {
 }
 
 @media screen and (min-width: 750px) {
-
   .hidden--desktop,
   .desktop\:hidden {
     /* stylelint-disable-next-line declaration-no-important */
@@ -563,22 +502,6 @@ p:empty {
 
 @media screen and (max-width: 749px) {
   .is-visually-hidden-mobile:not(:focus, :active) {
-    /* stylelint-disable-next-line declaration-no-important */
-    position: absolute !important;
-    overflow: hidden;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    border: 0;
-    clip: rect(0 0 0 0);
-    /* stylelint-disable-next-line declaration-no-important */
-    word-wrap: normal !important;
-  }
-}
-
-@media screen and (min-width: 750px) {
-  .is-visually-hidden-desktop:not(:focus, :active) {
     /* stylelint-disable-next-line declaration-no-important */
     position: absolute !important;
     overflow: hidden;
@@ -624,8 +547,11 @@ p:empty {
 @media screen and (min-width: 1400px) {
   .grid {
     grid-template-columns:
-      1fr repeat(var(--centered-column-number),
-        minmax(0, calc((var(--page-width) - var(--page-margin) * 2) / var(--centered-column-number)))) 1fr;
+      1fr repeat(
+        var(--centered-column-number),
+        minmax(0, calc((var(--page-width) - var(--page-margin) * 2) / var(--centered-column-number)))
+      )
+      1fr;
   }
 }
 
@@ -646,6 +572,25 @@ p:empty {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.skip-to-content-link {
+  position: absolute;
+  overflow: hidden;
+  height: 1px;
+  left: -99999px;
+  word-wrap: normal !important;
+}
+
+.skip-to-content-link:focus {
+  z-index: var(--layer-temporary);
+  overflow: auto;
+  width: auto;
+  height: auto;
+  padding: var(--padding-lg) var(--padding-4xl);
+  left: var(--margin-lg);
+  top: var(--margin-lg);
+  box-shadow: 0 0 0 var(--focus-outline-offset) var(--color-background);
 }
 
 .text-left {
@@ -699,16 +644,6 @@ p:empty {
   opacity: var(--image-opacity);
 }
 
-@media screen and (max-width: 749px) {
-  .background-image-container::before {
-    content: "";
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.00) 15.87%, rgba(0, 0, 0, 0.35) 37.5%);
-    position: absolute;
-  }
-}
-
 .background-image-container img,
 .background-image-container svg {
   object-fit: cover;
@@ -741,7 +676,7 @@ p:empty {
   height: var(--icon-size-xs);
 }
 
-.svg-wrapper>svg {
+.svg-wrapper > svg {
   width: var(--icon-size-sm);
   height: var(--icon-size-sm);
 }
@@ -766,80 +701,33 @@ p:empty {
   fill: var(--color-error);
 }
 
-.icon-default {
-  fill: currentColor;
+placeholder-image {
+  display: block;
+  height: 100%;
+  aspect-ratio: var(--ratio);
 }
 
-[data-placeholder='true'] * {
-  cursor: default;
+placeholder-image[data-type='product'] {
+  background-color: rgb(var(--color-foreground-rgb) / var(--opacity-15));
+  width: 100%;
 }
 
-slideshow-component [data-placeholder='true'] * {
-  cursor: grab;
+/** Placeholder background for the placeholder image, the dimensions are the same as the product images */
+placeholder-image[data-type='product']:not(:has(> img)) {
+  aspect-ratio: var(--ratio);
+  height: 350px;
 }
 
-/* Slideshow - Slides Per View */
-slideshow-component {
-  --slides-per-view: var(--slides-per-view-mobile, 1);
-}
-
-@media screen and (min-width: 750px) {
-  slideshow-component {
-    --slides-per-view: var(--slides-per-view-desktop, 1);
-  }
-}
-
-slideshow-slide {
-  width: calc(100% / var(--slides-per-view, 1));
-  flex: 0 0 calc(100% / var(--slides-per-view, 1));
-}
-
-/* Slideshow - Arrow Positioning & Visibility */
-.slideshow-controls__arrows--hidden-desktop {
-  display: none !important;
-}
-
-@media screen and (max-width: 749px) {
-  .slideshow-controls__arrows--hidden-mobile {
-    display: none !important;
-  }
-}
-
-.slideshow-controls__arrows--top {
-  align-items: flex-start;
-  padding-top: var(--gap-md);
-}
-
-.slideshow-controls__arrows--bottom {
-  align-items: flex-end;
-  padding-bottom: var(--gap-md);
-}
-
-.slideshow-controls__arrows--center {
-  align-items: center;
-}
-
-@media screen and (max-width: 749px) {
-  .slideshow-controls__arrows--mobile-top {
-    align-items: flex-start;
-    padding-top: var(--gap-md);
-  }
-
-  .slideshow-controls__arrows--mobile-bottom {
-    align-items: flex-end;
-    padding-bottom: var(--gap-md);
-  }
-
-  .slideshow-controls__arrows--mobile-center {
-    align-items: center;
-  }
+placeholder-image > img {
+  object-fit: cover;
+  aspect-ratio: var(--ratio);
+  height: 100%;
 }
 
 /* Base text and heading styles */
 body,
 .paragraph:not(.button),
-.paragraph>*,
-.text-block.paragraph :is(h1, h2, h3, h4, h5, h6) {
+.paragraph > * {
   font-family: var(--font-paragraph--family);
   font-style: var(--font-paragraph--style);
   font-weight: var(--font-paragraph--weight);
@@ -852,7 +740,6 @@ body,
 
 /* Ensure inputs with type presets maintain minimum 16px on mobile to prevent iOS zoom */
 @media screen and (max-width: 1200px) {
-
   input.paragraph.paragraph,
   input.paragraph.paragraph:not([type]),
   textarea.paragraph.paragraph,
@@ -861,7 +748,7 @@ body,
   }
 }
 
-.paragraph>small {
+.paragraph > small {
   font-size: smaller;
 }
 
@@ -869,8 +756,7 @@ body,
 
 h1,
 .h1.h1,
-.text-block.h1>*,
-.text-block.h1 :is(h1, h2, h3, h4, h5, h6) {
+.text-block.h1 > * {
   font-family: var(--font-h1--family);
   font-style: var(--font-h1--style);
   font-weight: var(--font-h1--weight);
@@ -878,11 +764,10 @@ h1,
   line-height: var(--font-h1--line-height);
   letter-spacing: var(--font-h1--letter-spacing);
   text-transform: var(--font-h1--case);
-  color: var(--color);
+  color: var(--color, var(--font-h1-color));
 }
 
 @media screen and (max-width: 1200px) {
-
   input.h1.h1,
   textarea.h1.h1,
   select.h1.h1 {
@@ -892,8 +777,7 @@ h1,
 
 h2,
 .h2.h2,
-.text-block.h2>*,
-.text-block.h2 :is(h1, h2, h3, h4, h5, h6) {
+.text-block.h2 > * {
   font-family: var(--font-h2--family);
   font-style: var(--font-h2--style);
   font-weight: var(--font-h2--weight);
@@ -901,11 +785,10 @@ h2,
   line-height: var(--font-h2--line-height);
   letter-spacing: var(--font-h2--letter-spacing);
   text-transform: var(--font-h2--case);
-  color: var(--color);
+  color: var(--color, var(--font-h2-color));
 }
 
 @media screen and (max-width: 1200px) {
-
   input.h2.h2,
   textarea.h2.h2,
   select.h2.h2 {
@@ -916,8 +799,7 @@ h2,
 h3,
 .h3,
 .h3.h3,
-.text-block.h3>*,
-.text-block.h3 :is(h1, h2, h3, h4, h5, h6) {
+.text-block.h3 > * {
   font-family: var(--font-h3--family);
   font-style: var(--font-h3--style);
   font-weight: var(--font-h3--weight);
@@ -925,11 +807,10 @@ h3,
   line-height: var(--font-h3--line-height);
   letter-spacing: var(--font-h3--letter-spacing);
   text-transform: var(--font-h3--case);
-  color: var(--color);
+  color: var(--color, var(--font-h3-color));
 }
 
 @media screen and (max-width: 1200px) {
-
   input.h3,
   textarea.h3,
   select.h3 {
@@ -939,8 +820,7 @@ h3,
 
 h4,
 .h4.h4,
-.text-block.h4>*,
-.text-block.h4 :is(h1, h2, h3, h4, h5, h6) {
+.text-block.h4 > * {
   font-family: var(--font-h4--family);
   font-style: var(--font-h4--style);
   font-weight: var(--font-h4--weight);
@@ -948,11 +828,10 @@ h4,
   line-height: var(--font-h4--line-height);
   letter-spacing: var(--font-h4--letter-spacing);
   text-transform: var(--font-h4--case);
-  color: var(--color);
+  color: var(--color, var(--font-h4-color));
 }
 
 @media screen and (max-width: 1200px) {
-
   input.h4.h4,
   textarea.h4.h4,
   select.h4.h4 {
@@ -962,8 +841,7 @@ h4,
 
 h5,
 .h5.h5,
-.text-block.h5>*,
-.text-block.h5 :is(h1, h2, h3, h4, h5, h6) {
+.text-block.h5 > * {
   font-family: var(--font-h5--family);
   font-style: var(--font-h5--style);
   font-weight: var(--font-h5--weight);
@@ -971,11 +849,10 @@ h5,
   line-height: var(--font-h5--line-height);
   letter-spacing: var(--font-h5--letter-spacing);
   text-transform: var(--font-h5--case);
-  color: var(--color);
+  color: var(--color, var(--font-h5-color));
 }
 
 @media screen and (max-width: 1200px) {
-
   input.h5.h5,
   textarea.h5.h5,
   select.h5.h5 {
@@ -985,8 +862,7 @@ h5,
 
 h6,
 .h6.h6,
-.text-block.h6>*,
-.text-block.h6 :is(h1, h2, h3, h4, h5, h6) {
+.text-block.h6 > * {
   font-family: var(--font-h6--family);
   font-style: var(--font-h6--style);
   font-weight: var(--font-h6--weight);
@@ -994,11 +870,10 @@ h6,
   line-height: var(--font-h6--line-height);
   letter-spacing: var(--font-h6--letter-spacing);
   text-transform: var(--font-h6--case);
-  color: var(--color);
+  color: var(--color, var(--font-h6-color));
 }
 
 @media screen and (max-width: 1200px) {
-
   input.h6.h6,
   textarea.h6.h6,
   select.h6.h6 {
@@ -1006,39 +881,17 @@ h6,
   }
 }
 
-.h7.h7,
-.text-block.h7>*,
-.text-block.h7 :is(h1, h2, h3, h4, h5, h6) {
-  font-family: var(--font-h7--family);
-  font-style: var(--font-h7--style);
-  font-weight: var(--font-h7--weight);
-  font-size: var(--font-h7--size);
-  line-height: var(--font-h7--line-height);
-  letter-spacing: var(--font-h7--letter-spacing);
-  text-transform: var(--font-h7--case);
-  color: var(--color, var(--font-h7-color));
-}
-
-@media screen and (max-width: 1200px) {
-
-  input.h7.h7,
-  textarea.h7.h7,
-  select.h7.h7 {
-    font-size: max(1rem, var(--font-h7--size));
-  }
-}
-
-:first-child:is(.h1, .h2, .h3, .h4, .h5, .h6, .h7) {
+:first-child:is(.h1, .h2, .h3, .h4, .h5, .h6) {
   margin-block-start: 0;
 }
 
-:last-child:is(.h1, .h2, .h3, .h4, .h5, .h6, .h7) {
+:last-child:is(.h1, .h2, .h3, .h4, .h5, .h6) {
   margin-block-end: 0;
 }
 
 /* Links */
 a {
-  --button-color: var(--color-primary, var(--color));
+  --button-color: var(--color, var(--color-primary));
 
   color: var(--button-color);
   text-decoration-color: transparent;
@@ -1046,22 +899,22 @@ a {
   text-underline-offset: 0.125em;
   transition: text-decoration-color var(--animation-speed) var(--animation-easing),
     color var(--animation-speed) var(--animation-easing);
-  /* Remove underline by default, client specific */
-  text-decoration: none;
 }
 
 :is(h1, h2, h3, h4, h5, h6, p) > a:hover {
-  --button-color: var(--color-primary-hover, var(--color));
+  --button-color: var(--color, var(--color-primary-hover));
 }
 
 /* Add underline to text using our paragraph styles only. */
-p:not(.h1, .h2, .h3, .h4, .h5, .h6, .h7) a:where(:not(.button, .button-secondary)),
-.rte :is(p, ul, ol, table):not(.h1, .h2, .h3, .h4, .h5, .h6, .h7) a:where(:not(.button, .button-secondary)) {
+p:not(.h1, .h2, .h3, .h4, .h5, .h6) a:where(:not(.button, .button-primary, .button-secondary)),
+.rte
+  :is(p, ul, ol, table):not(.h1, .h2, .h3, .h4, .h5, .h6)
+  a:where(:not(.button, .button-primary, .button-secondary)) {
   text-decoration-color: currentcolor;
 
   &:hover {
-    text-decoration-color: currentcolor;
-    color: rgb(var(--color-rgb, var(--color-foreground-rgb)) / 0.7);
+    text-decoration-color: transparent;
+    color: var(--color-primary-hover);
   }
 }
 
@@ -1079,28 +932,13 @@ details:not([open]) .summary-open {
   display: none;
 }
 
-details[open]>summary .icon-animated>svg {
+details[open] > summary .icon-animated > svg {
   transform: rotate(180deg);
 }
 
 /* iOS fix: hide the default arrow on the summary */
 summary::-webkit-details-marker {
   display: none;
-}
-
-/* When header is transparent, pull the first main content section up to sit under the floating header */
-body:has(.header[transparent]) .content-for-layout>.shopify-section:first-child {
-  margin-top: calc(var(--header-group-height) * -1);
-}
-
-body:has(.header[transparent]) #header-group > .header-section {
-  z-index: var(--layer-menu-drawer);
-}
-
-/* All other header group content should be beneath the floating header,
-but above the rest of the page content */
-body:has(.header[transparent]) #header-group > *:not(.header-section) {
-  z-index: calc(var(--layer-menu-drawer) - 1);
 }
 
 /* Featured collection block */
@@ -1158,18 +996,6 @@ body:has(.header[transparent]) #header-group > *:not(.header-section) {
   overflow: hidden;
 }
 
-/* Honor the per-card mobile padding emitted by spacing-style. The doubled
-   .product-grid__card.product-grid__card selector above (specificity 0,2,0)
-   beats .spacing-style's mobile rule, so we mirror the same specificity here
-   to read the -mobile vars when they're present. */
-@media screen and (max-width: 749px) {
-  .product-grid__card.product-grid__card {
-    padding-block: var(--padding-block-start-mobile, var(--padding-block-start)) var(--padding-block-end-mobile, var(--padding-block-end));
-    padding-inline: var(--padding-inline-start-mobile, var(--padding-inline-start)) var(--padding-inline-end-mobile, var(--padding-inline-end));
-    gap: var(--product-card-gap-mobile, var(--product-card-gap));
-  }
-}
-
 [product-grid-view='zoom-out'] .product-grid__card {
   row-gap: var(--padding-xs);
 }
@@ -1193,13 +1019,13 @@ body:has(.header[transparent]) #header-group > *:not(.header-section) {
   }
 }
 
-.product-grid__card .group-block>* {
+.product-grid__card .group-block > * {
   @media screen and (max-width: 749px) {
     flex-direction: column;
   }
 }
 
-ul[product-grid-view='zoom-out'] .product-grid__card>* {
+ul[product-grid-view='zoom-out'] .product-grid__card > * {
   display: none;
 }
 
@@ -1207,17 +1033,21 @@ ul[product-grid-view='zoom-out'] .product-grid__card .card-gallery {
   display: block;
 }
 
-[product-grid-view='zoom-out'] .card-gallery> :is(quick-add-component, .product-badges, slideshow-component > slideshow-controls) {
+[product-grid-view='zoom-out']
+  .card-gallery
+  > :is(quick-add-component, .product-badges, slideshow-component > slideshow-controls) {
   display: none;
 }
 
-ul[product-grid-view='zoom-out'] .card-gallery>img {
+ul[product-grid-view='zoom-out'] .card-gallery > img {
   display: block;
 }
 
 [product-grid-view='zoom-out'] {
-  --product-grid-columns-desktop: repeat(10,
-      minmax(clamp(50px, calc(100% - 9 * var(--product-grid-gap)) / 10, 80px), 1fr));
+  --product-grid-columns-desktop: repeat(
+    10,
+    minmax(clamp(50px, calc(100% - 9 * var(--product-grid-gap)) / 10, 80px), 1fr)
+  );
 }
 
 .product-grid-view-zoom-out--details {
@@ -1240,15 +1070,15 @@ ul[product-grid-view='zoom-out'] .card-gallery>img {
   font-weight: 400;
 }
 
-.product-grid-view-zoom-out--details>span.h6,
-.product-grid-view-zoom-out--details>div.h6>product-price {
+.product-grid-view-zoom-out--details > span.h6,
+.product-grid-view-zoom-out--details > div.h6 > product-price {
   display: inline-block;
   line-height: 0;
   margin-top: var(--margin-2xs);
 }
 
-.product-grid-view-zoom-out--details>span.h6>*,
-.product-grid-view-zoom-out--details>div.h6>*>* {
+.product-grid-view-zoom-out--details > span.h6 > *,
+.product-grid-view-zoom-out--details > div.h6 > * > * {
   line-height: 1.2;
 }
 
@@ -1346,19 +1176,18 @@ results-list[initialized] {
   width: 100%;
 }
 
-.text-block>*:first-child,
-.text-block>*:first-child:empty+*,
-.text-block>*:first-child+.hidden--desktop {
+.text-block > *:first-child,
+.text-block > *:first-child:empty + * {
   margin-block-start: 0;
 }
 
-.text-block>*:last-child,
-.text-block>*:has(+ *:last-child:empty) {
+.text-block > *:last-child,
+.text-block > *:has(+ *:last-child:empty) {
   margin-block-end: 0;
 }
 
 /* This is to deal with the margin applied to the p when custom styles are enabled. The p isn't the first child anymore due to the style tag */
-.text-block>style+* {
+.text-block > style + * {
   margin-block-start: 0;
 }
 
@@ -1406,52 +1235,27 @@ results-list[initialized] {
 
 /* stylelint-disable value-keyword-case */
 .dialog-drawer {
-  --dialog-drawer-opening-animation: move-and-fade;
-  --dialog-drawer-closing-animation: move-and-fade;
+  --dialog-drawer-opening-animation: slideInLeft;
+  --dialog-drawer-closing-animation: slideOutLeft;
 }
 
 .dialog-drawer--right {
-  --dialog-drawer-opening-animation: move-and-fade;
-  --dialog-drawer-closing-animation: move-and-fade;
+  --dialog-drawer-opening-animation: slideInRight;
+  --dialog-drawer-closing-animation: slideOutRight;
 }
-
 /* stylelint-enable value-keyword-case */
 
 .dialog-drawer[open] {
-  --start-x: var(--custom-transform-from, 100%);
-  --end-x: var(--custom-transform-to, 0px);
-  --start-opacity: 1;
-
   animation: var(--dialog-drawer-opening-animation) var(--animation-speed) var(--animation-easing) forwards;
 }
 
-.dialog-drawer[open].dialog-closing {
-  --start-x: 0px;
-  --end-x: 100%;
-  --start-opacity: 1;
-  --end-opacity: 1;
-
-  animation: var(--dialog-drawer-closing-animation) var(--animation-speed) var(--animation-easing);
-}
-
-.dialog-drawer--right[open] {
-  --start-x: -100%;
-  --start-opacity: 1;
-}
-
-.dialog-drawer--right[open].dialog-closing {
-  --start-x: 0px;
-  --end-x: -100%;
-  --start-opacity: 1;
-  --end-opacity: 1;
-
+.dialog-drawer.dialog-closing {
   animation: var(--dialog-drawer-closing-animation) var(--animation-speed) var(--animation-easing);
 }
 
 /* Buttons */
 .button,
 .button-secondary,
-.button-custom,
 button.shopify-payment-button__button--unbranded {
   --text-align: center;
 
@@ -1465,63 +1269,52 @@ button.shopify-payment-button__button--unbranded {
   border: none;
   font-family: var(--font-paragraph--family);
   font-style: var(--font-paragraph--style);
-  font-size: var(--primary-button-mobile-font-size, --font-paragraph--size);
-  font-weight: var(--primary-button-font-weight);
-  line-height: normal;
+  font-size: var(--font-paragraph--size);
+  line-height: var(--font-paragraph--line-height);
   margin-block: 0;
   transition: color var(--animation-speed) var(--animation-easing),
     box-shadow var(--animation-speed) var(--animation-easing),
-    background-color var(--animation-speed) var(--animation-easing),
-    outline var(--animation-speed) var(--animation-easing);
+    background-color var(--animation-speed) var(--animation-easing);
   cursor: pointer;
   width: fit-content;
-  /* box-shadow: inset 0 0 0 var(--button-border-width) var(--button-border-color); */
-  box-shadow: var(--primary-button-shadow-horizontal) var(--primary-button-shadow-vertical) var(--primary-button-shadow-blur) var(--primary-button-shadow-spread) var(--color-shadow);
-  outline: var(--button-border-width) solid var(--button-border-color);
-  outline-offset: calc((-1 * var(--button-border-width)) + 1px);
+  box-shadow: inset 0 0 0 var(--button-border-width) var(--button-border-color);
   padding-block: var(--button-padding-block);
   padding-inline: var(--button-padding-inline);
-
-  @media screen and (max-width: 749px) {
-    padding-block: var(--mobile-button-padding-block);
-    padding-inline: var(--mobile-button-padding-inline);
-  }
-
-  @media screen and (min-width: 750px) {
-    font-size: var(--primary-button-desktop-font-size, --font-paragraph--size);
-  }
 }
 
 .button {
   font-family: var(--button-font-family-primary);
+  font-weight: var(--button-font-weight-primary);
   text-transform: var(--button-text-case-primary);
   border-radius: var(--style-border-radius-buttons-primary);
 }
 
 .button:not(.button-secondary, .button-unstyled) {
-  outline-color: var(--button-focus-outline-color, var(--button-background-color));
+  outline-color: var(--button-background-color);
 }
 
 .button-secondary {
   font-family: var(--button-font-family-secondary);
+  font-weight: var(--button-font-weight-secondary);
   text-transform: var(--button-text-case-secondary);
   border-radius: var(--style-border-radius-buttons-secondary);
 }
 
 button.shopify-payment-button__button--unbranded {
   font-family: var(--button-font-family-primary);
+  font-weight: var(--button-font-weight-primary);
   text-transform: var(--button-text-case-primary);
 }
 
 textarea,
-input:not([type='checkbox'], [type='radio']) {
+input {
   background-color: var(--color-input-background);
   border-color: var(--color-input-border);
 }
 
 textarea::placeholder,
 input::placeholder {
-  color: rgb(var(--color-input-text-rgb) / var(--opacity-muted-text));
+  color: var(--color-input-text);
 }
 
 textarea:not(:placeholder-shown)::placeholder,
@@ -1547,7 +1340,6 @@ button.shopify-payment-button__button--unbranded {
   --button-background-color: var(--color-primary-button-background);
   --button-border-color: var(--color-primary-button-border);
   --button-border-width: var(--style-border-width-primary);
-  --button-focus-outline-color: var(--color-primary-button-focus-outline);
 }
 
 .button:hover,
@@ -1570,25 +1362,6 @@ button.shopify-payment-button__button--unbranded:hover:not([disabled]) {
   --button-border-color: var(--color-secondary-button-hover-border);
 }
 
-.button-custom {
-  --button-color: var(--color-primary-button-text);
-  --button-background-color: var(--color-primary-button-background);
-  --button-border-color: var(--color-primary-button-border);
-  --button-border-width: var(--style-border-width-secondary);
-  --button-focus-outline-color: var(--color-primary-button-focus-outline);
-
-  font-family: var(--button-font-family-primary);
-  text-transform: var(--button-text-case-primary);
-  border-radius: var(--style-border-radius-buttons-primary);
-  outline-color: var(--button-focus-outline-color, var(--button-background-color));
-}
-
-.button-custom:hover {
-  --button-color: var(--color-primary-button-hover-text);
-  --button-background-color: var(--color-primary-button-hover-background);
-  --button-border-color: var(--color-primary-button-hover-border);
-}
-
 /* Needed to override the default Shopify styles */
 button.shopify-payment-button__button--unbranded:hover:not([disabled]) {
   background-color: var(--button-background-color);
@@ -1598,10 +1371,9 @@ button.shopify-payment-button__button--unbranded:hover:not([disabled]) {
   display: block;
   padding: 0;
   background-color: inherit;
-  color: var(--color-foreground);
+  color: inherit;
   border: 0;
   border-radius: 0;
-  outline: none;
   overflow: hidden;
   box-shadow: none;
   font-family: var(--font-paragraph--family);
@@ -1611,14 +1383,6 @@ button.shopify-payment-button__button--unbranded:hover:not([disabled]) {
 
 .button-unstyled:hover {
   background-color: inherit;
-}
-
-/* Default hover dim for link-style buttons, scoped via :where() so component-specific
-   hover rules (.facets__clear-all-link, .header-actions__action, etc.) still win. */
-:where(.button-unstyled):hover {
-  --hover-color-rgb: var(--color-foreground-rgb);
-
-  color: rgb(var(--hover-color-rgb) / var(--opacity-70));
 }
 
 .button-unstyled--with-icon {
@@ -1636,13 +1400,13 @@ button.shopify-payment-button__button--unbranded:hover:not([disabled]) {
 /* Show more */
 
 .show-more__button {
-  color: var(--color-foreground);
+  color: var(--color-primary);
   cursor: pointer;
 }
 
 .show-more__button:hover {
   @media screen and (min-width: 750px) {
-    color: rgb(var(--color-foreground-rgb) / var(--opacity-80));
+    color: var(--color-primary-hover);
   }
 }
 
@@ -1662,13 +1426,19 @@ button.shopify-payment-button__button--unbranded:hover:not([disabled]) {
   display: none;
 }
 
+.link {
+  display: inline-block;
+  text-align: center;
+}
+
 shopify-accelerated-checkout,
 shopify-accelerated-checkout-cart {
   --shopify-accelerated-checkout-button-border-radius: var(--style-border-radius-buttons-primary);
   --shopify-accelerated-checkout-button-block-size: var(--height-buy-buttons);
 }
 
-.product-form-buttons:has(.add-to-cart-button.button-secondary) :is(shopify-accelerated-checkout, shopify-accelerated-checkout-cart) {
+.product-form-buttons:has(.add-to-cart-button.button-secondary)
+  :is(shopify-accelerated-checkout, shopify-accelerated-checkout-cart) {
   --shopify-accelerated-checkout-button-border-radius: var(--style-border-radius-buttons-secondary);
   --shopify-accelerated-checkout-button-block-size: var(--height-buy-buttons);
 }
@@ -1692,11 +1462,11 @@ summary {
   align-items: center;
   cursor: pointer;
   list-style: none;
-  padding-block: var(--padding-lg);
+  padding-block: var(--padding-sm);
 }
 
 summary:hover {
-  color: rgb(var(--color-foreground-rgb) / var(--opacity-80));
+  color: var(--color-primary-hover);
 }
 
 summary .svg-wrapper {
@@ -1748,12 +1518,13 @@ media-gallery {
 }
 
 :not(.dialog-zoomed-gallery) > .product-media-container {
-  --slide-width: 100%;
+  /* width and overflow forces children to shrink to parent width */
+  --slide-width: round(up, 100%, 1px);
 
   display: flex;
   aspect-ratio: var(--gallery-aspect-ratio, var(--media-preview-ratio));
   max-height: var(--constrained-height);
-  width: var(--slide-width, 100%);
+  width: 100%;
 
   /* Relative position needed for video and 3d models */
   position: relative;
@@ -1768,11 +1539,15 @@ media-gallery {
     margin-right: auto;
     margin-left: auto;
   }
+}
 
-  @supports (--test: round(up, 100%, 1px)) {
-    /* width and overflow forces children to shrink to parent width */
-    --slide-width: round(up, 100%, 1px);
-  }
+media-gallery:where(.media-gallery--grid) .media-gallery__grid {
+  display: none;
+}
+
+media-gallery.media-gallery--grid .media-gallery__grid .product-media-container {
+  /* Needed for safari to stretch to full grid height */
+  height: 100%;
 }
 
 .product-media :is(deferred-media, product-model) {
@@ -1791,14 +1566,23 @@ media-gallery {
     --constrained-min-height: 500px;
   }
 
-  body:has(header-component[transparent]) .product-media-container.constrain-height {
-    --viewport-offset: 0px;
+  .media-gallery--two-column .media-gallery__grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .media-gallery--large-first-image .product-media-container:first-child,
   .media-gallery--two-column .product-media-container:only-child {
     /* First child spans 2 columns */
     grid-column: span 2;
+  }
+
+  /* Display grid view as a carousel on mobile, grid on desktop */
+  media-gallery:is(.media-gallery--grid) slideshow-component {
+    display: none;
+  }
+
+  media-gallery:where(.media-gallery--grid) .media-gallery__grid {
+    display: grid;
   }
 }
 
@@ -1814,9 +1598,6 @@ media-gallery {
 .product-media-container img {
   aspect-ratio: inherit;
   object-fit: contain;
-}
-
-.product-media-container.media-fit-contain img {
   object-position: center center;
 }
 
@@ -1828,6 +1609,20 @@ media-gallery {
   }
 }
 
+/* Media gallery zoom dialog */
+.product-media-container__zoom-button {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: var(--layer-flat);
+  cursor: zoom-in;
+  background-color: transparent;
+
+  &:hover {
+    background-color: transparent;
+  }
+}
+
 zoom-dialog dialog {
   width: 100vw;
   height: 100vh;
@@ -1836,7 +1631,7 @@ zoom-dialog dialog {
   padding: 0;
   max-width: 100%;
   max-height: 100%;
-  background: #fff;
+  background: white;
   opacity: 0;
   transition: opacity var(--animation-speed) var(--animation-easing);
   scrollbar-width: none;
@@ -1898,6 +1693,71 @@ zoom-dialog dialog {
   animation: elementSlideOutBottom calc(var(--animation-speed) * 0.5) var(--animation-easing) forwards;
 }
 
+.dialog-thumbnails-list-container {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  display: flex;
+  z-index: var(--layer-raised);
+}
+
+.dialog-thumbnails-list {
+  position: relative;
+  display: inline-flex;
+  flex-direction: row;
+  gap: 8px;
+  bottom: 0;
+  overflow-x: auto;
+  opacity: 0;
+  padding: var(--padding-lg);
+  margin-inline: auto;
+  scrollbar-width: none;
+  animation: thumbnailsSlideInBottom calc(var(--animation-speed) * 0.75) var(--animation-easing) forwards;
+  animation-delay: calc(var(--animation-speed) * 1.5);
+}
+
+.dialog--closed .dialog-thumbnails-list {
+  animation: thumbnailsSlideOutBottom var(--animation-speed) var(--animation-easing) forwards;
+}
+
+@media screen and (min-width: 750px) {
+  .dialog-thumbnails-list {
+    position: fixed;
+    flex-direction: column;
+    inset: 50% var(--margin-lg) auto auto;
+    right: 0;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    animation: thumbnailsSlideInTop calc(var(--animation-speed) * 0.5) var(--animation-easing) forwards;
+    animation-delay: calc(var(--animation-speed) * 2);
+  }
+
+  .dialog--closed .dialog-thumbnails-list {
+    animation: thumbnailsSlideOutTop var(--animation-speed) var(--animation-easing) forwards;
+  }
+}
+
+.dialog-thumbnails-list__thumbnail {
+  width: var(--thumbnail-width);
+  height: auto;
+  transition: transform var(--animation-speed) var(--animation-easing);
+  flex-shrink: 0;
+  border-radius: var(--media-radius);
+
+  img {
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--media-radius);
+    aspect-ratio: var(--aspect-ratio);
+  }
+
+  &:is([aria-selected='true']) {
+    outline: var(--focus-outline-width) solid currentcolor;
+    outline-offset: calc(var(--focus-outline-offset) / 2);
+    border: var(--style-border-width) solid rgb(var(--color-border-rgb) / var(--media-border-opacity));
+  }
+}
+
 .close-button:hover {
   background-color: transparent;
   opacity: 0.8;
@@ -1915,7 +1775,7 @@ zoom-dialog dialog {
 }
 
 /* If the product media is already providing an image cover, hide images provided by sibling deferred-media */
-.product-media__image~* .deferred-media__poster-image {
+.product-media__image ~ * .deferred-media__poster-image {
   display: none;
 }
 
@@ -1936,7 +1796,7 @@ zoom-dialog dialog {
 product-model model-viewer,
 /* Media that have a poster button sibling providing the size should be absolute-positioned.
 Otherwise, it should be a block to rely on its own size */
-:is(deferred-media, product-model)>.deferred-media__poster-button~*:not(template) {
+:is(deferred-media, product-model) > .deferred-media__poster-button ~ *:not(template) {
   display: block;
   position: absolute;
   top: 0;
@@ -1956,19 +1816,21 @@ slideshow-slide .shopify-model-viewer-ui__controls-area.shopify-model-viewer-ui_
 
 .dialog-zoomed-gallery .shopify-model-viewer-ui__controls-area.shopify-model-viewer-ui__controls-area {
   /* Move the controls above the thumbnails. Need to calculate the height of the thumbnails list */
-  bottom: calc(var(--thumbnail-width) / var(--media-preview-ratio) + var(--padding-lg) * 2);
+  bottom: calc(var(--thumbnail-width) / calc(var(--media-preview-ratio)) + var(--padding-lg) * 2);
   right: var(--padding-lg);
 }
 
 @media screen and (max-width: 749px) {
-  slideshow-component:has(:not(.mobile\:hidden) :is(.slideshow-controls__dots, .slideshow-controls__counter)) .shopify-model-viewer-ui__controls-area {
+  slideshow-component:has(:not(.mobile\:hidden) :is(.slideshow-controls__dots, .slideshow-controls__counter))
+    .shopify-model-viewer-ui__controls-area {
     /* Position the controls just above the counter */
     bottom: calc(var(--minimum-touch-target) + var(--padding-sm));
   }
 }
 
 @media screen and (min-width: 750px) {
-  slideshow-component:has(:not(.desktop\:hidden) :is(.slideshow-controls__dots, .slideshow-controls__counter)) .shopify-model-viewer-ui__controls-area {
+  slideshow-component:has(:not(.desktop\:hidden) :is(.slideshow-controls__dots, .slideshow-controls__counter))
+    .shopify-model-viewer-ui__controls-area {
     /* Position the controls just above the counter */
     bottom: calc(var(--minimum-touch-target) + var(--padding-sm));
   }
@@ -1988,7 +1850,6 @@ slideshow-slide .shopify-model-viewer-ui__controls-area.shopify-model-viewer-ui_
 }
 
 deferred-media {
-
   /* The overflow hidden in the deferred-media won't let the button show the focus ring */
   &:has(:focus-visible) {
     outline: var(--focus-outline-width) solid currentcolor;
@@ -2021,7 +1882,6 @@ deferred-media img {
 }
 
 deferred-media iframe {
-  display: block;
   width: 100%;
   height: 100%;
   border: none;
@@ -2076,9 +1936,10 @@ deferred-media[class] :is(.deferred-media__poster-button img, .deferred-media__p
   padding: var(--padding-md);
 }
 
-.button-shopify-xr>svg {
+.button-shopify-xr > svg {
   width: var(--icon-size-sm);
   height: var(--icon-size-sm);
+  fill: currentcolor;
   margin-inline-end: var(--margin-md);
 }
 
@@ -2089,10 +1950,8 @@ deferred-media[class] :is(.deferred-media__poster-button img, .deferred-media__p
 /* Swatches */
 .swatch {
   --color-border: rgb(var(--color-foreground-rgb) / var(--style-border-swatch-opacity));
-  --min-width-unitless: 15.9999;
-  /* want to avoid division by 0 */
-  --min-height-unitless: 15.9999;
-  /* want to avoid division by 0 */
+  --min-width-unitless: 15.9999; /* want to avoid division by 0 */
+  --min-height-unitless: 15.9999; /* want to avoid division by 0 */
   --min-height: 16px;
   --min-width: 16px;
 
@@ -2121,19 +1980,27 @@ deferred-media[class] :is(.deferred-media__poster-button img, .deferred-media__p
     We also want the result to always be smaller than the input (pdp > everywhere else)
     by some scaling factor.
   */
-  --offset-scaled-width: calc(var(--scaling-factor) * var(--offset-swatch-width) / var(--offset-swatch-height) * var(--offset-max-swatch-size));
-  --offset-scaled-height: calc(var(--scaling-factor) * var(--offset-swatch-height) / var(--offset-swatch-width) * var(--offset-max-swatch-size));
+  --offset-scaled-width: calc(
+    var(--scaling-factor) * var(--offset-swatch-width) / var(--offset-swatch-height) * var(--offset-max-swatch-size)
+  );
+  --offset-scaled-height: calc(
+    var(--scaling-factor) * var(--offset-swatch-height) / var(--offset-swatch-width) * var(--offset-max-swatch-size)
+  );
   --offset-max-swatch-size: calc(var(--max-swatch-size) - var(--min-width));
 
   /* width = min(m + sU, (m + s * W'/H' * M'), M) */
-  --swatch-width: min(calc(var(--min-width) + var(--scaling-factor) * var(--offset-swatch-width) * 1px),
-      calc(var(--min-width) + var(--offset-scaled-width)),
-      var(--max-swatch-size));
+  --swatch-width: min(
+    calc(var(--min-width) + calc(var(--scaling-factor) * var(--offset-swatch-width) * 1px)),
+    calc(var(--min-width) + var(--offset-scaled-width)),
+    var(--max-swatch-size)
+  );
 
   /* height = min(m + sV, (m + s * H'/W' * M'), M) */
-  --swatch-height: min(calc(var(--min-height) + var(--scaling-factor) * var(--offset-swatch-height) * 1px),
-      calc(var(--min-height) + var(--offset-scaled-height)),
-      var(--max-swatch-size));
+  --swatch-height: min(
+    calc(var(--min-height) + calc(var(--scaling-factor) * var(--offset-swatch-height) * 1px)),
+    calc(var(--min-height) + var(--offset-scaled-height)),
+    var(--max-swatch-size)
+  );
 
   display: block;
   background: var(--swatch-background);
@@ -2180,10 +2047,6 @@ deferred-media[class] :is(.deferred-media__poster-button img, .deferred-media__p
     --color-border: rgb(var(--color-foreground-rgb) / var(--variant-picker-border-opacity));
   }
 
-  &.swatch--variant-image {
-    background-size: cover;
-  }
-
   @media screen and (min-width: 750px) {
     /* desktop values */
     --max-swatch-size: 32px;
@@ -2197,396 +2060,6 @@ deferred-media[class] :is(.deferred-media__poster-button img, .deferred-media__p
   border-radius: var(--variant-picker-swatch-radius);
 }
 
-/* Variant option component */
-.variant-option {
-  --options-border-radius: var(--variant-picker-button-radius);
-  --options-border-width: var(--variant-picker-button-border-width);
-  --variant-option-padding-inline: var(--padding-md);
-}
-
-.variant-option+.variant-option {
-  margin-top: var(--padding-lg);
-}
-
-.variant-option--swatches {
-  --options-border-radius: var(--variant-picker-swatch-radius);
-
-  width: 100%;
-
-  overflow-list::part(list) {
-    padding-block: var(--overflow-list-padding-block, 0);
-    padding-inline: var(--overflow-list-padding-inline, 0);
-  }
-}
-
-.variant-option--swatches>overflow-list {
-  justify-content: var(--product-swatches-alignment);
-
-  @media screen and (max-width: 749px) {
-    justify-content: var(--product-swatches-alignment-mobile);
-  }
-}
-
-.variant-option--buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--gap-xs);
-  margin: 0;
-  padding: 0;
-  border: none;
-}
-
-.variant-option--buttons legend {
-  padding: 0;
-  margin-block-end: var(--margin-xs);
-  font-size: var(--font-size--sm);
-  font-weight: bold;
-}
-
-.variant-option--buttons legend,
-.variant-option--dropdowns > label,
-.variant-option[data-testid='variant-option-single'] {
-  color: var(--variant-option-label-color, var(--color-foreground));
-}
-
-.variant-option__swatch-value {
-  padding-inline-start: var(--padding-xs);
-  color: var(--variant-option-label-color-subdued, var(--color-foreground-subdued));
-}
-
-@media (prefers-reduced-motion: no-preference) {
-
-  .variant-option__button-label,
-  .variant-option__select-wrapper,
-  .variant-option__button-label::before,
-  .variant-option__button-label::after,
-  .variant-option__button-label:has([data-previous-checked='true'], [data-current-checked='true']) .variant-option__button-label__pill,
-  .variant-option__button-label:not(.variant-option__button-label--has-swatch) svg line:last-of-type {
-    transition-duration: var(--animation-speed);
-    transition-timing-function: var(--animation-easing);
-  }
-
-  .variant-option__button-label__pill {
-    transition-property: transform;
-  }
-
-  .variant-option__button-label:not(.variant-option__button-label--has-swatch) svg line:last-of-type {
-    transition-property: clip-path;
-  }
-
-  .variant-option__button-label:has([data-previous-checked='true'], [data-current-checked='true']) .variant-option__button-label__pill {
-    transition-property: transform;
-  }
-
-  .variant-option__button-label::after {
-    transition-property: clip-path;
-  }
-
-  .variant-option__button-label::before {
-    transition-property: border-color;
-  }
-
-  .variant-option__select-wrapper,
-  .variant-option__button-label {
-    transition-property: background-color, border-color, color;
-  }
-}
-
-.variant-option__button-label {
-  --variant-picker-stroke-color: var(--color-variant-border);
-
-  cursor: pointer;
-  display: flex;
-  flex: 0 0 4.76rem;
-  align-items: center;
-  position: relative;
-  padding-block: var(--padding-xs);
-  padding-inline: var(--padding-xs);
-  border: var(--options-border-width) solid var(--color-variant-border);
-  border-radius: var(--options-border-radius);
-  overflow: clip;
-  justify-content: center;
-  min-height: fit-content;
-  min-width: fit-content;
-  white-space: nowrap;
-  background-color: var(--color-variant-background);
-  color: var(--color-variant-text);
-  gap: 0;
-
-  &:hover,
-  &:hover:has([aria-disabled='true']):has([data-option-available='false']) {
-    --variant-picker-stroke-color: var(--color-variant-hover-border);
-
-    background-color: var(--color-variant-hover-background);
-    border-color: var(--color-variant-hover-border);
-    color: var(--color-variant-hover-text);
-  }
-
-  /* we need something like overflow-clip-margin to use the pseudoelement but it doesn't work in Safari */
-
-  /* so instead use the layered background image trick */
-  &:not(.variant-option__button-label--has-swatch):has([data-option-available='false']) {
-    border-width: 0;
-  }
-
-  /* ::after/::before act as a fake border for the button style variant */
-
-  /* ::after is the unavailable variant border that clips in */
-  &:not(.variant-option__button-label--has-swatch)::before,
-  &:has([data-option-available='false']):not(.variant-option__button-label--has-swatch)::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border: var(--options-border-width) solid var(--color-selected-variant-border);
-    border-radius: inherit;
-    pointer-events: none;
-    z-index: 2;
-    /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
-    clip-path: inset(var(--clip, 0 0 0 0));
-  }
-
-  &:has([data-option-available='false']):not(.variant-option__button-label--has-swatch)::before {
-    inset: 0;
-  }
-
-  &:not(.variant-option__button-label--has-swatch)::before {
-    /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
-    clip-path: inset(0 0 0 0);
-    border-color: var(--color-variant-border);
-    inset: calc(var(--options-border-width) * -1);
-  }
-
-  &:has(:checked):not(.variant-option__button-label--has-swatch, :has([data-option-available='false']))::before {
-    border-color: var(--color-selected-variant-border);
-  }
-
-  /* setting left/right accounts for variant buttons of different widths */
-  &:not(:has(:checked)):has(~ label > :checked),
-  &:has(:checked):has(~ label > [data-previous-checked='true']) {
-    .variant-option__button-label__pill {
-      right: 0;
-      left: unset;
-    }
-  }
-
-  &:has([data-previous-checked='true'])~label:has([data-current-checked='true']),
-  &:has(:checked)~label {
-    .variant-option__button-label__pill {
-      left: 0;
-      right: unset;
-    }
-  }
-
-  &:not(:has(:checked)):has(~ label > :checked) {
-    --pill-offset: calc(100% + 1px);
-  }
-
-  &:has(:checked)~label {
-    --pill-offset: calc(-100% - 1px);
-  }
-
-  &:has([data-current-checked='true']):first-of-type~label:last-of-type:not(.variant-option__button-label--has-swatch),
-  &:not(:has(:checked)):has(~ label > :checked):not(.variant-option__button-label--has-swatch) {
-    --clip: 0 0 0 100%;
-  }
-
-  &:not(:has([data-current-checked='true'])):first-of-type:has(~ label:last-of-type > :checked):not(.variant-option__button-label--has-swatch),
-  &:has(:checked)~label:not(.variant-option__button-label--has-swatch) {
-    --clip: 0 100% 0 0;
-  }
-
-  &:has([data-previous-checked='true'], [data-current-checked='true']) .variant-option__button-label__pill {
-    width: max(var(--pill-width-current, 100%), var(--pill-width-previous, 100%));
-  }
-
-  @media screen and (min-width: 750px) {
-    padding: var(--padding-xs) var(--variant-option-padding-inline);
-  }
-}
-
-/* wrap around only for 3 or more variants in a row */
-
-/* the more complex selector rules here produce the wrap around effect for first/last variants */
-.variant-option--buttons:has(:nth-of-type(3)) {
-  .variant-option__button-label:has([data-current-checked='true']):first-of-type~label:last-of-type {
-    --pill-offset: calc(100% + 1px);
-  }
-
-  .variant-option__button-label:not(:has([data-current-checked='true'])):first-of-type:has(~ label:last-of-type > :checked) {
-    --pill-offset: calc(-100% - 1px);
-  }
-}
-
-.variant-option__button-label__pill {
-  background: var(--color-selected-variant-background);
-  position: absolute;
-  top: calc(var(--options-border-width) * -1);
-  bottom: calc(var(--options-border-width) * -1);
-  border-radius: inherit;
-  pointer-events: none;
-  width: 100%;
-  transform: translateX(var(--pill-offset, 0));
-}
-
-.variant-option__button-label__text {
-  pointer-events: none;
-  text-align: start;
-  text-wrap: auto;
-  z-index: 2;
-  font-size: 0.875rem;
-}
-
-.variant-option--equal-width-buttons {
-  --variant-min-width: clamp(44px, calc(var(--variant-option-padding-inline) * 2 + var(--variant-ch)), 100%);
-
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--variant-min-width), 1fr));
-
-  .variant-option__button-label {
-    min-width: var(--variant-min-width);
-  }
-
-  .variant-option__button-label__text {
-    text-align: center;
-    text-wrap: balance;
-  }
-}
-
-.variant-option__button-label:has(:focus-visible) {
-  --variant-picker-stroke-color: var(--color-foreground);
-
-  border-color: var(--color-foreground);
-  outline: var(--focus-outline-width) solid var(--color-foreground);
-  outline-offset: var(--focus-outline-offset);
-}
-
-.variant-option__button-label--has-swatch {
-  --focus-outline-radius: var(--variant-picker-swatch-radius);
-
-  padding: 0;
-  border: none;
-  flex-basis: auto;
-  min-height: auto;
-}
-
-/* Override global label:has(input) display rule with higher specificity */
-.variant-option__button-label--has-swatch:has(input) {
-  display: block;
-}
-
-.variant-option__button-label:has(:checked) {
-  --variant-picker-stroke-color: var(--color-selected-variant-border);
-
-  color: var(--color-selected-variant-text);
-  border-color: var(--color-selected-variant-border);
-}
-
-.variant-option__button-label:has(:checked):hover {
-  border-color: var(--color-selected-variant-hover-border);
-  color: var(--color-selected-variant-hover-text);
-
-  .variant-option__button-label__pill {
-    background-color: var(--color-selected-variant-hover-background);
-  }
-}
-
-.variant-option__button-label:has([data-option-available='false']) {
-  color: rgb(var(--color-variant-text-rgb) / var(--opacity-60));
-}
-
-.variant-option__button-label--has-swatch:hover {
-  outline: var(--focus-outline-width) solid var(--color-variant-hover-border);
-  outline-offset: var(--focus-outline-offset);
-}
-
-.variant-option__button-label--has-swatch:has([data-option-available='false']) svg,
-.variant-option__button-label--has-swatch:has([data-option-available='false']) .swatch {
-  stroke: var(--color-variant-border);
-}
-
-.variant-option__button-label--has-swatch:has(:checked) {
-  --focus-outline: var(--focus-outline-width) solid var(--color-selected-variant-border);
-
-  outline: var(--focus-outline);
-  outline-offset: var(--focus-outline-offset);
-}
-
-/* This triggers iOS < 16.4. The outline bug is not recognized as a lack of @supports */
-@supports not (background-color: rgb(from red 150 g b / alpha)) {
-
-  /** There is a bug in safari < 16.4 that causes the outline to not follow the elements border radius. This is a workaround. **/
-  .variant-option__button-label--has-swatch:has(:checked),
-  .variant-option__button-label:has(:focus-visible) .swatch {
-    outline: none;
-    position: relative;
-    overflow: visible;
-  }
-
-  .variant-option__button-label--has-swatch:has(:checked)::after,
-  .variant-option__button-label:has(:focus-visible) .swatch::after {
-    content: '';
-    position: absolute;
-    inset: calc(-1 * var(--focus-outline-offset));
-    border: var(--focus-outline);
-    border-radius: var(--focus-outline-radius, 50%);
-    background-color: transparent;
-    display: inherit;
-  }
-}
-
-.variant-option__button-label:has([data-option-available='false']):has(:checked) {
-  background-color: inherit;
-  color: rgb(var(--color-variant-text-rgb) / var(--opacity-60));
-}
-
-.variant-option__button-label input {
-  /* remove the checkbox from the page flow */
-  position: absolute;
-
-  /* set the dimensions to match those of the label */
-  inset: 0;
-
-  /* hide it */
-  opacity: 0;
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  aspect-ratio: unset;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-  appearance: auto;
-  display: block;
-  cursor: pointer;
-}
-
-.variant-option__button-label svg {
-  position: absolute;
-  left: var(--options-border-width);
-  top: var(--options-border-width);
-  height: calc(100% - (var(--options-border-width) * 2));
-  width: calc(100% - (var(--options-border-width) * 2));
-  cursor: pointer;
-  pointer-events: none;
-  stroke-width: var(--style-border-width);
-  stroke: var(--variant-picker-stroke-color);
-}
-
-.variant-option__button-label:not(.variant-option__button-label--has-swatch) svg {
-  stroke: var(--color-variant-border);
-
-  line {
-    stroke-width: var(--options-border-width);
-  }
-
-  line:last-of-type {
-    /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
-    clip-path: inset(var(--clip, 0 0 0 0));
-    stroke: rgb(var(--color-variant-text-rgb) / 1);
-  }
-}
-
 .sticky-content {
   position: sticky;
   top: var(--sticky-header-offset, 0);
@@ -2594,9 +2067,8 @@ deferred-media[class] :is(.deferred-media__poster-button img, .deferred-media__p
 }
 
 @media screen and (min-width: 750px) {
-
   .sticky-content--desktop,
-  .sticky-content--desktop.full-height--desktop>.group-block {
+  .sticky-content--desktop.full-height--desktop > .group-block {
     position: sticky;
     top: var(--sticky-header-offset, 0);
     z-index: var(--layer-flat);
@@ -2609,80 +2081,38 @@ deferred-media[class] :is(.deferred-media__poster-button img, .deferred-media__p
   white-space: nowrap;
 }
 
-.price {
-  font-weight: 700;
-}
-
-product-recommendations .price,
-product-card .price {
-  font-weight: normal;
-}
-
 .unit-price {
   display: block;
   font-size: min(0.85em, var(--font-paragraph--size));
-  color: rgb(var(--color-rgb, var(--color-foreground-rgb)) / var(--opacity-subdued-text));
+  color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
 }
 
 .tax-note.tax-note.tax-note {
   font-size: min(0.85em, var(--font-paragraph--size));
-  font-weight: var(--font-paragraph--weight);
-  color: rgb(var(--color-rgb, var(--color-foreground-rgb)) / var(--opacity-subdued-text));
+  color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
 }
 
-.tax-note:empty {
-  display: none;
-}
-
-product-price.text-block:is(.h1, .h2, .h3, .h4, .h5, .h6, .h7)>*:not(.tax-note) {
+product-price.text-block:is(.h1, .h2, .h3, .h4, .h5, .h6) > *:not(.tax-note) {
   margin-block: 0;
 }
 
-/* Volume pricing note should match unit-price styling (small, grey text) */
-product-price .volume-pricing-note,
-product-price.text-block:is(.h1, .h2, .h3, .h4, .h5, .h6) .volume-pricing-note {
-  display: block;
-  font-family: var(--font-body--family);
-  font-weight: normal;
-  font-size: var(--font-size--xs);
-  line-height: normal;
-  letter-spacing: normal;
-  text-transform: none;
-  color: rgb(var(--color-rgb, var(--color-foreground-rgb)) / var(--opacity-subdued-text));
-}
-
 .compare-at-price {
-  color: rgb(var(--color-rgb, var(--color-foreground-rgb)) / var(--opacity-subdued-text));
+  opacity: 0.4;
   text-decoration-line: line-through;
   text-decoration-thickness: 1.5px;
-  text-decoration-color: rgb(var(--color-rgb, var(--color-foreground-rgb)) / var(--opacity-30));
-}
-
-.price-item__group {
-  display: inline-block;
-}
-
-.price-item--sale {
-  white-space: nowrap;
-}
-
-.price__hidden {
-  display: none;
-}
-
-form.payment-terms {
-  padding-top: 0.5em;
-  font-size: min(0.85em, var(--font-paragraph--size));
-  font-weight: var(--font-paragraph--weight);
-  color: var(--color, rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text)));
-}
-
-.installments:not(:has(shopify-payment-terms)) {
-  display: none;
 }
 
 .card-gallery {
   position: relative;
+}
+
+@media screen and (min-width: 750px) {
+  product-card:focus-within .quick-add__button,
+  .card-gallery:hover .quick-add__button {
+    display: grid;
+    will-change: margin, opacity;
+    animation: elementSlideInTop var(--animation-speed) var(--animation-easing);
+  }
 }
 
 @container (max-width: 70px) {
@@ -2691,14 +2121,51 @@ form.payment-terms {
   }
 }
 
-/* Hide "Add" button when "Choose" button is shown */
-[data-quick-add-button='choose'] add-to-cart-component {
-  display: none;
+/* Drawer */
+.drawer {
+  background-color: var(--color-background);
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: var(--sidebar-width);
+  z-index: var(--layer-raised);
+  transform: translateX(-120%);
+  transition: transform var(--animation-speed) var(--animation-easing);
 }
 
-/* Hide "Choose" button when "Add" button is shown */
-[data-quick-add-button='add'] .quick-add__button--choose {
-  display: none;
+.drawer[data-open='true'] {
+  transform: translateX(0);
+}
+
+.drawer-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.drawer__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--drawer-header-block-padding) var(--drawer-inline-padding);
+}
+
+.drawer__title {
+  font-size: var(--font-h2--size);
+  margin: 0;
+}
+
+.drawer__close {
+  width: var(--minimum-touch-target);
+  height: var(--minimum-touch-target);
+}
+
+.drawer__content {
+  display: block;
+  padding: var(--drawer-content-block-padding) var(--drawer-inline-padding);
+  width: 100%;
 }
 
 /* Background overlay */
@@ -2748,17 +2215,6 @@ form.payment-terms {
   margin-inline: var(--margin-inline-start) var(--margin-inline-end);
 }
 
-@media screen and (max-width: 749px) {
-
-  .spacing-style,
-  .inherit-spacing {
-    padding-block: calc(var(--padding-block-start-mobile, var(--padding-block-start)) + var(--section-top-offset, 0px)) var(--padding-block-end-mobile, var(--padding-block-end));
-    padding-inline: var(--padding-inline-start-mobile, var(--padding-inline-start)) var(--padding-inline-end-mobile, var(--padding-inline-end));
-    margin-block: var(--margin-block-start-mobile, var(--margin-block-start)) var(--margin-block-end-mobile, var(--margin-block-end));
-    margin-inline: var(--margin-inline-start-mobile, var(--margin-inline-start)) var(--margin-inline-end-mobile, var(--margin-inline-end));
-  }
-}
-
 /* Size style */
 .size-style {
   width: var(--size-style-width-mobile, var(--size-style-width));
@@ -2772,7 +2228,7 @@ form.payment-terms {
 
 /* Custom Typography style */
 .custom-typography,
-.custom-typography>* {
+.custom-typography > * {
   font-family: var(--font-family);
   font-weight: var(--font-weight);
   text-transform: var(--text-transform);
@@ -2798,27 +2254,13 @@ form.payment-terms {
 }
 
 .custom-font-size,
-.custom-font-size>* {
+.custom-font-size > * {
   font-size: var(--font-size);
 }
 
-@media screen and (max-width: 749px) {
-
-  .custom-font-size,
-  .custom-font-size>*,
-  .custom-font-size h1,
-  .custom-font-size h2,
-  .custom-font-size h3,
-  .custom-font-size h4,
-  .custom-font-size p {
-    font-size: var(--font-size-mobile, var(--font-size));
-    line-height: var(--line-height-mobile, var(--line-height));
-  }
-}
-
 .custom-font-weight,
-.custom-font-weight>* {
-  font-weight: var(--font-weight);
+.custom-font-weight > * {
+  font-weight: var(--weight);
 }
 
 /* Border override style */
@@ -2827,15 +2269,6 @@ form.payment-terms {
   border-style: var(--border-style);
   border-color: var(--border-color);
   border-radius: var(--border-radius);
-}
-
-@media only screen and (max-width: 749px) {
-  .border-style {
-    border-width: var(--border-width-mobile, var(--border-width));
-    border-style: var(--border-style-mobile, var(--border-style));
-    border-color: var(--border-color-mobile, var(--border-color));
-    border-radius: var(--border-radius-mobile, var(--border-radius));
-  }
 }
 
 /* Gap scaling style */
@@ -2850,16 +2283,8 @@ form.payment-terms {
 
 .layout-panel-flex {
   display: flex;
-  gap: var(--mobile-gap, var(--gap));
+  gap: var(--gap);
   height: 100%;
-
-  @media screen and (min-width: 750px) {
-    gap: var(--gap);
-  }
-}
-
-.shopify-block:has(> [shopify-block-empty]) {
-  display: none;
 }
 
 .layout-panel-flex--row {
@@ -2882,40 +2307,21 @@ form.payment-terms {
   }
 
   .layout-panel-flex--row:not(.mobile-column) {
-    flex-wrap: var(--flex-wrap-mobile);
-    height: auto;
-
-    >.menu {
-      flex: 1 1 min-content;
+    .text-block {
+      flex: 1 1 var(--max-width--display-tight);
     }
 
-    >.text-block {
-      flex: 1 1;
-    }
-
-    >.image-block {
+    .image-block {
       flex: 1 1 var(--size-style-width-mobile-min);
     }
 
-    >.button {
+    .button {
       flex: 0 0 fit-content;
     }
-
-    > .group-block--height-fill {
-      height: calc(var(--section-min-height, auto) - var(--section-height-offset, 0px));
-    }
-  }
-
-  .layout-panel-flex--row {
-    justify-content: var(--horizontal-alignment-mobile, var(--horizontal-alignment));
-  }
-
-  .layout-panel-flex--column {
-    align-items: var(--horizontal-alignment-mobile, var(--horizontal-alignment));
   }
 }
 
-@media screen and (min-width: 750px) {
+@media (min-width: 750px) {
   .layout-panel-flex {
     flex-direction: var(--flex-direction);
   }
@@ -2948,8 +2354,9 @@ form.payment-terms {
   }
 }
 
-.field__input:focus {
+.field__input:is(:focus, :hover) {
   box-shadow: var(--input-box-shadow-focus);
+  background-color: var(--color-input-hover-background);
 }
 
 .field__input--button-radius {
@@ -2976,11 +2383,11 @@ form.payment-terms {
 .rte,
 .shopify-policy__title {
   :is(h1, h2, h3, h4, h5, h6) {
-    margin-block: clamp(1.5rem, 1em * 3.3, 2.5rem) var(--font-heading--spacing);
+    margin-block: clamp(1.5rem, 1em * 3.3, 2.5rem) clamp(1rem, 1em * 0.25, 2rem);
   }
 
   :first-child:is(p, h1, h2, h3, h4, h5, h6),
-  :first-child:empty+ :is(p, h1, h2, h3, h4, h5, h6) {
+  :first-child:empty + :is(p, h1, h2, h3, h4, h5, h6) {
     margin-block-start: 0;
   }
 
@@ -3038,21 +2445,31 @@ form.payment-terms {
 }
 
 .checkbox {
+  --checkbox-size: 22px;
   --checkbox-top: 50%;
   --checkbox-left: 1.5px;
   --checkbox-offset: 3px;
+  --checkbox-border-radius: 7px;
+  --checkbox-label-padding: 8px;
   --checkbox-path-opacity: 0;
   --checkbox-cursor: pointer;
+  --checkbox-border: 1px solid rgb(var(--color-foreground-rgb) / var(--opacity-35-55));
 
   position: relative;
   display: flex;
   align-items: center;
 
+  @media screen and (min-width: 750px) {
+    --checkbox-size: 16px;
+    --checkbox-border-radius: 5px;
+    --checkbox-label-padding: 6px;
+  }
+
   &:has(.checkbox__input:checked) {
     --checkbox-path-opacity: 1;
   }
 
-  &.checkbox--disabled {
+  &:has(.checkbox__input:disabled) {
     --checkbox-cursor: not-allowed;
   }
 }
@@ -3061,33 +2478,25 @@ form.payment-terms {
   position: absolute;
   opacity: 0;
   margin: 0;
-  padding: 0;
   width: var(--checkbox-size);
   height: var(--checkbox-size);
-  aspect-ratio: unset;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-  appearance: auto;
-  display: block;
-  cursor: pointer;
 
   /* Outline is on the SVG instead, to allow it to have border-radius */
   &:focus-visible {
     outline: none;
   }
 
-  &:focus-visible+.checkbox__label .icon-checkmark {
+  &:focus-visible + .checkbox__label .icon-checkmark {
     outline: var(--focus-outline-width) solid currentcolor;
     outline-offset: var(--focus-outline-offset);
   }
 
-  &:checked+.checkbox__label .icon-checkmark {
-    background-color: var(--checkbox-color);
-    border-color: var(--checkbox-color);
+  &:checked + .checkbox__label .icon-checkmark {
+    background-color: var(--color-foreground);
+    border-color: var(--color-foreground);
   }
 
-  &:disabled+.checkbox__label .icon-checkmark {
+  &:disabled + .checkbox__label .icon-checkmark {
     background-color: var(--input-disabled-background-color);
     border-color: var(--input-disabled-border-color);
   }
@@ -3099,15 +2508,9 @@ form.payment-terms {
   cursor: var(--checkbox-cursor);
   line-height: var(--checkbox-size);
   min-width: var(--minimum-touch-target);
-  gap: 0.5rem;
-  align-items: center;
 }
 
 .checkbox .icon-checkmark {
-  --checkbox-size: 16px;
-  --checkbox-border: 1px solid #000;
-  --checkbox-border-radius: 0;
-  --checkbox-color: var(--color-link, currentColor);
   height: var(--checkbox-size);
   width: var(--checkbox-size);
   flex-shrink: 0;
@@ -3121,8 +2524,6 @@ form.payment-terms {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 0.875rem;
-  color: var(--color-foreground);
 }
 
 .checkbox .icon-checkmark path {
@@ -3131,154 +2532,8 @@ form.payment-terms {
   transition: opacity var(--animation-speed) var(--animation-easing);
 }
 
-.checkbox__input:disabled+.checkbox__label {
+.checkbox__input:disabled + .checkbox__label {
   color: var(--input-disabled-text-color);
-}
-
-/* Radio buttons and checkboxes - shared base styles */
-:where(input[type='radio']),
-:where(input[type='checkbox']) {
-  width: var(--checkbox-size);
-  height: var(--checkbox-size);
-  aspect-ratio: 1;
-  margin: 0;
-  margin-inline-end: var(--padding-3xs);
-  padding: 0;
-  border: var(--checkbox-border);
-  appearance: none;
-  position: relative;
-  display: inline-block;
-  vertical-align: middle;
-  cursor: pointer;
-}
-
-/* Radio buttons */
-input[type='radio'] {
-  border-radius: var(--style-border-radius-50);
-  background: transparent;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
-}
-
-:where(input[type='radio']):checked {
-  border-color: var(--color-foreground);
-  background: var(--color-background);
-}
-
-:where(input[type='radio']):checked::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: calc(var(--checkbox-size) / 2);
-  height: calc(var(--checkbox-size) / 2);
-  background: var(--color-foreground);
-  border-radius: var(--style-border-radius-50);
-  transition: background 0.2s ease;
-}
-
-:where(input[type='radio']):disabled {
-  border-color: var(--input-disabled-border-color);
-  background-color: var(--input-disabled-background-color);
-  cursor: not-allowed;
-}
-
-:where(input[type='radio']):disabled:checked::after {
-  background: var(--input-disabled-background-color);
-}
-
-:where(input[type='radio']):not(:disabled):hover {
-  border-color: rgb(var(--color-foreground-rgb) / var(--opacity-40-60));
-  background-color: rgb(var(--color-foreground-rgb) / var(--opacity-5));
-}
-
-:where(input[type='radio']):not(:disabled):hover:checked {
-  border-color: var(--color-foreground);
-  background-color: var(--color-background);
-}
-
-:where(input[type='radio']):not(:disabled):hover:checked::after {
-  background: rgb(var(--color-foreground-rgb) / var(--opacity-85));
-}
-
-/* Checkboxes */
-:where(input[type='checkbox']) {
-  border-radius: var(--checkbox-border-radius);
-  background-color: var(--color-background);
-  transition: border-color 0.2s ease, background-color 0.2s ease;
-}
-
-:where(input[type='checkbox']):checked {
-  background-color: var(--color-foreground);
-  border-color: var(--color-foreground);
-}
-
-:where(input[type='checkbox']):checked::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: var(--checkbox-size);
-  height: var(--checkbox-size);
-  background-color: var(--color-background);
-  mask-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4.75439 10.7485L7.68601 14.5888C7.79288 14.7288 7.84632 14.7988 7.91174 14.8242C7.96907 14.8466 8.03262 14.8469 8.09022 14.8253C8.15596 14.8007 8.21026 14.7314 8.31886 14.5927L15.2475 5.74658' stroke='black' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  mask-size: contain;
-  mask-repeat: no-repeat;
-  mask-position: center;
-}
-
-:where(input[type='checkbox']):not(:disabled):hover {
-  border-color: rgb(var(--color-foreground-rgb) / var(--opacity-40-60));
-  background-color: rgb(var(--color-foreground-rgb) / var(--opacity-5));
-}
-
-:where(input[type='checkbox']):not(:disabled):hover:checked {
-  border-color: var(--color-foreground);
-  background-color: rgb(var(--color-foreground-rgb) / var(--opacity-85));
-}
-
-:where(input[type='checkbox']):disabled {
-  background-color: var(--input-disabled-background-color);
-  border-color: var(--input-disabled-border-color);
-  cursor: not-allowed;
-}
-
-:where(input[type='checkbox']):disabled:checked::after {
-  background-color: var(--input-disabled-text-color);
-}
-
-/* Shared styles for radio buttons and checkboxes */
-:where(input[type='radio'])+label,
-:where(input[type='checkbox'])+label {
-  display: inline;
-  vertical-align: middle;
-  cursor: pointer;
-}
-
-:where(input[type='radio']):disabled+label,
-:where(input[type='checkbox']):disabled+label {
-  color: var(--input-disabled-text-color);
-  cursor: not-allowed;
-}
-
-/* Flexbox for labels wrapping radio buttons or checkboxes */
-label:has(input[type='radio']),
-label:has(input[type='checkbox']) {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--padding-2xs);
-  cursor: pointer;
-}
-
-label:has(input[type='radio']:disabled),
-label:has(input[type='checkbox']:disabled) {
-  cursor: not-allowed;
-}
-
-/* Override for swatch labels to maintain block display */
-.variant-option__button-label--has-swatch:has(input[type='radio']) {
-  display: block;
 }
 
 /* Add to cart button */
@@ -3287,25 +2542,36 @@ label:has(input[type='checkbox']:disabled) {
   overflow: hidden;
 }
 
-/* Cart items component */
-.cart-items-component {
-  width: 100%;
-  height: 100%;
+/* Cart bubble */
+.cart-bubble {
+  --cart-padding: 0.2em;
+
+  position: relative;
+  width: 20px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border-width: 0;
+  display: grid;
+  line-height: normal;
+  place-content: center;
+  color: var(--color-primary-button-text);
+  padding-inline: var(--cart-padding);
+}
+
+.cart-bubble__background {
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-primary-button-background);
+  border-radius: var(--style-border-radius-lg);
+}
+
+.cart-bubble__text {
+  font-size: var(--font-size--2xs);
+  z-index: var(--layer-flat);
+  line-height: 1;
   display: flex;
-  flex-direction: column;
-}
-
-/* Cart typography */
-.cart-primary-typography {
-  font-family: var(--cart-primary-font-family);
-  font-style: var(--cart-primary-font-style);
-  font-weight: var(--cart-primary-font-weight);
-}
-
-.cart-secondary-typography {
-  font-family: var(--cart-secondary-font-family);
-  font-style: var(--cart-secondary-font-style);
-  font-weight: var(--cart-secondary-font-weight);
+  align-items: center;
+  justify-content: center;
 }
 
 /* Quantity selector */
@@ -3321,6 +2587,11 @@ label:has(input[type='checkbox']:disabled) {
   border-radius: var(--style-border-radius-inputs);
   flex: 1 1 var(--quantity-selector-width);
   align-self: stretch;
+  transition: background-color var(--animation-speed) var(--animation-easing);
+
+  &:hover {
+    background-color: var(--color-input-hover-background);
+  }
 }
 
 .product-form-buttons:has(.add-to-cart-button.button-secondary) .quantity-selector {
@@ -3352,19 +2623,16 @@ label:has(input[type='checkbox']:disabled) {
   border-end-end-radius: var(--style-border-radius-inputs);
 }
 
-.product-details .quantity-selector,
-.quick-add-modal .quantity-selector {
+.product-details .quantity-selector {
   border-radius: var(--style-border-radius-buttons-primary);
 }
 
-.product-details .quantity-selector .quantity-minus,
-.quick-add-modal .quantity-selector .quantity-minus {
+.product-details .quantity-selector .quantity-minus {
   border-start-start-radius: var(--style-border-radius-buttons-primary);
   border-end-start-radius: var(--style-border-radius-buttons-primary);
 }
 
-.product-details .quantity-selector .quantity-plus,
-.quick-add-modal .quantity-selector .quantity-plus {
+.product-details .quantity-selector .quantity-plus {
   border-start-end-radius: var(--style-border-radius-buttons-primary);
   border-end-end-radius: var(--style-border-radius-buttons-primary);
 }
@@ -3430,7 +2698,7 @@ label:has(input[type='checkbox']:disabled) {
   }
 }
 
-.pills__pill>.svg-wrapper {
+.pills__pill > .svg-wrapper {
   --close-icon-opacity: 0.4;
   --icon-stroke-width: 1px;
 
@@ -3455,179 +2723,26 @@ label:has(input[type='checkbox']:disabled) {
 
 /* Fly to cart animation */
 fly-to-cart {
-  --offset-y: 10px;
-
   position: fixed;
-  width: var(--width, 40px);
-  height: var(--height, 40px);
+  width: 40px;
+  height: 40px;
   left: 0;
   top: 0;
+  border-radius: 50%;
   z-index: calc(infinity);
   pointer-events: none;
-  border-radius: var(--style-border-radius-buttons-primary);
-  overflow: hidden;
-  object-fit: cover;
-  background-size: cover;
-  background-position: center;
   opacity: 0;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgb(0 0 0 / 20%);
+  transition: opacity 0.3s ease;
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
   background-color: var(--color-foreground);
-  translate: var(--start-x, 0) var(--start-y, 0);
-  transform: translate(-50%, -50%);
-  animation-name: travel-x, travel-y, travel-scale;
-  animation-timing-function: var(--x-timing), var(--y-timing), var(--scale-timing);
-  animation-duration: 0.6s;
-  animation-composition: accumulate;
-  animation-fill-mode: both;
-}
-
-fly-to-cart.fly-to-cart--main {
-  --x-timing: cubic-bezier(0.7, -5, 0.98, 0.5);
-  --y-timing: cubic-bezier(0.15, 0.57, 0.9, 1.05);
-  --scale-timing: cubic-bezier(0.85, 0.05, 0.96, 1);
-}
-
-fly-to-cart.fly-to-cart--quick {
-  --x-timing: cubic-bezier(0, -0.1, 1, 0.32);
-  --y-timing: cubic-bezier(0, 0.92, 0.92, 1.04);
-  --scale-timing: cubic-bezier(0.86, 0.08, 0.98, 0.98);
-
-  animation-duration: 0.6s;
-}
-
-fly-to-cart.fly-to-cart--sticky {
-  --x-timing: cubic-bezier(0.98, -0.8, 0.92, 0.5);
-  --y-timing: cubic-bezier(0.14, 0.56, 0.92, 1.04);
-  --scale-timing: cubic-bezier(0.86, 0.08, 0.98, 0.98);
-  --radius: var(--style-border-radius-buttons-primary);
-
-  @media screen and (max-width: 749px) {
-    --x-timing: cubic-bezier(0.98, -0.1, 0.92, 0.5);
-  }
-
-  animation-duration: 0.8s;
-}
-
-@keyframes travel-scale {
-  0% {
-    opacity: var(--start-opacity, 1);
-  }
-
-  5% {
-    opacity: 1;
-  }
-
-  100% {
-    border-radius: 50%;
-    opacity: 1;
-    transform: translate(-50%, calc(-50% + var(--offset-y))) scale(0.25);
-  }
-}
-
-@keyframes travel-x {
-  to {
-    translate: var(--travel-x, 0) 0;
-  }
-}
-
-@keyframes travel-y {
-  to {
-    translate: 0 var(--travel-y, 0);
-  }
+  transform: translate(var(--x, 0), var(--y, 0)) scale(var(--scale, 1));
 }
 
 /* ------------------------------------------------------------------------------ */
-
-/* Collection Wrapper - Shared layout CSS for collection and search pages */
-
-/* ------------------------------------------------------------------------------ */
-
-.collection-wrapper {
-  @media screen and (min-width: 750px) {
-    --facets-vertical-col-width: 6;
-
-    grid-template-columns:
-      1fr repeat(var(--centered-column-number),
-        minmax(0, calc((var(--page-width) - var(--page-margin) * 2) / var(--centered-column-number)))) 1fr;
-  }
-
-  @media screen and (min-width: 990px) {
-    --facets-vertical-col-width: 5;
-  }
-}
-
-.collection-wrapper:has(.facets-block-wrapper--full-width),
-.collection-wrapper:has(.collection-wrapper--full-width) {
-  @media screen and (min-width: 750px) {
-    grid-column: 1 / -1;
-    grid-template-columns:
-      minmax(var(--page-margin), 1fr) repeat(var(--centered-column-number),
-        minmax(0, calc((var(--page-width) - var(--page-margin) * 2) / var(--centered-column-number)))) minmax(var(--page-margin), 1fr);
-  }
-}
-
-.collection-wrapper:has(.facets--vertical) .facets-block-wrapper--vertical:not(.hidden)~.main-collection-grid {
-  @media screen and (min-width: 750px) {
-    grid-column: var(--facets-vertical-col-width) / var(--full-width-column-number);
-  }
-}
-
-.collection-wrapper:has(.facets-block-wrapper--vertical:not(#filters-drawer)):has(.collection-wrapper--full-width) {
-  @media screen and (min-width: 750px) {
-    grid-column: 1 / -1;
-    grid-template-columns: 0fr repeat(var(--centered-column-number), minmax(0, 1fr)) 0fr;
-  }
-}
-
-:is(.collection-wrapper--full-width, .collection-wrapper--full-width-on-mobile) [product-grid-view='default'] .product-grid__card {
-  @media screen and (max-width: 749px) {
-    padding-inline-start: max(var(--padding-xs), var(--padding-inline-start));
-    padding-inline-end: max(var(--padding-xs), var(--padding-inline-end));
-  }
-}
-
-:is(.collection-wrapper--full-width, .collection-wrapper--full-width-on-mobile) [product-grid-view='mobile-single'] .product-grid__card {
-  @media screen and (max-width: 749px) {
-    padding-inline-start: max(var(--padding-xs), var(--padding-inline-start));
-    padding-inline-end: max(var(--padding-xs), var(--padding-inline-end));
-  }
-}
-
-/* Make product media go edge-to-edge by using negative margins */
-:is(.collection-wrapper--full-width) .card-gallery,
-:is(.collection-wrapper--full-width-on-mobile) .card-gallery {
-  @media screen and (max-width: 749px) {
-    margin-inline-start: calc(-1 * max(var(--padding-xs), var(--padding-inline-start)));
-    margin-inline-end: calc(-1 * max(var(--padding-xs), var(--padding-inline-end)));
-  }
-}
-
-.collection-wrapper--full-width .main-collection-grid__title {
-  margin-left: var(--page-margin);
-}
-
-.collection-wrapper--full-width-on-mobile .main-collection-grid__title {
-  @media screen and (max-width: 749px) {
-    margin-left: var(--page-margin);
-  }
-}
-
-.collection-wrapper--grid-full-width .facets--vertical:not(.facets--drawer) {
-  @media screen and (min-width: 750px) {
-    padding-inline-start: max(var(--padding-sm), var(--padding-inline-start));
-  }
-}
-
-.collection-wrapper:has(.product-grid-mobile--large) .facets-mobile-wrapper.facets-controls-wrapper {
-  @media screen and (max-width: 749px) {
-    display: none;
-  }
-}
-
-.collection-wrapper:has(> .facets--horizontal) .facets__panel[open] {
-  @media screen and (min-width: 750px) {
-    z-index: var(--facets-open-z-index);
-  }
-}
 
 /* ------------------------------------------------------------------------------ */
 
@@ -3648,21 +2763,105 @@ fly-to-cart.fly-to-cart--sticky {
   }
 }
 
-@keyframes move-and-fade {
+@keyframes slideInLeft {
   from {
-    transform: translate(var(--start-x, 0), var(--start-y, 0));
-    opacity: var(--start-opacity, 0);
+    transform: translateX(var(--custom-transform-from, 100%));
   }
 
   to {
-    transform: translate(var(--end-x, 0), var(--end-y, 0));
-    opacity: var(--end-opacity, 1);
+    transform: translateX(var(--custom-transform-to, 0));
+  }
+}
+
+@keyframes slideInLeftViewTransition {
+  from {
+    transform: translateX(100px);
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(var(--custom-transform-to, -100%));
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutLeft {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes slideInTop {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
   }
 }
 
 @keyframes slideInTopViewTransition {
   from {
     transform: translateY(100px);
+  }
+}
+
+@keyframes slideOutBottom {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes slideInBottom {
+  from {
+    transform: translateY(-100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideOutTop {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes cartBubbleSlideIn {
+  from {
+    transform: translateY(-1em);
+  }
+
+  to {
+    transform: translateY(0);
   }
 }
 
@@ -3799,7 +2998,6 @@ fly-to-cart.fly-to-cart--sticky {
 }
 
 @keyframes thumbnail-selected {
-
   0%,
   100% {
     box-shadow: 0 0 0 2px transparent;
@@ -3807,7 +3005,7 @@ fly-to-cart.fly-to-cart--sticky {
   }
 
   50% {
-    box-shadow: 0 0 0 2px #000;
+    box-shadow: 0 0 0 2px black;
     scale: 1;
   }
 }
@@ -3890,11 +3088,10 @@ fly-to-cart.fly-to-cart--sticky {
   position: absolute;
   z-index: var(--layer-lowest);
   inset: 0;
-  clip-path: inset(-50px 0 0 0);
-  /* stylelint-disable-line */
+  clip-path: inset(-50px 0 0 0); /* stylelint-disable-line */
 }
 
-@media screen and (min-width: 750px) {
+@media (min-width: 750px) {
   .top-shadow--mobile::before {
     display: none;
   }
@@ -3906,11 +3103,10 @@ fly-to-cart.fly-to-cart--sticky {
   position: absolute;
   z-index: var(--layer-lowest);
   inset: 0;
-  clip-path: inset(0 0 -50px 0);
-  /* stylelint-disable-line */
+  clip-path: inset(0 0 -50px 0); /* stylelint-disable-line */
 }
 
-@media screen and (min-width: 750px) {
+@media (min-width: 750px) {
   .bottom-shadow--mobile::before {
     display: none;
   }
@@ -3923,11 +3119,11 @@ fly-to-cart.fly-to-cart--sticky {
   aspect-ratio: var(--size-style-aspect-ratio, auto);
 }
 
-:not(deferred-media)>.video-placeholder-wrapper {
+:not(deferred-media) > .video-placeholder-wrapper {
   width: var(--video-placeholder-width);
 }
 
-.video-placeholder-wrapper>* {
+.video-placeholder-wrapper > * {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -3939,48 +3135,11 @@ fly-to-cart.fly-to-cart--sticky {
  */
 slideshow-component {
   --cursor: grab;
-  --slide-offset: 6px;
 
   position: relative;
   display: flex;
   flex-direction: column;
   timeline-scope: var(--slideshow-timeline);
-}
-
-slideshow-component.slideshow--content-below-media slideshow-slide {
-  display: grid;
-}
-
-.slideshow--content-below-media slideshow-slide :is(.slide__image-container, .slide__content) {
-  position: static;
-}
-
-.slideshow--content-below-media slideshow-slide {
-  grid-template-rows: var(--grid-template-rows);
-
-  @media screen and (min-width: 750px) {
-    grid-template-rows: var(--grid-template-rows-desktop);
-  }
-}
-
-.slide__content {
-  @supports (animation-timeline: auto) {
-    opacity: 0;
-    animation: slide-reveal both linear;
-    animation-timeline: var(--slideshow-timeline);
-  }
-
-  @media (prefers-reduced-motion) {
-    opacity: 1;
-    animation: none;
-  }
-}
-
-/*
- * Force Safari to recalculate the timeline state on timeline refresh (after loop)
-*/
-slideshow-component[refreshing-timeline] .slide__content {
-  animation: none;
 }
 
 .slideshow--single-media {
@@ -4005,7 +3164,6 @@ slideshow-slides {
   scrollbar-width: none;
   gap: var(--slideshow-gap, 0);
   cursor: var(--cursor);
-  min-height: var(--slide-min-height);
 
   @media (prefers-reduced-motion) {
     scroll-behavior: auto;
@@ -4024,20 +3182,34 @@ slideshow-slides {
     border: none;
   }
 
+  &[size='small'] {
+    min-height: 17.5rem;
+  }
+
+  &[size='medium'] {
+    min-height: 21.25rem;
+  }
+
+  &[size='large'] {
+    min-height: 25rem;
+  }
+
   @media screen and (min-width: 750px) {
-    min-height: var(--slide-min-height-desktop);
+    &[size='small'] {
+      min-height: 26.25rem;
+    }
+
+    &[size='medium'] {
+      min-height: 35rem;
+    }
+
+    &[size='large'] {
+      min-height: 45rem;
+    }
   }
 }
 
 slideshow-component[disabled='true'] slideshow-slides {
-  overflow: hidden;
-}
-
-/**
- * By default, slideshows have overflow: hidden (no compositor layer).
- * When the slideshow enters the viewport, JavaScript adds [in-viewport] which enables scrolling.
- */
-slideshow-component:not([in-viewport]) slideshow-slides {
   overflow: hidden;
 }
 
@@ -4047,124 +3219,15 @@ slideshow-component[mobile-disabled] slideshow-slides {
   }
 }
 
-/*
- * Per-breakpoint disabled state: at the matching breakpoint, neutralize
- * the carousel layout so children flow as the parent block intends.
- * Consumers control the per-slide cell with --slideshow-disabled-slide-width
- * (default: auto) and the gap with --slideshow-disabled-gap.
- */
-slideshow-component[mobile-disabled]>slideshow-container>slideshow-slides,
-slideshow-component[desktop-disabled]>slideshow-container>slideshow-slides {
-  --_disabled-gap: var(--slideshow-disabled-gap, 0);
-}
-
-@media screen and (max-width: 749px) {
-  slideshow-component[mobile-disabled]>slideshow-container>slideshow-slides {
-    overflow: visible;
-    scroll-snap-type: none;
-    flex-wrap: wrap;
-    gap: var(--_disabled-gap);
-    cursor: auto;
-  }
-
-  slideshow-component[mobile-disabled]>slideshow-container>slideshow-slides>slideshow-slide {
-    flex: 0 0 var(--slideshow-disabled-slide-width, auto);
-    width: var(--slideshow-disabled-slide-width, auto);
-    scroll-snap-align: none;
-    content-visibility: visible;
-  }
-
-  slideshow-component[mobile-disabled]>slideshow-container>slideshow-arrows,
-  slideshow-component[mobile-disabled]>slideshow-controls {
-    display: none;
-  }
-}
-
-@media screen and (min-width: 750px) {
-  slideshow-component[desktop-disabled]>slideshow-container>slideshow-slides {
-    overflow: visible;
-    scroll-snap-type: none;
-    flex-wrap: wrap;
-    gap: var(--_disabled-gap);
-    cursor: auto;
-  }
-
-  slideshow-component[desktop-disabled]>slideshow-container>slideshow-slides>slideshow-slide {
-    flex: 0 0 var(--slideshow-disabled-slide-width, auto);
-    width: var(--slideshow-disabled-slide-width, auto);
-    scroll-snap-align: none;
-    content-visibility: visible;
-  }
-
-  slideshow-component[desktop-disabled]>slideshow-container>slideshow-arrows,
-  slideshow-component[desktop-disabled]>slideshow-controls {
-    display: none;
-  }
-}
-
-/*
- * Auto-slideshow always shows multiple slides per view, so:
- *  - snap to start (not center) — center leaves half-card peeks on both edges.
- *  - keep content-visibility: visible so every slide contributes to the
- *    container's height from the first paint, preventing the height-shift
- *    bug where the container locked to whichever slide was visible first.
- */
-slideshow-auto-component slideshow-slide {
-  scroll-snap-align: start;
-  content-visibility: visible;
-}
-
-/*
- * Pagination dots for auto-slideshow — visual dots, not the default
- * numbered <ol> list. Scoped to auto-slideshow only so the original
- * slideshow block's controls are untouched.
- */
-slideshow-auto-component .slideshow-controls__dots {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  list-style: none;
-  margin: 0;
-  padding: 1rem 0 0;
-}
-
-slideshow-auto-component .slideshow-controls__dots>li {
-  display: block;
-  list-style: none;
-}
-
-slideshow-auto-component .slideshow-controls__dots .slideshow-control {
-  width: 9px;
-  height: 9px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background-color: var(--color-foreground, inherit);
-  opacity: 0.25;
-  font-size: 0;
-  line-height: 0;
-  color: transparent;
-  cursor: pointer;
-  transition: opacity var(--animation-speed, 0.2s) ease;
-}
-
-slideshow-auto-component .slideshow-controls__dots .slideshow-control[aria-selected='true'] {
-  opacity: 1;
-}
-
 slideshow-slide {
   position: relative;
-  scroll-snap-align: center;
+  scroll-snap-align: start;
   width: var(--slide-width, 100%);
   max-height: 100%;
   flex-shrink: 0;
-  view-timeline-name: var(--slideshow-timeline);
   view-timeline-axis: inline;
   content-visibility: auto;
   contain-intrinsic-size: auto none;
-  border-radius: var(--corner-radius, 0);
-  overflow: hidden;
 
   slideshow-component[actioned] &,
   &[aria-hidden='false'] {
@@ -4178,15 +3241,6 @@ slideshow-slide {
   &[hidden]:not([reveal]) {
     display: none;
   }
-
-  /* Make inactive slides appear clickable */
-  &[aria-hidden='true'] {
-    cursor: pointer;
-  }
-}
-
-slideshow-slide .slide__image-container--rounded {
-  border-radius: var(--corner-radius, 0);
 }
 
 slideshow-slide.product-media-container--tallest {
@@ -4194,10 +3248,12 @@ slideshow-slide.product-media-container--tallest {
 }
 
 @media screen and (max-width: 749px) {
-
   /* Media gallery has a peeking slide on the right side always, and on the left side when the current slide is the last one */
-  .media-gallery--hint :is(slideshow-slide:has(+ slideshow-slide[aria-hidden='false']:last-of-type),
-    slideshow-slide[aria-hidden='false'] + slideshow-slide) {
+  .media-gallery--hint
+    :is(
+      slideshow-slide:has(+ slideshow-slide[aria-hidden='false']:last-of-type),
+      slideshow-slide[aria-hidden='false'] + slideshow-slide
+    ) {
     content-visibility: auto;
 
     slideshow-component[actioned] & {
@@ -4211,8 +3267,11 @@ slideshow-slide.product-media-container--tallest {
  * Card galleries preview the next or previous images on 'pointerenter', so we
  * try to kick load them beforehand (they are lazy loaded otherwise).
  */
-:is(.resource-list__carousel, .card-gallery) :is(slideshow-slide:has(+ slideshow-slide[aria-hidden='false']),
-  slideshow-slide[aria-hidden='false'] + slideshow-slide) {
+:is(.resource-list__carousel, .card-gallery)
+  :is(
+    slideshow-slide:has(+ slideshow-slide[aria-hidden='false']),
+    slideshow-slide[aria-hidden='false'] + slideshow-slide
+  ) {
   content-visibility: auto;
 
   slideshow-component[actioned] & {
@@ -4220,191 +3279,11 @@ slideshow-slide.product-media-container--tallest {
   }
 }
 
-/* Hovering box */
-.hovering-box.hovering-box__content--above {
-  .hovering-box__hover-text {
-    opacity: 0;
-  }
-
-  .box__hover:hover+.hovering-box__hover-text {
-    opacity: 1;
-    z-index: 9;
-  }
-}
-
-.hovering-box.hovering-box__content--above {
-  .hovering-box__hover-text {
-    background: #fff;
-    width: calc(100% - 2rem);
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    box-shadow: 1px 1px 16px #00000050;
-    padding: 1.125rem;
-    border-radius: 5px;
-    font-size: 0.8125rem;
-    line-height: 1.3;
-    color: #676767;
-    font-weight: 500;
-  }
-
-  .hovering-box__hover-text:after {
-    position: absolute;
-    content: "";
-    left: 50px;
-    border-top: 15px solid transparent;
-    border-right: 11px solid #fefefe;
-    border-bottom: 15px solid transparent;
-  }
-}
-
-.hovering-box.hovering-box__content--above.hovering-box__content--top {
-  position: relative;
-
-  .hovering-box__hover-text {
-    bottom: calc(100% + 15px);
-  }
-
-  .hovering-box__hover-text:after {
-    bottom: -20px;
-    transform: rotate(270deg);
-  }
-}
-
-.hovering-box.hovering-box__content--above.hovering-box__content--bottom {
-  position: relative;
-
-  .hovering-box__hover-text {
-    top: calc(100% + 15px);
-  }
-
-  .hovering-box__hover-text:after {
-    top: -20px;
-    transform: rotate(90deg);
-  }
-}
-
-.hovering-box.hovering-box__content--replace {
-  .box__hover .text-block p {
-    font-weight: 500;
-  }
-
-  .box__hover,
-  .hovering-box__hover-text {
-
-    .rte,
-    .text-block {
-      padding-top: 2rem;
-    }
-  }
-
-  .hovering-box__hover-text {
-    display: none;
-    text-align: center;
-
-    .rte {
-      font-weight: 500;
-      font-size: 0.875rem;
-      line-height: 1.57;
-      margin: 0;
-      background: #f3f3f3;
-      border: 1px solid #9e9e9e;
-      border-radius: 10px;
-      width: 100%;
-      padding: 2rem 0.625rem 0.9375rem;
-    }
-  }
-
-  .icon_box,
-  .icon_hover_box {
-    justify-items: var(--horizontal-alignment);
-
-    img {
-      outline: 15px solid white;
-      outline-offset: 0px;
-      border-radius: 50%;
-    }
-  }
-}
-
-@media only screen and (min-width: 750px) {
-  .hovering-box.hovering-box__content--replace:hover {
-    .hovering-box__hover-text {
-      opacity: 1;
-      display: block;
-      z-index: 9;
-    }
-
-    .box__hover {
-      opacity: 0;
-      display: none;
-    }
-  }
-}
-
-@media screen and (max-width: 749px) {
-  .hovering-box.hovering-box__content--above {
-    .hovering-box__hover-text {
-      font-size: 0.75rem;
-      padding: 0.875rem;
-      width: calc(100% - 2rem);
-    }
-  }
-
-  .hovering-box.hovering-box__content--replace.active {
-    .box__hover {
-      opacity: 0;
-      display: none;
-    }
-
-    .hovering-box__hover-text {
-      display: block;
-      z-index: 9;
-      opacity: 1;
-    }
-  }
-
-  .hovering-box.hovering-box__content--replace {
-    padding-bottom: 2rem;
-
-    .hovering-box__hover-text {
-      display: none;
-      text-align: center;
-
-      .rte {
-        font-size: 1rem;
-        line-height: 1.56;
-      }
-    }
-  }
-}
-
-/* Parallax effect for main banner */
-.parallax {
-  position: absolute;
-  bottom: 0;
-  top: 0;
-  z-index: -1;
-  overflow: hidden;
-}
-
-div:has(>.parallax) {
-  position: relative;
-}
-
-.parallax * {
-  object-fit: cover;
-}
-
-.parallax img {
-  transform: scale(1.4);
-}
-
 /*
  * Be specific about HTML children structure to avoid targeting nested slideshows.
  * Ensure that the content is 'visible' while scrolling instead of 'auto' to avoid issues in Safari.
  */
-slideshow-component:is([dragging], [transitioning], :hover)>slideshow-container>slideshow-slides>slideshow-slide {
+slideshow-component:is([dragging], [transitioning], :hover) > slideshow-container > slideshow-slides > slideshow-slide {
   content-visibility: visible;
 }
 
@@ -4435,200 +3314,373 @@ slideshow-container {
   position: relative;
   grid-area: container;
   container-type: inline-size;
-  background-color: var(--color-background);
-}
-
-@media screen and (min-width: 750px) {
-  .media-gallery--carousel slideshow-component:has(slideshow-controls[thumbnails]) {
-    column-gap: 1rem;
-
-    &:has(slideshow-controls[pagination-position='right']) {
-      display: grid;
-      grid-template:
-        'container controls' auto
-        'arrows controls' min-content
-        / 1fr auto;
-    }
-
-    &:has(slideshow-controls[pagination-position='left']) {
-      display: grid;
-      grid-template:
-        'controls container' auto
-        'controls arrows' min-content
-        / auto 1fr;
-    }
-
-    slideshow-controls[pagination-position='left'] {
-      order: -1;
-    }
-  }
 }
 
 /*
- * Slideshow Controls — Thumbnails
- * Styles for the gallery thumbnail strip rendered by snippets/slideshow-controls.liquid.
- * Sizes the buttons via --thumbnail-width (set on <media-gallery>), arranges them in a
- * row or column depending on pagination position, and gives the active one a visible ring.
- *
- * The brand cream (var(--color-background, transparent)) is the gallery background; thumbnails sit on the same fill
- * so the strip reads as one continuous panel with the main image.
+ * Slideshow Controls
  */
-slideshow-controls[thumbnails] {
+slideshow-controls {
+  flex-shrink: 0;
   display: flex;
-  min-width: 0;
-  min-height: 0;
+  justify-content: space-between;
+  scrollbar-width: none;
+  min-height: var(--minimum-touch-target);
+  grid-area: controls;
 
-  @media only screen and (max-width: 749px) {
-    margin-top: 1rem;
+  &[controls-on-media] {
+    position: absolute;
+    bottom: 0;
   }
 }
 
-slideshow-controls[thumbnails] .slideshow-controls__thumbnails-container {
-  display: flex;
-  overflow: auto;
-  scrollbar-width: none;
-  max-width: 100%;
-  max-height: 100%;
-}
-
-slideshow-controls[thumbnails] .slideshow-controls__thumbnails-container::-webkit-scrollbar {
+slideshow-controls::-webkit-scrollbar {
   display: none;
 }
 
-slideshow-controls[thumbnails] .slideshow-controls__thumbnails {
-  display: flex;
-  gap: 1rem;
+slideshow-controls button {
+  --color: rgb(var(--color-foreground-rgb) / var(--opacity-30));
+  --color-active: var(--color-foreground);
+  --color-hover: rgb(var(--color-foreground-rgb) / var(--opacity-50));
 
-  @media only screen and (max-width: 749px) {
-    gap: 0.75rem;
+  display: inline-block;
+  height: var(--minimum-touch-target);
+  width: var(--minimum-touch-target);
+  cursor: pointer;
+}
+
+slideshow-controls .icon {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-xs);
+}
+
+slideshow-controls[pagination-position='center'] {
+  align-items: center;
+  justify-content: center;
+}
+
+slideshow-controls[pagination-position='center'][thumbnails] {
+  width: 100%;
+}
+
+slideshow-controls[pagination-position='center']:not([controls-on-media], [thumbnails], [icons-on-media]) {
+  justify-content: space-between;
+}
+
+slideshow-component:has(slideshow-controls[thumbnails]) {
+  &:has(slideshow-controls[pagination-position='right']) {
+    display: grid;
+    grid-template:
+      'container controls' auto
+      'arrows controls' min-content
+      / 1fr auto;
+  }
+
+  &:has(slideshow-controls[pagination-position='left']) {
+    display: grid;
+    grid-template:
+      'controls container' auto
+      'controls arrows' min-content
+      / auto 1fr;
+  }
+
+  slideshow-controls[pagination-position='left'] {
+    order: -1;
   }
 }
 
-slideshow-controls[thumbnails][pagination-position='right'] .slideshow-controls__thumbnails-container,
-slideshow-controls[thumbnails][pagination-position='left'] .slideshow-controls__thumbnails-container {
+slideshow-controls[thumbnails]:is([pagination-position='right'], [pagination-position='left']) {
+  display: flex;
   flex-direction: column;
+  height: 0;
+  min-height: 100%;
+
+  .slideshow-controls__thumbnails-container {
+    overflow: hidden auto;
+  }
+
+  &:not([controls-on-media]) {
+    .slideshow-controls__thumbnails-container {
+      position: sticky;
+      top: var(--sticky-header-offset, 0);
+    }
+
+    .slideshow-controls__thumbnails {
+      padding-block-start: var(--focus-outline-offset);
+    }
+  }
 }
 
-slideshow-controls[thumbnails][pagination-position='right'] .slideshow-controls__thumbnails,
-slideshow-controls[thumbnails][pagination-position='left'] .slideshow-controls__thumbnails {
-  flex-direction: column;
+slideshow-controls:not([controls-on-media])[icons-on-media] {
+  &[pagination-position='right'] {
+    justify-content: flex-end;
+  }
+
+  &[pagination-position='left'] {
+    justify-content: flex-start;
+  }
 }
 
-@media screen and (max-width: 749px) {
+slideshow-controls:not([controls-on-media]):is([pagination-position='left'], [pagination-position='right'])
+  .slideshow-controls__thumbnails {
+  padding-block: var(--padding-2xs);
+}
 
-  .media-gallery--carousel slideshow-controls[thumbnails][pagination-position='left'] .slideshow-controls__thumbnails-container,
-  .media-gallery--carousel slideshow-controls[thumbnails][pagination-position='right'] .slideshow-controls__thumbnails-container,
-  .media-gallery--carousel slideshow-controls[thumbnails][pagination-position='left'] .slideshow-controls__thumbnails,
-  .media-gallery--carousel slideshow-controls[thumbnails][pagination-position='right'] .slideshow-controls__thumbnails {
-    flex-direction: row;
+slideshow-controls:not([controls-on-media]) {
+  &:is([pagination-position='right']) {
+    .slideshow-controls__thumbnails {
+      padding-inline-end: var(--slideshow-thumbnails-padding-inline, var(--focus-outline-offset));
+    }
+  }
+
+  &:is([pagination-position='left']) {
+    .slideshow-controls__thumbnails {
+      padding-inline-start: var(--slideshow-thumbnails-padding-inline, var(--focus-outline-offset));
+    }
+  }
+}
+
+slideshow-controls[controls-on-media] {
+  z-index: var(--layer-raised);
+
+  &:has(.slideshow-controls__dots, .slideshow-controls__counter) {
+    --color-foreground: #fff;
+    --color-foreground-rgb: var(--color-white-rgb);
+  }
+
+  &[pagination-position='right'] {
+    right: 0;
+  }
+
+  &[pagination-position='left'] {
+    left: 0;
+  }
+
+  &[pagination-position='center'] {
+    width: 100%;
+  }
+
+  &:not([thumbnails])[pagination-position='left'] {
+    width: fit-content;
+    align-self: flex-start;
+  }
+
+  &:not([thumbnails])[pagination-position='right'] {
+    width: fit-content;
+    align-self: flex-end;
+  }
+}
+
+slideshow-controls:is([pagination-position='right'], [pagination-position='left']) {
+  .slideshow-controls__thumbnails {
+    flex-direction: column;
+  }
+}
+
+.slideshow-controls__arrows {
+  display: flex;
+  justify-content: space-between;
+  height: var(--minimum-touch-target);
+  grid-area: arrows;
+
+  button {
+    padding: 0 var(--padding-xs);
+  }
+}
+
+.slideshow-controls__dots,
+.slideshow-controls__counter {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  list-style: none;
+
+  button {
+    --color: rgb(var(--color-foreground-rgb) / var(--opacity-30));
+    --color-active: var(--color-foreground);
+    --color-hover: rgb(var(--color-foreground-rgb) / var(--opacity-50));
+  }
+}
+
+slideshow-controls:has(.slideshow-controls__dots),
+slideshow-component[autoplay] slideshow-controls {
+  mix-blend-mode: difference;
+}
+
+.slideshow-controls__dots {
+  gap: 0.6rem;
+  padding: var(--padding-sm) var(--padding-lg);
+  border-radius: 3rem;
+  overflow: hidden;
+
+  button {
+    --size: 0.5rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(var(--size) * 2);
+    height: calc(var(--size) * 2);
+    margin: calc(var(--size) / -2);
+    font-size: 0;
+    border-radius: calc(var(--size));
+
+    &::after {
+      content: '';
+      display: block;
+      background-color: var(--color);
+      height: var(--size);
+      width: var(--size);
+
+      /* This is at --size / 2 to remove a visual regression on subpixel rendering displays */
+      border-radius: calc(var(--size) / 2);
+
+      @supports not (view-timeline-axis: inline) {
+        &[aria-selected='true'] {
+          --color: var(--color-active);
+        }
+      }
+
+      &:hover {
+        --color: var(--color-hover);
+      }
+    }
+
+    &[aria-selected='true'] {
+      --color: var(--color-active);
+    }
+  }
+}
+
+.slideshow-controls__dots,
+.slideshow-controls__counter {
+  &:only-child {
+    margin-inline: auto;
+  }
+}
+
+.slideshow-controls__counter {
+  color: var(--color-foreground);
+  background-color: rgb(0 0 0 / 40%);
+  width: auto;
+  border-radius: 2rem;
+  padding: 0.3rem var(--padding-sm);
+  margin-inline: var(--margin-sm);
+  backdrop-filter: blur(10px);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--font-size--xs);
+
+  .slash {
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-40));
+    padding-inline: var(--padding-2xs);
+    margin-block-start: -0.1rem;
+  }
+}
+
+.slideshow-control[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.slideshow-control--large {
+  .icon-caret {
+    --icon-stroke-width: 1px;
+  }
+
+  .icon-caret {
+    --icon-stroke-width: 1px;
+  }
+
+  .svg-wrapper,
+  svg {
+    width: var(--slideshow-controls-icon);
+    height: var(--slideshow-controls-icon);
+  }
+}
+
+/* Slideshow control shape styles */
+.button-unstyled.slideshow-control.slideshow-control--shape-square,
+.button-unstyled.slideshow-control.slideshow-control--shape-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+  background-color: var(--color-primary-button-background);
+  color: var(--color-primary-button-text);
+}
+
+.button-unstyled.slideshow-control.slideshow-control--shape-circle {
+  border-radius: 50%;
+}
+
+.button-unstyled.slideshow-control.slideshow-control--shape-square {
+  border-radius: 0;
+}
+
+.slideshow-control .icon-caret {
+  rotate: -90deg;
+}
+
+/* Slideshow Thumbnails */
+.slideshow-controls__thumbnails-container {
+  display: flex;
+  width: 100%;
+  max-height: 100%;
+  overflow-x: scroll;
+  scrollbar-width: none;
+}
+
+.slideshow-controls__thumbnails {
+  display: inline-flex;
+  padding-inline: var(--slideshow-thumbnails-padding-inline, var(--padding-sm));
+  padding-block: var(--slideshow-thumbnails-padding-block, var(--padding-sm));
+  gap: var(--gap-xs);
+  margin-inline: auto;
+  height: fit-content;
+
+  .slideshow-control {
+    border-radius: var(--media-radius);
+    width: clamp(44px, 7vw, var(--thumbnail-width));
+    height: auto;
+    aspect-ratio: var(--aspect-ratio);
+
+    img {
+      height: 100%;
+      object-fit: cover;
+      border-radius: var(--media-radius);
+    }
+
+    &:is([aria-selected='true']) {
+      outline: var(--focus-outline-width) solid currentcolor;
+      outline-offset: calc(var(--focus-outline-offset) / 2);
+      border: var(--style-border-width) solid rgb(var(--color-border-rgb) / var(--media-border-opacity));
+    }
   }
 }
 
 .slideshow-controls__thumbnail {
   position: relative;
-  flex-shrink: 0;
-  width: 6.25rem;
-  aspect-ratio: var(--aspect-ratio, 1);
-  padding: 0;
-  cursor: pointer;
-  border-radius: var(--thumbnail-radius, 0);
-  background-color: var(--color-background, transparent);
-  overflow: hidden;
-  transition: opacity var(--animation-speed) var(--animation-easing);
-
-  @media only screen and (max-width: 749px) {
-    width: 5.0625rem;
-    height: 5.0625rem;
-  }
-}
-
-.slideshow-controls__thumbnail img {
-  width: 100%;
-  height: 100%;
-  /* Contain (not cover) so the cream background of the button frames the image. */
-  object-fit: contain;
-  display: block;
-  border-radius: inherit;
-}
-
-.slideshow-controls__thumbnail:not([aria-selected='true']) {
-  opacity: 0.6;
-}
-
-.slideshow-controls__thumbnail:hover {
-  opacity: 1;
 }
 
 .slideshow-controls__thumbnail-badge {
   position: absolute;
-  inset: auto var(--padding-2xs, 4px) var(--padding-2xs, 4px) auto;
-  display: inline-flex;
+  top: var(--padding-2xs);
+  right: var(--padding-2xs);
+  width: clamp(16px, 10%, 20px);
+  height: clamp(16px, 10%, 20px);
+  background-color: var(--color-background);
+  border-radius: var(--style-border-radius-xs);
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 50%;
-  background-color: rgb(var(--color-background-rgb) / 0.85);
-  color: var(--color-foreground);
-  pointer-events: none;
+  box-shadow: 0 0 0 1px rgb(var(--color-foreground-rgb) / var(--opacity-5));
 }
 
 .slideshow-controls__thumbnail-badge svg {
-  width: 0.875rem;
-  height: 0.875rem;
-}
-
-/*
- * Product media gallery — cream surface behind the active image only. The
- * thumbnail strip itself stays transparent; each thumbnail button supplies its
- * own cream fill (see .slideshow-controls__thumbnail above).
- */
-.media-gallery--carousel {
-  position: relative;
-}
-
-.media-gallery--carousel slideshow-container {
-  background-color: var(--color-background, transparent);
-}
-
-/*
- * Product media gallery — badge overlay (category/label) over the main image.
- * Mirrors the collection card badge so the styles are available on the PDP
- * without depending on the collection block's stylesheet.
- */
-.product-media-gallery__badges {
-  position: absolute;
-  top: 1rem;
-  inset-inline-start: 1rem;
-  z-index: var(--layer-flat);
-  pointer-events: none;
-}
-
-@media screen and (min-width: 750px) {
-  .media-gallery--carousel:has(slideshow-controls[thumbnails][pagination-position='left']) .product-media-gallery__badges {
-    /* Push past the thumbnail column + the 1rem gap between strip and image. */
-    inset-inline-start: calc(6.25rem + 1rem + 1rem);
-  }
-
-  .media-gallery--carousel:has(slideshow-controls[thumbnails][pagination-position='right']) .product-media-gallery__badges {
-    inset-inline-start: 1rem;
-  }
-}
-
-.product-media-gallery__badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  color: var(--color-foreground);
-  background: var(--color-background);
-  font-size: var(--font-size--xs);
-  font-family: var(--font-paragraph--family);
-  font-weight: var(--font-paragraph--weight);
-  text-transform: var(--badge-text-transform, uppercase);
-  border-radius: var(--badge-border-radius, 0);
-  padding-block: var(--badge-rectangle-padding-block);
-  padding-inline: var(--badge-rectangle-padding-inline);
+  width: 60%;
+  height: 60%;
+  fill: var(--color-foreground);
+  opacity: 0.6;
 }
 
 /* Slideshow Play/Pause */
@@ -4646,13 +3698,13 @@ slideshow-controls[thumbnails][pagination-position='left'] .slideshow-controls__
 
 slideshow-component:is([autoplay]) {
   &:is([paused]) {
-    .icon-play>svg {
+    .icon-play > svg {
       display: block;
     }
   }
 
   &:not([paused]) {
-    .icon-pause>svg {
+    .icon-pause > svg {
       display: block;
     }
   }
@@ -4700,7 +3752,6 @@ slideshow-arrows .slideshow-control {
   pointer-events: auto;
   opacity: 0;
   min-height: var(--minimum-touch-target);
-  min-width: var(--minimum-touch-target);
   padding: 0 var(--padding-xs);
   color: var(--color-white);
 }
@@ -4711,7 +3762,6 @@ slideshow-arrows .slideshow-control.slideshow-control--style-none {
 
 .media-gallery--carousel slideshow-arrows .slideshow-control {
   padding-inline: 0 var(--padding-md);
-  opacity: 1;
 }
 
 .card-gallery slideshow-arrows .slideshow-control {
@@ -4723,9 +3773,15 @@ slideshow-arrows .slideshow-control.slideshow-control--style-none {
   }
 }
 
-/* Slideshow Arrow Hover Animation - must stay in base.css for proper CSS cascade */
+.media-gallery--carousel slideshow-arrows .slideshow-control {
+  opacity: 1;
+}
 
-:not(.media-gallery--carousel)> :is(slideshow-component:hover, slideshow-component:focus-within):not(:has(slideshow-controls:hover))>slideshow-container>slideshow-arrows .slideshow-control {
+:not(.media-gallery--carousel)
+  > :is(slideshow-component:hover, slideshow-component:focus-within):not(:has(slideshow-controls:hover))
+  > slideshow-container
+  > slideshow-arrows
+  .slideshow-control {
   animation: arrowsSlideIn var(--animation-speed) var(--animation-easing) forwards;
 }
 
@@ -4740,8 +3796,17 @@ slideshow-arrows .slideshow-control.slideshow-control--style-none {
   }
 }
 
-.section-resource-list,
-.section-carousel {
+.block-resource-list {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--gap);
+  min-width: 0;
+  min-height: 0;
+  container-type: inline-size;
+  container-name: resource-list;
+}
+
+.section-resource-list {
   row-gap: var(--gap);
 }
 
@@ -4762,10 +3827,10 @@ slideshow-arrows .slideshow-control.slideshow-control--style-none {
   display: none;
 }
 
-:where(.section-resource-list.section--full-width) product-card[data-product-transition]>.group-block,
-:where(.section-carousel.section--full-width) product-card[data-product-transition]>.group-block {
+.section-resource-list.section--full-width product-card-link > .group-block {
   @media screen and (max-width: 749px) {
-    padding-inline: max(var(--padding-xs), var(--padding-inline-start)) max(var(--padding-xs), var(--padding-inline-end));
+    padding-inline: max(var(--padding-xs), var(--padding-inline-start))
+      max(var(--padding-xs), var(--padding-inline-end));
   }
 }
 
@@ -4881,7 +3946,10 @@ slideshow-arrows .slideshow-control.slideshow-control--style-none {
 
 @container resource-list-carousel (min-width: 750px) {
   .resource-list__carousel .resource-list__slide {
-    --section-slide-width: calc((100% - (var(--resource-list-column-gap) * (var(--column-count) - 1)) - var(--peek-next-slide-size)) / var(--column-count));
+    --section-slide-width: calc(
+      (100% - (var(--resource-list-column-gap) * (var(--column-count) - 1)) - var(--peek-next-slide-size)) /
+        var(--column-count)
+    );
     --fallback-slide-width: clamp(150px, var(--mobile-card-size, 60cqw), var(--slide-width-max));
     --slide-width: var(--section-slide-width, var(--fallback-slide-width));
   }
@@ -4928,27 +3996,21 @@ slideshow-arrows .slideshow-control.slideshow-control--style-none {
   width: 100%;
 }
 
-@media screen and (max-width: 749px) {
-  .group-block-content {
-    height: auto;
-  }
-}
-
 /* Container styles */
 .section-content-wrapper.section-content-wrapper:where(.layout-panel-flex) .group-block--fill {
   flex: 1;
 }
 
 /* Flex behavior for width variants */
-.layout-panel-flex--row>.group-block--width-fit {
+.layout-panel-flex--row > .group-block--width-fit {
   flex: 0;
 }
 
-.layout-panel-flex--row>.group-block--width-fill {
+.layout-panel-flex--row > .group-block--width-fill {
   flex: 1;
 }
 
-.layout-panel-flex--row>.group-block--width-custom {
+.layout-panel-flex--row > .group-block--width-custom {
   flex-basis: var(--size-style-width);
 }
 
@@ -4963,21 +4025,44 @@ slideshow-arrows .slideshow-control.slideshow-control--style-none {
 }
 
 /* Flex behavior for height variants */
-.layout-panel-flex--column>.group-block--height-fit {
+.layout-panel-flex--column > .group-block--height-fit {
   flex: 0 1 auto;
 }
 
-.layout-panel-flex--column>.group-block--height-fill {
+.layout-panel-flex--column > .group-block--height-fill {
   flex: 1;
 }
 
-.layout-panel-flex--column>.group-block--height-custom {
+.layout-panel-flex--column > .group-block--height-custom {
   flex-basis: var(--size-style-height);
+}
+
+.search-input {
+  width: 100%;
+  color: var(--color-foreground);
+  padding-block: var(--padding-lg);
+  padding-inline: calc(var(--margin-lg) + var(--icon-size-lg)) 0;
+  background: transparent;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  outline: none;
+  border: 0;
+
+  &:focus-visible {
+    outline: none;
+  }
+}
+
+.search-input:focus {
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
 }
 
 accordion-custom {
   details {
-
     &::details-content,
     .details-content {
       block-size: 0;
@@ -4990,14 +4075,7 @@ accordion-custom {
         block-size var(--animation-speed-slow) var(--animation-easing);
     }
 
-    /* Disable transitions when the content toggle is not caused by the direct user interaction, e.g. opening the filters on mobile. */
-    &:not(:focus-within)::details-content,
-    &:not(:focus-within) .details-content {
-      transition: none;
-    }
-
     &:not([open]) {
-
       &::details-content,
       .details-content {
         padding-block: 0;
@@ -5005,7 +4083,6 @@ accordion-custom {
     }
 
     &[open] {
-
       &::details-content,
       .details-content {
         opacity: 1;
@@ -5048,19 +4125,19 @@ text-component {
   line-height: 1;
 
   &::after {
-    /* Empty alt text — the pseudo-element is a visual shimmer overlay, not announceable content.
-      Without this, VoiceOver reads attr(value) in addition to the inner text node, doubling the announcement. */
-    content: attr(value) / '';
+    content: attr(value);
     position: absolute;
     inset: 0;
     color: transparent;
     opacity: 0;
     transition: opacity var(--animation-speed-slow) var(--animation-easing);
     pointer-events: none;
-    background-image: linear-gradient(-85deg,
-        var(--shimmer-text-color) 10%,
-        var(--shimmer-color-light) 50%,
-        var(--shimmer-text-color) 90%);
+    background-image: linear-gradient(
+      -85deg,
+      var(--shimmer-text-color) 10%,
+      var(--shimmer-color-light) 50%,
+      var(--shimmer-text-color) 90%
+    );
     background-clip: text;
     background-size: 200% 100%;
     background-position: 100% 0;
@@ -5151,6 +4228,7 @@ text-component {
 
 .product-card:hover,
 .collection-card:hover,
+.resource-card:hover,
 .predictive-search-results__card--product:hover,
 .predictive-search-results__card:hover {
   position: relative;
@@ -5159,17 +4237,19 @@ text-component {
     box-shadow var(--hover-transition-duration) var(--hover-transition-timing);
 }
 
-.predictive-search-results__inner {
-  flex-grow: 1;
-  overflow-y: auto;
-  padding-block: var(--padding-lg);
-  container-type: inline-size;
-  color: var(--color-foreground);
+.header .product-card:hover,
+.header .collection-card:hover,
+.header .resource-card:hover,
+.header-drawer .product-card:hover,
+.header-drawer .collection-card:hover,
+.header-drawer .resource-card:hover {
+  z-index: auto;
+  transform: none;
+  box-shadow: none;
 }
 
 /* Prevent iOS zoom on input focus by ensuring minimum 16px font size on mobile */
 @media screen and (max-width: 1200px) {
-
   input,
   textarea,
   select,
@@ -5194,234 +4274,7 @@ text-component {
   .h5.h5 select,
   .h6.h6 input,
   .h6.h6 textarea,
-  .h6.h6 select,
-  .h7.h7 input,
-  .h7.h7 textarea,
-  .h7.h7 select {
+  .h6.h6 select {
     font-size: max(1rem, 100%);
-  }
-}
-
-.product-recommendations {
-  display: block;
-}
-
-.product-recommendations>* {
-  border: 1px solid var(--color-border, currentColor);
-}
-
-.product-recommendations__skeleton-item {
-  aspect-ratio: 3 / 4;
-  background-color: var(--color-foreground);
-  opacity: var(--skeleton-opacity);
-  border-radius: 4px;
-}
-
-@media screen and (max-width: 749px) {
-  .product-recommendations__skeleton-item:nth-child(2n + 1) {
-    display: none;
-  }
-}
-
-product-recommendations:has([data-has-recommendations='false']) {
-  display: none;
-}
-
-.add-to-cart-button {
-  --text-speed: 0.26;
-  --base-delay: calc(var(--text-speed) * 0.25);
-  --tick-speed: 0.1;
-  --ring-speed: 0.2;
-  --check-speed: 0.2;
-  --burst-speed: 0.32;
-  --step-delay: 3;
-  --speed: 1;
-
-  user-select: none;
-  transition-property: color, box-shadow, background-color, scale, translate;
-  transition-duration: var(--animation-speed);
-  transition-timing-function: var(--ease-out-cubic);
-
-  &:active {
-    scale: 0.99;
-    translate: 0 1px;
-  }
-}
-
-.add-to-cart-button .svg-wrapper .checkmark-burst {
-  width: 30px;
-  height: 30px;
-}
-
-.add-to-cart-text {
-  --atc-opacity: 0;
-  --atc-destination: -1em;
-
-  display: flex;
-  gap: var(--gap-2xs);
-  align-items: center;
-  justify-content: center;
-  animation-duration: var(--animation-speed);
-  animation-timing-function: var(--animation-easing);
-  animation-fill-mode: forwards;
-  transition: width var(--animation-speed) var(--animation-easing),
-    opacity var(--animation-speed) var(--animation-easing);
-}
-
-.add-to-cart__added {
-  --atc-opacity: 1;
-  --atc-destination: 0px;
-
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  translate: -50% -50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.3rem;
-}
-
-.add-to-cart__added-icon {
-  width: 32px;
-  height: 32px;
-}
-
-[data-added='true'] .add-to-cart-text,
-[data-added='true'] .add-to-cart__added {
-  animation-name: atc-slide;
-}
-
-.checkmark-burst {
-  opacity: 0;
-  overflow: visible;
-
-  .burst {
-    rotate: 20deg;
-  }
-
-  .check {
-    opacity: 0.2;
-    scale: 0.8;
-    filter: blur(2px);
-    transform: translateZ(0);
-  }
-
-  :is(.ring, .line, .check, .burst, .tick) {
-    transform-box: fill-box;
-    transform-origin: center;
-  }
-
-  :is(.line) {
-    stroke-dasharray: 1.5 1.5;
-    stroke-dashoffset: -1.5;
-    translate: 0 -180%;
-  }
-
-  g {
-    transform-origin: center;
-    rotate: calc(var(--index) * (360 / 8) * 1deg);
-  }
-}
-
-.add-to-cart-button[data-added='true'] .checkmark-burst {
-  opacity: 1;
-}
-
-.add-to-cart-button[data-added='true'] {
-  .check {
-    opacity: 1;
-    scale: 1;
-    filter: blur(0);
-  }
-
-  .tick {
-    scale: 1.75;
-  }
-
-  .ring {
-    opacity: 0;
-    scale: 1;
-  }
-
-  .line {
-    stroke-dashoffset: 1.5;
-  }
-
-  .add-to-cart-text {
-    /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
-    filter: blur(2px);
-    opacity: 0;
-    translate: 0 4px;
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .add-to-cart-button[data-added='true'] {
-    .check {
-      transition-property: opacity, scale, filter;
-      transition-duration: calc(calc(var(--check-speed) * 1s));
-      transition-delay: calc((var(--base-delay) * 1s));
-      transition-timing-function: var(--ease-out-quad);
-    }
-
-    .tick {
-      transition-property: scale;
-      transition-duration: calc((calc(var(--tick-speed) * 1s)));
-      transition-delay: calc(((var(--base-delay) + (var(--check-speed) * (var(--step-delay) * 1.1))) * 1s));
-      transition-timing-function: ease-out;
-    }
-
-    .ring {
-      transition-property: opacity, scale;
-      transition-duration: calc((calc(var(--ring-speed) * 1s)));
-      transition-delay: calc(((var(--base-delay) + (var(--check-speed) * var(--step-delay))) * 1s));
-      transition-timing-function: var(--ease-out-quad);
-    }
-
-    .line {
-      transition-property: stroke-dashoffset;
-      transition-duration: calc((calc(var(--burst-speed) * 1s)));
-      transition-delay: calc(((var(--base-delay) + (var(--check-speed) * var(--step-delay))) * 1s));
-      transition-timing-function: var(--ease-out-cubic);
-    }
-  }
-
-  .add-to-cart-text {
-    transition-property: clip-path, opacity, filter, translate;
-    transition-duration: calc((var(--text-speed) * 0.6s)), calc((var(--text-speed) * 1s));
-    transition-timing-function: ease-out;
-  }
-}
-
-.add-to-cart-text {
-  /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
-  clip-path: circle(100% at 50% 50%);
-}
-
-@keyframes atc-slide {
-  to {
-    opacity: var(--atc-opacity, 1);
-    translate: 0px var(--atc-destination, 0px);
-  }
-}
-
-/* When the header is transparent, and when there is no header-section below it, offset the first main-section with
- * the height of the header
- */
-main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
-  &.spacing-style,
-  .spacing-style {
-    --section-top-offset: calc(var(--header-height) * var(--transparent-header-offset-boolean));
-
-    /* Any nested sections should not be offset */
-    :is(.spacing-style, .inherit-spacing) {
-      --section-top-offset: 0px;
-    }
-  }
-
-  /* Make sticky content immediately stick to the top of the page */
-  .sticky-content {
-    margin-top: calc(var(--header-height) * var(--transparent-header-offset-boolean) * -1);
   }
 }

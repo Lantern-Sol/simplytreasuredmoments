@@ -1,8 +1,7 @@
 import { sectionRenderer } from '@theme/section-renderer';
 import { Component } from '@theme/component';
-import { debounce, mediaQueryLarge, startViewTransition } from '@theme/utilities';
-import { convertMoneyToMinorUnits, formatMoney } from '@theme/money-formatting';
-import { CollectionUpdateEvent, SearchUpdateEvent, StandardEvents } from '@shopify/events';
+import { FilterUpdateEvent, ThemeEvents } from '@theme/events';
+import { debounce, formatMoney, startViewTransition } from '@theme/utilities';
 
 /**
  * Search query parameter.
@@ -21,30 +20,6 @@ const SEARCH_QUERY = 'q';
  */
 class FacetsFormComponent extends Component {
   requiredRefs = ['facetsForm'];
-
-  connectedCallback() {
-    super.connectedCallback();
-    // In vertical filter mode the in-page filters take over at ≥750px, so a
-    // drawer left open across a mobile→desktop resize would render duplicate
-    // filter UI. `data-filter-style` is only set on the drawer variant (see
-    // blocks/filters.liquid), so matching "vertical" here uniquely targets it.
-    if (this.dataset.filterStyle === 'vertical') {
-      mediaQueryLarge.addEventListener('change', this.#onBreakpointChange);
-    }
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    mediaQueryLarge.removeEventListener('change', this.#onBreakpointChange);
-  }
-
-  #onBreakpointChange = (/** @type {MediaQueryListEvent} */ event) => {
-    if (!event.matches) return;
-    const drawer = document.getElementById('filters-drawer');
-    if (drawer && 'close' in drawer && typeof drawer.close === 'function') {
-      drawer.close();
-    }
-  };
 
   /**
    * Creates URL parameters from form data
@@ -100,61 +75,21 @@ class FacetsFormComponent extends Component {
    */
   updateFilters = () => {
     this.#updateURLHash();
-    const renderPromise = this.#updateSection();
-    if (this.dataset.pageType === 'search') {
-      this.#dispatchSearchUpdateEvent(renderPromise);
-    } else {
-      this.#dispatchCollectionUpdateEvent(renderPromise);
-    }
+    this.dispatchEvent(new FilterUpdateEvent(this.createURLParameters()));
+    this.#updateSection();
   };
 
   /**
    * Updates the section
-   * @returns {Promise<void>}
    */
   #updateSection() {
     const viewTransition = !this.closest('dialog');
 
     if (viewTransition) {
-      return startViewTransition(() => sectionRenderer.renderSection(this.sectionId), ['product-grid']);
+      startViewTransition(() => sectionRenderer.renderSection(this.sectionId), ['product-grid']);
     } else {
-      return sectionRenderer.renderSection(this.sectionId).then(() => {});
+      sectionRenderer.renderSection(this.sectionId);
     }
-  }
-
-  /**
-   * Dispatches search:update event if on the search page.
-   * @param {Promise<void>} renderPromise - The promise from section rendering
-   */
-  #dispatchSearchUpdateEvent(renderPromise) {
-    const query = this.#getSearchQuery();
-
-    const deferredPromise = SearchUpdateEvent.createPromise();
-    const productFilters = SearchUpdateEvent.parseProductFilters();
-
-    this.dispatchEvent(
-      new SearchUpdateEvent({
-        search: {
-          query,
-          ...(productFilters && { productFilters }),
-          sortKey: SearchUpdateEvent.getSortKey(),
-        },
-        promise: deferredPromise.promise,
-      })
-    );
-
-    // Resolve promise after section renders with result count
-    renderPromise
-      .then(() => deferredPromise.resolve({ totalCount: this.#getResultsCount() }))
-      .catch((error) => deferredPromise.reject(error));
-  }
-
-  /**
-   * Gets the count of product results from the server-rendered data attribute.
-   * @returns {number}
-   */
-  #getResultsCount() {
-    return Number(this.dataset.resultsCount) || 0;
   }
 
   /**
@@ -163,45 +98,8 @@ class FacetsFormComponent extends Component {
    */
   updateFiltersByURL(url) {
     history.pushState('', '', url);
-    const renderPromise = this.#updateSection();
-    if (this.dataset.pageType === 'search') {
-      this.#dispatchSearchUpdateEvent(renderPromise);
-    } else {
-      this.#dispatchCollectionUpdateEvent(renderPromise);
-    }
-  }
-
-  /**
-   * Dispatches collection:update event if on a collection page.
-   * @param {Promise<void>} renderPromise - The promise from section rendering
-   */
-  #dispatchCollectionUpdateEvent(renderPromise) {
-    // Build collection object with available identifiers
-    // Only use numeric IDs — non-numeric values like "all" fail GID validation
-    /** @type {any} */
-    const rawId = this.dataset.collectionId;
-    const collectionData = {
-      id: rawId && /^\d+$/.test(rawId) ? rawId : null,
-      handle: /** @type {string} */ (this.dataset.collectionHandle),
-      productsCount: this.#getResultsCount(),
-    };
-
-    const deferredPromise = CollectionUpdateEvent.createPromise();
-    const productFilters = CollectionUpdateEvent.parseProductFilters();
-
-    this.dispatchEvent(
-      new CollectionUpdateEvent({
-        collection: collectionData,
-        ...(productFilters && { productFilters }),
-        sortKey: CollectionUpdateEvent.getSortKey(),
-        promise: deferredPromise.promise,
-      })
-    );
-
-    // Resolve promise after section renders with product count
-    renderPromise
-      .then(() => deferredPromise.resolve({ productsCount: this.#getResultsCount() }))
-      .catch((error) => deferredPromise.reject(error));
+    this.dispatchEvent(new FilterUpdateEvent(this.createURLParameters()));
+    this.#updateSection();
   }
 }
 
@@ -255,33 +153,27 @@ class FacetInputsComponent extends Component {
   }
 
   /**
-   * Fires immediately on pointerdown so a quick tap triggers the prefetch.
-   * @param {PointerEvent} event
+   * Handles mouseover events on facet labels
+   * @param {MouseEvent} event - The mouseover event
    */
-  prefetchPageImmediate(event) {
+  prefetchPage = debounce((event) => {
     if (!(event.target instanceof HTMLElement)) return;
-    this.#prefetchOption(event.target);
-  }
 
-  /**
-   * Reads `checked` at call time, so callers must invoke it before the toggle
-   * for the predicted post-toggle URL to be correct.
-   * @param {HTMLElement} optionElement
-   */
-  #prefetchOption(optionElement) {
     const form = this.closest('form');
     if (!form) return;
 
-    const inputElement = optionElement.querySelector('input');
-    if (!(inputElement instanceof HTMLInputElement) || inputElement.disabled) return;
+    const formData = new FormData(form);
+    const inputElement = event.target.querySelector('input');
+
+    if (!(inputElement instanceof HTMLInputElement)) return;
+
+    if (!inputElement.checked) formData.append(inputElement.name, inputElement.value);
 
     const facetsForm = this.closest('facets-form-component');
     if (!(facetsForm instanceof FacetsFormComponent)) return;
 
-    const formData = new FormData(form);
-    if (!inputElement.checked) formData.append(inputElement.name, inputElement.value);
-
     const urlParameters = facetsForm.createURLParameters(formData);
+
     const url = new URL(window.location.pathname, window.location.origin);
 
     for (const [key, value] of urlParameters) url.searchParams.append(key, value);
@@ -289,14 +181,6 @@ class FacetInputsComponent extends Component {
     if (inputElement.checked) url.searchParams.delete(inputElement.name, inputElement.value);
 
     sectionRenderer.getSectionHTML(this.sectionId, true, url);
-  }
-
-  /**
-   * @param {PointerEvent} event
-   */
-  prefetchPage = debounce((event) => {
-    if (!(event.target instanceof HTMLElement)) return;
-    this.#prefetchOption(event.target);
   }, 200);
 
   cancelPrefetchPage = () => this.prefetchPage.cancel();
@@ -332,31 +216,14 @@ if (!customElements.get('facet-inputs-component')) {
  * @extends {Component<PriceFacetRefs>}
  */
 class PriceFacetComponent extends Component {
-  /** @type {string} */
-  currency;
-  /** @type {string} */
-  moneyFormat;
-
   connectedCallback() {
     super.connectedCallback();
     this.addEventListener('keydown', this.#onKeyDown);
-    this.currency = this.dataset.currency ?? 'USD';
-    this.moneyFormat = this.#extractMoneyPlaceholder(this.dataset.moneyFormat ?? '{{amount}}');
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     this.removeEventListener('keydown', this.#onKeyDown);
-  }
-
-  /**
-   * Extracts the placeholder from a money format string, removing currency symbols.
-   * @param {string} format - The money format (e.g., "${{amount}}", "{{amount}} USD")
-   * @returns {string} Just the placeholder (e.g., "{{amount}}")
-   */
-  #extractMoneyPlaceholder(format) {
-    const match = format.match(/{{\s*\w+\s*}}/);
-    return match ? match[0] : '{{amount}}';
   }
 
   /**
@@ -388,36 +255,18 @@ class PriceFacetComponent extends Component {
   }
 
   /**
-   * Parses a formatted money value into minor units
-   * displayValue can come from user input or API response
-   * @param {string} displayValue - The display value (e.g., "10.50" for USD, "9,50" for EUR, "1000" for JPY)
-   * @param {string} currency - The currency code
-   * @returns {number} The value in minor units
-   */
-  #parseDisplayValue(displayValue, currency) {
-    return convertMoneyToMinorUnits(displayValue, currency) ?? 0;
-  }
-
-  /**
    * Adjusts input values to be within valid range
    * @param {HTMLInputElement} input - The input element to adjust
    */
   #adjustToValidValues(input) {
     if (input.value.trim() === '') return;
 
-    const { currency, moneyFormat } = this;
-    // Parse the user's input value using currency-aware parsing
-    const value = this.#parseDisplayValue(input.value, currency);
+    const value = Number(input.value);
+    const min = Number(formatMoney(input.getAttribute('data-min') ?? ''));
+    const max = Number(formatMoney(input.getAttribute('data-max') ?? ''));
 
-    // data-min and data-max now contain raw minor unit values (not formatted)
-    const min = this.#parseDisplayValue(input.getAttribute('data-min') ?? '0', currency);
-    const max = this.#parseDisplayValue(input.getAttribute('data-max') ?? '0', currency);
-
-    if (value < min) {
-      input.value = formatMoney(min, moneyFormat, currency);
-    } else if (value > max) {
-      input.value = formatMoney(max, moneyFormat, currency);
-    }
+    if (value < min) input.value = min.toString();
+    if (value > max) input.value = max.toString();
   }
 
   /**
@@ -460,14 +309,12 @@ class FacetClearComponent extends Component {
   connectedCallback() {
     super.connectedCallback();
     this.addEventListener('keyup', this.#handleKeyUp);
-    document.addEventListener(StandardEvents.searchUpdate, this.#handleFilterUpdate);
-    document.addEventListener(StandardEvents.collectionUpdate, this.#handleFilterUpdate);
+    document.addEventListener(ThemeEvents.FilterUpdate, this.#handleFilterUpdate);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    document.removeEventListener(StandardEvents.searchUpdate, this.#handleFilterUpdate);
-    document.removeEventListener(StandardEvents.collectionUpdate, this.#handleFilterUpdate);
+    document.removeEventListener(ThemeEvents.FilterUpdate, this.#handleFilterUpdate);
   }
 
   /**
@@ -518,19 +365,12 @@ class FacetClearComponent extends Component {
    * Toggle clear button visibility when filters are applied. Happens before the
    * Section Rendering Request resolves.
    *
-   * @param {SearchUpdateEvent | CollectionUpdateEvent} event
+   * @param {FilterUpdateEvent} event
    */
-  #handleFilterUpdate = (/** @type {SearchUpdateEvent | CollectionUpdateEvent} */ event) => {
-    // Ignore events from other sections (e.g. predictive search in header)
-    const eventSection = /** @type {Element | null} */ (event.target)?.closest('.shopify-section');
-    const mySection = this.closest('.shopify-section');
-    if (eventSection && mySection && eventSection !== mySection) return;
-
+  #handleFilterUpdate = (event) => {
     const { clearButton } = this.refs;
     if (clearButton instanceof Element) {
-      const filters =
-        event instanceof SearchUpdateEvent ? event.search?.productFilters ?? [] : event.productFilters ?? [];
-      clearButton.classList.toggle('facets__clear--active', filters.length > 0);
+      clearButton.classList.toggle('facets__clear--active', event.shouldShowClearAll());
     }
   };
 }
@@ -551,14 +391,12 @@ if (!customElements.get('facet-clear-component')) {
 class FacetRemoveComponent extends Component {
   connectedCallback() {
     super.connectedCallback();
-    document.addEventListener(StandardEvents.searchUpdate, this.#handleFilterUpdate);
-    document.addEventListener(StandardEvents.collectionUpdate, this.#handleFilterUpdate);
+    document.addEventListener(ThemeEvents.FilterUpdate, this.#handleFilterUpdate);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    document.removeEventListener(StandardEvents.searchUpdate, this.#handleFilterUpdate);
-    document.removeEventListener(StandardEvents.collectionUpdate, this.#handleFilterUpdate);
+    document.removeEventListener(ThemeEvents.FilterUpdate, this.#handleFilterUpdate);
   }
 
   /**
@@ -589,20 +427,12 @@ class FacetRemoveComponent extends Component {
    * Toggle clear button visibility when filters are applied. Happens before the
    * Section Rendering Request resolves.
    *
-   * @param {SearchUpdateEvent | CollectionUpdateEvent} event
+   * @param {FilterUpdateEvent} event
    */
-  #handleFilterUpdate = (/** @type {SearchUpdateEvent | CollectionUpdateEvent} */ event) => {
-    // Ignore events from other sections (e.g. predictive search in header)
-    const eventSection = /** @type {Element | null} */ (event.target)?.closest('.shopify-section');
-    const mySection = this.closest('.shopify-section');
-    if (eventSection && mySection && eventSection !== mySection) return;
-
+  #handleFilterUpdate = (event) => {
     const { clearButton } = this.refs;
     if (clearButton instanceof Element) {
-      const activeClass = this.getAttribute('active-class') || 'active';
-      const filters =
-        event instanceof SearchUpdateEvent ? event.search?.productFilters ?? [] : event.productFilters ?? [];
-      clearButton.classList.toggle(activeClass, filters.length > 0);
+      clearButton.classList.toggle('active', event.shouldShowClearAll());
     }
   };
 }
@@ -875,10 +705,7 @@ class FacetStatusComponent extends Component {
     facetStatus.innerHTML = Array.from(checkedInputElements)
       .map((inputElement) => {
         const swatch = inputElement.parentElement?.querySelector('span.swatch');
-        const span = document.createElement('span');
-        span.className = 'visually-hidden';
-        span.textContent = inputElement.getAttribute('aria-label') ?? '';
-        return (swatch?.outerHTML ?? '') + span.outerHTML;
+        return swatch?.outerHTML ?? '';
       })
       .join('');
   }
@@ -890,8 +717,6 @@ class FacetStatusComponent extends Component {
    */
   #updateBubbleSummary(checkedInputElements, checkedInputElementsCount) {
     const { facetStatus } = this.refs;
-    const filterStyle = this.dataset.filterStyle;
-
     facetStatus.classList.remove('bubble', 'facets__bubble');
 
     if (checkedInputElementsCount === 0) {
@@ -899,8 +724,8 @@ class FacetStatusComponent extends Component {
       return;
     }
 
-    if (filterStyle === 'horizontal' && checkedInputElementsCount === 1) {
-      facetStatus.textContent = checkedInputElements[0]?.dataset.label ?? '';
+    if (checkedInputElementsCount === 1) {
+      facetStatus.innerHTML = checkedInputElements[0]?.dataset.label ?? '';
       return;
     }
 
@@ -923,31 +748,29 @@ class FacetStatusComponent extends Component {
       return;
     }
 
-    const currency = facetStatus.dataset.currency || '';
-    const minInputNum = this.#parseCents(minInputValue, '0', currency);
-    const maxInputNum = this.#parseCents(maxInputValue, facetStatus.dataset.rangeMax, currency);
+    const minInputNum = this.#parseCents(minInputValue, '0');
+    const maxInputNum = this.#parseCents(maxInputValue, facetStatus.dataset.rangeMax);
     facetStatus.innerHTML = `${this.#formatMoney(minInputNum)}–${this.#formatMoney(maxInputNum)}`;
   }
 
   /**
-   * Parses a decimal number as minor units (cents for most currencies, but adjusted for zero-decimal currencies)
+   * Parses a decimal number as cents
    * @param {string} value - The stringified decimal number to parse
-   * @param {string} fallback - The fallback value in case `value` is invalid (formatted string like "11,400")
-   * @param {string} currency - The currency code (e.g., 'USD', 'JPY', 'KRW')
-   * @returns {number} The money value in minor units
+   * @param {string} fallback - The fallback value in case `value` is invalid
+   * @returns {number} The money value in cents
    */
-  #parseCents(value, fallback = '0', currency = '') {
-    // Try to parse the value
-    const result = convertMoneyToMinorUnits(value, currency);
-    if (result !== null) return result;
+  #parseCents(value, fallback = '0') {
+    const parts = value ? value.trim().split(/[^0-9]/) : (parseInt(fallback, 10) / 100).toString();
+    const [wholeStr, fractionStr, ...rest] = parts;
+    if (typeof wholeStr !== 'string' || rest.length > 0) return parseInt(fallback, 10);
 
-    // Fall back to parsing the fallback string (which may have formatting like "11,400")
-    const fallbackResult = convertMoneyToMinorUnits(fallback, currency);
-    if (fallbackResult !== null) return fallbackResult;
+    const whole = parseInt(wholeStr, 10);
+    let fraction = parseInt(fractionStr || '0', 10);
 
-    // Last resort: clean and parse as integer
-    const cleanFallback = fallback.replace(/[^\d]/g, '');
-    return parseInt(cleanFallback, 10) || 0;
+    // Use two most-significant digits, e.g. 1 -> 10, 12 -> 12, 123 -> 12.3, 1234 -> 12.34, etc
+    fraction = fraction * Math.pow(10, 2 - fraction.toString().length);
+
+    return whole * 100 + fraction;
   }
 
   /**
@@ -958,10 +781,67 @@ class FacetStatusComponent extends Component {
   #formatMoney(moneyValue) {
     if (!(this.refs.moneyFormat instanceof HTMLTemplateElement)) return '';
 
-    const format = this.refs.moneyFormat.content.textContent || '{{amount}}';
+    const template = this.refs.moneyFormat.content.textContent || '{{amount}}';
     const currency = this.refs.facetStatus.dataset.currency || '';
 
-    return formatMoney(moneyValue, format, currency);
+    return template.replace(/{{\s*(\w+)\s*}}/g, (_, placeholder) => {
+      if (typeof placeholder !== 'string') return '';
+      if (placeholder === 'currency') return currency;
+
+      let thousandsSeparator = ',';
+      let decimalSeparator = '.';
+      let precision = CURRENCY_DECIMALS[currency.toUpperCase()] ?? DEFAULT_CURRENCY_DECIMALS;
+
+      if (placeholder === 'amount') {
+        // Check first since it's the most common, use defaults.
+      } else if (placeholder === 'amount_no_decimals') {
+        precision = 0;
+      } else if (placeholder === 'amount_with_comma_separator') {
+        thousandsSeparator = '.';
+        decimalSeparator = ',';
+      } else if (placeholder === 'amount_no_decimals_with_comma_separator') {
+        // Weirdly, this is correct. It uses amount_with_comma_separator's
+        // behaviour but removes decimals, resulting in an unintuitive
+        // output that can't possibly include commas, despite the name.
+        thousandsSeparator = '.';
+        precision = 0;
+      } else if (placeholder === 'amount_no_decimals_with_space_separator') {
+        thousandsSeparator = ' ';
+        precision = 0;
+      } else if (placeholder === 'amount_with_space_separator') {
+        thousandsSeparator = ' ';
+        decimalSeparator = ',';
+      } else if (placeholder === 'amount_with_period_and_space_separator') {
+        thousandsSeparator = ' ';
+        decimalSeparator = '.';
+      } else if (placeholder === 'amount_with_apostrophe_separator') {
+        thousandsSeparator = "'";
+        decimalSeparator = '.';
+      }
+
+      return this.#formatCents(moneyValue, thousandsSeparator, decimalSeparator, precision);
+    });
+  }
+
+  /**
+   * Formats money in cents
+   * @param {number} moneyValue - The money value in cents (hundredths of one major currency unit)
+   * @param {string} thousandsSeparator - The thousands separator
+   * @param {string} decimalSeparator - The decimal separator
+   * @param {number} precision - The precision
+   * @returns {string} The formatted money value
+   */
+  #formatCents(moneyValue, thousandsSeparator, decimalSeparator, precision) {
+    const roundedNumber = (moneyValue / 100).toFixed(precision);
+
+    let [a, b] = roundedNumber.split('.');
+    if (!a) a = '0';
+    if (!b) b = '';
+
+    // Split by groups of 3 digits
+    a = a.replace(/\d(?=(\d\d\d)+(?!\d))/g, (digit) => digit + thousandsSeparator);
+
+    return precision <= 0 ? a : a + decimalSeparator + b.padEnd(precision, '0');
   }
 
   /**
@@ -975,3 +855,56 @@ class FacetStatusComponent extends Component {
 if (!customElements.get('facet-status-component')) {
   customElements.define('facet-status-component', FacetStatusComponent);
 }
+
+/**
+ * Default currency decimals used in most currenies
+ * @constant {number}
+ */
+const DEFAULT_CURRENCY_DECIMALS = 2;
+
+/**
+ * Decimal precision for currencies that have a non-default precision
+ * @type {Record<string, number>}
+ */
+const CURRENCY_DECIMALS = {
+  BHD: 3,
+  BIF: 0,
+  BYR: 0,
+  CLF: 4,
+  CLP: 0,
+  DJF: 0,
+  GNF: 0,
+  IQD: 3,
+  ISK: 0,
+  JOD: 3,
+  JPY: 0,
+  KMF: 0,
+  KRW: 0,
+  KWD: 3,
+  LYD: 3,
+  MRO: 5,
+  OMR: 3,
+  PYG: 0,
+  RWF: 0,
+  TND: 3,
+  UGX: 0,
+  UYI: 0,
+  UYW: 4,
+  VND: 0,
+  VUV: 0,
+  XAF: 0,
+  XAG: 0,
+  XAU: 0,
+  XBA: 0,
+  XBB: 0,
+  XBC: 0,
+  XBD: 0,
+  XDR: 0,
+  XOF: 0,
+  XPD: 0,
+  XPF: 0,
+  XPT: 0,
+  XSU: 0,
+  XTS: 0,
+  XUA: 0,
+};

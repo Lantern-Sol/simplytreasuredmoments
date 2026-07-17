@@ -18,24 +18,12 @@
   %}
 {%- enddoc -%}
 
-{% style %}
-  {% if request.visual_preview_mode %}
-    .collection-card {
-      min-width: 250px;
-    }
-  {% endif %}
-{% endstyle %}
-
 {% liquid
   assign onboarding = false
   assign block_settings = block.settings
 
   if collection == blank
     assign onboarding = true
-  endif
-
-  if block_settings.background_color != blank
-    render 'contrast-override', background_color: block_settings.background_color, section_id: block.id
   endif
 %}
 
@@ -46,19 +34,15 @@
     {% if block_settings.placement == 'on_image' %}collection-card--image-bg{% endif %}
     {% if section.settings.layout_type == 'bento' %}collection-card--image-height-fixed{% endif %}
     {% if section.settings.layout_type == 'editorial' %}collection-card--flexible-aspect-ratio{% endif %}
-    {% if block_settings.reveal_on_hover and block_settings.placement == 'on_image' %}collection-card--reveal-on-hover{% endif %}
-    {% if block_settings.background_color != blank %} color-custom-{{ block.id }}{% endif %}
+    {% if block_settings.inherit_color_scheme == false %} color-{{ block_settings.color_scheme }}{% endif %}
   "
   data-block-id="{{ block.id }}"
-  {% if onboarding %}
-    data-placeholder="true"
-  {% endif %}
   style="
     {% render 'border-override', settings: block_settings %}
     --horizontal-alignment: {{ block_settings.horizontal_alignment }};
     --vertical-alignment: {{ block_settings.vertical_alignment }};
     --background-overlay-color: {{ block_settings.overlay_color }};
-    --gap: {{ block_settings.collection_card_gap }}px;
+    --collection-card-gap: {{ block_settings.collection_card_gap }}px;
   "
   {{- block.shopify_attributes -}}
 >
@@ -82,7 +66,8 @@
   .collection-card {
     --fixed-card-height: var(--height-small);
 
-    flex: 1 1 var(--card-width-small);
+    width: 100%;
+    position: relative;
   }
 
   .collection-card > svg {
@@ -91,15 +76,26 @@
     aspect-ratio: var(--ratio);
   }
 
+  .collection-card__inner {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    gap: var(--collection-card-gap);
+    display: flex;
+    flex-direction: column;
+  }
+
   .collection-card--image-bg .collection-card__inner {
     height: 100%;
   }
 
   .collection-card__inner {
-    gap: var(--gap);
+    z-index: var(--layer-flat);
+    pointer-events: none;
 
     a,
     button {
+      /* only allow interactive elements to be clickable separate from .collection-card__link */
       pointer-events: auto;
     }
   }
@@ -110,8 +106,23 @@
   }
 
   .collection-card__content {
+    position: relative;
+    display: flex;
+    height: 100%;
+    width: 100%;
     max-width: 100%;
-    --flex-wrap: wrap;
+    gap: var(--collection-card-gap);
+    flex-direction: column;
+    align-items: var(--horizontal-alignment);
+    justify-content: var(--vertical-alignment);
+  }
+
+  .collection-card__link {
+    position: absolute;
+    inset: 0;
+
+    /* allows focus outline to have radius in supported browsers */
+    border-radius: var(--border-radius);
   }
 
   /* Nested image block rules */
@@ -120,18 +131,8 @@
     aspect-ratio: var(--ratio);
   }
 
-  @media screen and (max-width: 749px) {
-    .collection-card.collection-card--image-bg {
-      aspect-ratio: var(--ratio-mobile, var(--ratio));
-    }
-  }
-
   .collection-card.collection-card--image-bg .collection-card__content {
     padding: var(--padding-lg);
-  }
-
-  .collection-card--image-height-fixed {
-    height: 100%;
   }
 
   /* Bento layout rules */
@@ -145,7 +146,7 @@
     aspect-ratio: unset;
   }
 
-  .collection-card__image .resource-image__image {
+  .collection-card__image .image-block__image {
     object-fit: cover;
     width: 100%;
     height: 100%;
@@ -168,59 +169,24 @@
     &.collection-card .placeholder-svg {
       aspect-ratio: 99;
     }
-  }
 
-  /*
-    Hover reveal — mirrors the Media tile animation. Only active when the
-    card's content is placed ON the image (makes no sense for below-image).
-    Clip the inner so translated-down children disappear below the card edge.
-  */
-  .collection-card--reveal-on-hover .collection-card__inner {
-    overflow: hidden;
-    position: relative;
-  }
-
-  .collection-card--reveal-on-hover .collection-card__content {
-    justify-content: flex-end;
-    transform: translateY(var(--collection-card-reveal-offset, 4.25rem));
-    transition: transform 0.3s ease;
-  }
-
-  .collection-card--reveal-on-hover:hover .collection-card__content,
-  .collection-card--reveal-on-hover:focus-within .collection-card__content {
-    transform: translateY(0);
-  }
-
-  /* Keep extra content (anything after the first child — e.g., description +
-     button) invisible at rest; fade in during the slide-up. */
-  .collection-card--reveal-on-hover .collection-card__content > *:not(:first-child) {
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  .collection-card--reveal-on-hover:hover .collection-card__content > *:not(:first-child),
-  .collection-card--reveal-on-hover:focus-within .collection-card__content > *:not(:first-child) {
-    opacity: 1;
-  }
-
-  /*
-    Mobile has no hover, so show the revealed state by default. Matches the
-    :hover end-state above (slid up + extra children visible) without animating.
-  */
-  @media screen and (max-width: 749px) {
-    .collection-card--reveal-on-hover .collection-card__content {
-      transform: translateY(0);
+    .collection-card__image {
+      aspect-ratio: 99;
+      height: 100%;
     }
 
-    .collection-card--reveal-on-hover .collection-card__content > *:not(:first-child) {
-      opacity: 1;
+    .collection-card__inner {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
     }
-  }
 
-  @media (prefers-reduced-motion: reduce) {
-    .collection-card--reveal-on-hover .collection-card__content,
-    .collection-card--reveal-on-hover .collection-card__content > *:not(:first-child) {
-      transition: none;
+    .collection-card__content {
+      flex-shrink: 0;
+    }
+
+    &:not(.collection-card--image-bg) .collection-card__content {
+      height: auto;
     }
   }
 {% endstylesheet %}

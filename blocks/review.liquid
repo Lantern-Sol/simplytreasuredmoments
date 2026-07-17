@@ -1,3 +1,5 @@
+
+
 {% liquid
   assign block_settings = block.settings
   assign product = closest.product
@@ -12,17 +14,6 @@
     assign rating_count = product.metafields.reviews.rating_count | default: 3
   endif
 -%}
-
-{% if block_settings.text_color != blank %}
-  {% style %}
-    .rating-wrapper-{{ block.id }} {
-      --star-fill-color: {{ block_settings.text_color }};
-      --star-fill-color-rgb: {{ block_settings.text_color.rgb }};
-      --color: {{ block_settings.text_color }};
-      --color-rgb: {{ block_settings.text_color.rgb }};
-    }
-  {% endstyle %}
-{% endif %}
 
 {%- if rating != blank -%}
   {% liquid
@@ -43,8 +34,7 @@
   %}
 
   <div
-    class="rating-wrapper rating-wrapper-{{ block.id }} justify-{{ block_settings.alignment }} size-style"
-    style="{% render 'size-style', settings: block_settings %}"
+    class="rating-wrapper justify-{{ block_settings.alignment }} rating-color--{{ block_settings.rating_color }}"
     {{ block.shopify_attributes }}
   >
     <svg
@@ -74,7 +64,7 @@
         <svg
           class="stars {% if svg_filled_stars > 0 %}filled-star{% endif %}"
           viewBox="0 0 32 32"
-          style="--empty-star-fill-color: rgb(var(--star-fill-color-rgb) / var(--opacity-20))"
+          style="--empty-star-fill-color: rgb(var(--star-fill-color-rgb) / var(--opacity-20)"
           role="presentation"
         >
           <use xlink:href="#star"></use>
@@ -84,7 +74,7 @@
           <svg
             class="stars {% if star <= svg_filled_stars %}filled-star{% endif %}"
             viewBox="0 0 32 32"
-            style="--empty-star-fill-color:{% if block_settings.stars_style == 'outline' %}transparent{% else %}rgb(var(--star-fill-color-rgb) / var(--opacity-20)){% endif %}"
+            style="--empty-star-fill-color:{% if block_settings.stars_style == 'outline' %}transparent{% else %}rgb(var(--star-fill-color-rgb) / var(--opacity-20){% endif %}"
             role="presentation"
           >
             <use xlink:href="#star"{% if decimal_rating == 0.5 and star == svg_filled_stars %} fill="url(#half)"{% endif %}></use>
@@ -115,12 +105,19 @@
 
 {% stylesheet %}
   .rating-wrapper {
+    width: 100%;
+    gap: var(--gap-xs);
+    flex-wrap: wrap;
+  }
+
+  .rating-color--primary {
+    --star-fill-color: var(--color-primary);
+    --star-fill-color-rgb: var(--color-primary-rgb);
+  }
+
+  .rating-color--foreground {
     --star-fill-color: var(--color-foreground);
     --star-fill-color-rgb: var(--color-foreground-rgb);
-    --color: var(--color-foreground);
-    --color-rgb: var(--color-foreground-rgb);
-    gap: var(--gap-xs);
-    min-width: fit-content;
   }
 
   .rating-wrapper,
@@ -137,6 +134,7 @@
     gap: var(--gap-3xs);
   }
 
+  .rating-wrapper .rating-text,
   .rating-wrapper .rating-count,
   .rating-wrapper .rating-count-separator {
     color: var(--star-fill-color);
@@ -200,10 +198,20 @@
       "default": true
     },
     {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:settings.text_color",
-      "placeholder": "t:settings.default"
+      "type": "select",
+      "id": "rating_color",
+      "label": "t:settings.color",
+      "options": [
+        {
+          "value": "foreground",
+          "label": "t:options.text"
+        },
+        {
+          "value": "primary",
+          "label": "t:options.body"
+        }
+      ],
+      "default": "primary"
     },
     {
       "type": "header",
@@ -246,27 +254,10 @@
       "default": "paragraph"
     },
     {
-      "type": "select",
-      "id": "width",
-      "label": "t:settings.width",
-      "options": [
-        {
-          "value": "fit-content",
-          "label": "t:options.fit"
-        },
-        {
-          "value": "100%",
-          "label": "t:options.fill"
-        }
-      ],
-      "default": "100%"
-    },
-    {
       "type": "text_alignment",
       "id": "alignment",
       "label": "t:settings.alignment",
-      "default": "left",
-      "visible_if": "{{ block.settings.width != 'fit-content' }}"
+      "default": "left"
     }
   ],
   "presets": [
