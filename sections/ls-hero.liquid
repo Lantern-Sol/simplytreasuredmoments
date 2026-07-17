@@ -1,0 +1,484 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Nunito+Sans:wght@400;600;700&display=swap');
+
+  .section.ls-hero {
+    position: relative;
+    overflow: hidden;
+    min-height: 28rem;
+  }
+
+  .ls-hero__media {
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+    z-index: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ls-hero__media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ls-hero__content {
+    grid-column: 2;
+    grid-row: 1 / -1;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.5rem;
+    padding-bottom: 2rem;
+    width: 100%;
+    gap: 1.25rem;
+  }
+
+  .ls-hero__rating {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .ls-hero__rating svg {
+    width: 0.8125rem;
+    height: 0.8125rem;
+    color: #C8A45D;
+  }
+
+  .ls-hero__rating-text {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 18.2px;
+    color: var(--TMP-color-system-v2-Warm-Gold-900, #4D3B19);
+    margin-left: 0.375rem;
+  }
+
+  .ls-hero__heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 2rem;
+    line-height: 1.1;
+    color: #FFFFFF;
+    margin: 0;
+  }
+
+  .ls-hero__subtext {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.4375;
+    color: #FFFFFF;
+    margin: 0;
+    opacity: 0.92;
+  }
+
+  .ls-hero__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 3rem;
+    background-color: var(--color-primary-button-background, #C8A45D);
+    color: var(--color-primary-button-text, #FFFFFF);
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-decoration: none;
+    border-radius: 0.3125rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    letter-spacing: 0.02em;
+  }
+
+  .ls-hero__cta:hover {
+    background-color: var(--color-primary-button-hover-background, #b8943d);
+    color: var(--color-primary-button-text, #FFFFFF);
+  }
+
+  .ls-hero__trust {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .ls-hero__trust-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    text-align: center;
+    flex: 1;
+  }
+
+  .ls-hero__trust-item svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #FFFFFF;
+    opacity: 0.85;
+  }
+
+  .ls-hero__trust-label {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.625rem;
+    line-height: 1.3;
+    color: #FFFFFF;
+    opacity: 0.85;
+  }
+
+  /* Tablet */
+  @media (min-width: 40em) {
+    .ls-hero__content {
+      padding-left: 0.5rem; /* 48px from edge - 40px grid margin = 8px */
+      justify-content: center;
+    }
+
+    .ls-hero__rating,
+    .ls-hero__heading,
+    .ls-hero__subtext,
+    .ls-hero__cta,
+    .ls-hero__trust {
+      max-width: 31rem;
+    }
+
+    .ls-hero__heading {
+      font-size: 2.5rem;
+    }
+
+    .ls-hero__cta {
+      width: auto;
+      min-width: 16rem;
+    }
+
+    .ls-hero__trust {
+      justify-content: flex-start;
+    }
+  }
+
+  /* Desktop */
+  @media (min-width: 60em) {
+    .section.ls-hero {
+      min-height: 34.8125rem;
+      max-height: 34.8125rem;
+    }
+
+    .ls-hero__content {
+      padding-left: 2rem; /* 72px from edge - 40px grid margin = 32px */
+      padding-block: 3rem;
+      gap: 1.5rem;
+    }
+
+    .ls-hero__rating,
+    .ls-hero__heading,
+    .ls-hero__subtext,
+    .ls-hero__cta,
+    .ls-hero__trust {
+      max-width: 30.875rem;
+    }
+
+    .ls-hero__heading {
+      font-size: 2.75rem;
+      line-height: 3.025rem;
+      color: var(--color-foreground-heading, #192534);
+    }
+
+    .ls-hero__subtext {
+      font-size: 1.125rem;
+      line-height: 1.4375rem;
+      color: var(--color-foreground, #192534);
+      opacity: 1;
+    }
+
+    .ls-hero__cta {
+      width: 19.125rem;
+    }
+
+    .ls-hero__trust {
+      max-width: 19.125rem;
+      justify-content: space-between;
+    }
+
+    .ls-hero__trust-item svg {
+      color: #6A5D4D;
+      opacity: 1;
+    }
+
+    .ls-hero__trust-label {
+      font-size: 0.6875rem;
+      color: #6A5D4D;
+      opacity: 1;
+    }
+  }
+</style>
+
+<section
+  class="section section--full-width ls-hero color-{{ section.settings.color_scheme }}"
+  style="
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+>
+  <div class="ls-hero__media">
+    {%- if section.settings.image != blank -%}
+      <picture>
+        {%- if section.settings.image_mobile != blank -%}
+          <source
+            media="(max-width: 59.9375em)"
+            srcset="{{ section.settings.image_mobile | image_url: width: 780 }} 390w,
+                    {{ section.settings.image_mobile | image_url: width: 1080 }} 540w,
+                    {{ section.settings.image_mobile | image_url: width: 1440 }} 720w"
+            sizes="100vw"
+          >
+        {%- endif -%}
+        {{
+          section.settings.image
+          | image_url: width: 2880
+          | image_tag:
+            widths: '720, 1080, 1440, 1920, 2880',
+            sizes: '100vw',
+            fetchpriority: 'high',
+            loading: 'eager',
+            alt: section.settings.heading
+        }}
+      </picture>
+    {%- else -%}
+      <div style="width: 100%; height: 100%; background-color: var(--color-background, #FAFAFA);"></div>
+    {%- endif -%}
+  </div>
+
+  <div class="ls-hero__content">
+    {%- if section.settings.rating_text != blank -%}
+      <div class="ls-hero__rating">
+        {%- for i in (1..5) -%}
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 13 13" fill="none">
+            <path d="M12.324 5.09717L8.19165 4.66077L6.5 0.866455L4.80835 4.66077L0.676025 5.09717L3.76257 7.87903L2.90088 11.9431L6.5 9.86743L10.0991 11.9431L9.23743 7.87903L12.324 5.09717Z" fill="#4D3B19"/>
+          </svg>
+        {%- endfor -%}
+        <span class="ls-hero__rating-text">{{ section.settings.rating_text }}</span>
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.heading != blank -%}
+      <h1 class="ls-hero__heading">{{ section.settings.heading }}</h1>
+    {%- endif -%}
+
+    {%- if section.settings.subtext != blank -%}
+      <p class="ls-hero__subtext">{{ section.settings.subtext }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.button_label != blank -%}
+      <a
+        class="ls-hero__cta"
+        href="{{ section.settings.button_link }}"
+        {% if section.settings.button_link == blank %}role="link" aria-disabled="true"{% endif %}
+      >
+        {{ section.settings.button_label }}
+      </a>
+    {%- endif -%}
+
+    <div class="ls-hero__trust">
+      {%- if section.settings.trust_1_label != blank -%}
+        <div class="ls-hero__trust-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <g clip-path="url(#clip0_6268_3202)">
+              <path d="M0 4.50193C0 4.16951 0.269035 3.90002 0.600906 3.90002H12.7764C13.1082 3.90002 13.3772 4.16951 13.3772 4.50193V6.09012V6.7604V7.33132V16.394C13.1312 16.8081 13.0576 16.9322 12.6619 17.5978L8.66807 17.5976V16.3937H12.1754V5.10385H1.20181V16.3937H3.22104V17.5976H0.600906C0.269035 17.5976 0 17.3281 0 16.9957V4.50193Z" fill="#6A5D4D"/>
+              <path d="M22.7982 9.70054L13.3772 7.33128V6.09009L23.5454 8.64726C23.8127 8.71446 24 8.95509 24 9.23106V16.9957C24 17.3281 23.731 17.5977 23.399 17.5977H20.7685V16.3938H22.7982V9.70054ZM13.3772 16.3939L16.013 16.3938L16.0132 17.5977L12.6619 17.5978L13.3772 16.3939Z" fill="#6A5D4D"/>
+              <path d="M9.25523 17.0225C9.25523 18.7221 7.87972 20.1 6.18294 20.1C4.48617 20.1 3.11065 18.7221 3.11065 17.0225C3.11065 15.3229 4.48617 13.9451 6.18294 13.9451C7.87972 13.9451 9.25523 15.3229 9.25523 17.0225ZM6.18294 18.8961C7.21597 18.8961 8.05342 18.0573 8.05342 17.0225C8.05342 15.9877 7.21597 15.1489 6.18294 15.1489C5.14991 15.1489 4.31246 15.9877 4.31246 17.0225C4.31246 18.0573 5.14991 18.8961 6.18294 18.8961Z" fill="#6A5D4D"/>
+              <path d="M21.0235 17.0225C21.0235 18.7221 19.648 20.1 17.9512 20.1C16.2545 20.1 14.8789 18.7221 14.8789 17.0225C14.8789 15.3229 16.2545 13.9451 17.9512 13.9451C19.648 13.9451 21.0235 15.3229 21.0235 17.0225ZM17.9512 18.8961C18.9842 18.8961 19.8217 18.0573 19.8217 17.0225C19.8217 15.9877 18.9842 15.1489 17.9512 15.1489C16.9182 15.1489 16.0807 15.9877 16.0807 17.0225C16.0807 18.0573 16.9182 18.8961 17.9512 18.8961Z" fill="#6A5D4D"/>
+            </g>
+            <defs>
+              <clipPath id="clip0_6268_3202">
+                <rect width="24" height="24" fill="white"/>
+              </clipPath>
+            </defs>
+          </svg>
+          <span class="ls-hero__trust-label">
+            {{ section.settings.trust_1_label }}
+            {%- if section.settings.trust_1_line2 != blank -%}
+              <br>{{ section.settings.trust_1_line2 }}
+            {%- endif -%}
+          </span>
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.trust_2_label != blank -%}
+        <div class="ls-hero__trust-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
+            <g clip-path="url(#clip0_6268_3209)">
+              <path d="M14.4637 1.32353C14.4637 0.937743 14.7747 0.625 15.1582 0.625H16.8215C21.3365 0.625 25 4.3163 25 8.86155C25 13.4069 21.3365 17.0981 16.8215 17.0981L2.37489 17.1381L1.63568 16.3996L2.37489 15.6855L16.8215 15.701C20.5676 15.701 23.6111 12.637 23.6111 8.86155C23.6111 5.08614 20.5676 2.02206 16.8215 2.02206H15.1582C14.7747 2.02206 14.4637 1.70931 14.4637 1.32353Z" fill="#6A5D4D"/>
+              <path d="M7.50389 8.75845C7.77896 8.48961 8.21861 8.49597 8.48589 8.77267C8.75315 9.04936 8.74683 9.4916 8.47175 9.76044L7.50389 8.75845ZM1.63569 16.3996L8.4246 23.1829C8.69563 23.4559 8.69534 23.8981 8.42396 24.1707C8.15259 24.4434 7.71289 24.443 7.44188 24.1701L0.203078 16.8792C0.0715485 16.7467 -0.00160531 16.5666 2.67334e-05 16.3795C0.00165879 16.1922 0.0779401 16.0135 0.211759 15.8834C0.408625 15.6919 2.23093 13.9114 4.00549 12.1773L7.50389 8.75845L8.47175 9.76044L4.97328 13.1794C3.69301 14.4305 2.33813 15.7136 1.63569 16.3996Z" fill="#6A5D4D"/>
+            </g>
+            <defs>
+              <clipPath id="clip0_6268_3209">
+                <rect width="25" height="25" fill="white"/>
+              </clipPath>
+            </defs>
+          </svg>
+          <span class="ls-hero__trust-label">
+            {{ section.settings.trust_2_label }}
+            {%- if section.settings.trust_2_line2 != blank -%}
+              <br>{{ section.settings.trust_2_line2 }}
+            {%- endif -%}
+          </span>
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.trust_3_label != blank -%}
+        <div class="ls-hero__trust-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
+            <path d="M12.5 2.84375C15.2268 2.84375 17.4688 5.08571 17.4688 7.8125V10.6562H19.8125V22.1562H5.1875V10.6562H7.53125V7.8125C7.53125 5.08571 9.77321 2.84375 12.5 2.84375ZM5.75 21.5938H19.25V11.2188H5.75V21.5938ZM12.5 3.40625C10.0724 3.40625 8.09375 5.38487 8.09375 7.8125V10.6562H16.9062V7.8125C16.9062 5.38487 14.9276 3.40625 12.5 3.40625Z" fill="#6A5D4D" stroke="#6A5D4D"/>
+          </svg>
+          <span class="ls-hero__trust-label">
+            {{ section.settings.trust_3_label }}
+            {%- if section.settings.trust_3_line2 != blank -%}
+              <br>{{ section.settings.trust_3_line2 }}
+            {%- endif -%}
+          </span>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "LS Hero",
+  "tag": "section",
+  "class": "ls-hero-section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Hero image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Mobile image (optional)"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-ls-hero"
+    },
+    {
+      "type": "header",
+      "content": "Rating"
+    },
+    {
+      "type": "text",
+      "id": "rating_text",
+      "label": "Rating text",
+      "default": "5.0 | Trusted by thousands of families"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "A memory worth keeping. Handcrafted in every detail."
+    },
+    {
+      "type": "textarea",
+      "id": "subtext",
+      "label": "Subtext",
+      "default": "Commemorative coins crafted by hand in the USA, for missions, temples, family legacies, and every milestone worth remembering."
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Shop Coins Collection"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Trust badges"
+    },
+    {
+      "type": "text",
+      "id": "trust_1_label",
+      "label": "Badge 1 — line 1",
+      "default": "Free Shipping"
+    },
+    {
+      "type": "text",
+      "id": "trust_1_line2",
+      "label": "Badge 1 — line 2",
+      "default": "Orders +$99"
+    },
+    {
+      "type": "text",
+      "id": "trust_2_label",
+      "label": "Badge 2 — line 1",
+      "default": "60-Day Free"
+    },
+    {
+      "type": "text",
+      "id": "trust_2_line2",
+      "label": "Badge 2 — line 2",
+      "default": "Returns"
+    },
+    {
+      "type": "text",
+      "id": "trust_3_label",
+      "label": "Badge 3 — line 1",
+      "default": "Secure"
+    },
+    {
+      "type": "text",
+      "id": "trust_3_line2",
+      "label": "Badge 3 — line 2",
+      "default": "Checkout"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "LS Hero"
+    }
+  ]
+}
+{% endschema %}

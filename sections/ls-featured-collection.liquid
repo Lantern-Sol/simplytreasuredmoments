@@ -1,0 +1,270 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Nunito+Sans:wght@400;600;700&display=swap');
+
+  .ls-fc__wrapper {
+    grid-column: 2;
+  }
+
+  .ls-fc__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+
+  .ls-fc__heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 2rem;
+    line-height: 1.2;
+    color: #192534;
+    margin: 0;
+  }
+
+  .ls-fc__view-all {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 196px;
+    height: 2.5rem;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: #192534;
+    text-decoration: none;
+    border: 0.5px solid #192534;
+    border-radius: 3px;
+    background: transparent;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .ls-fc__view-all:hover {
+    background-color: #192534;
+    color: #FFFFFF;
+  }
+
+  .ls-fc__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+  }
+
+  .ls-fc__card {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .ls-fc__card-image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 303 / 331;
+    overflow: hidden;
+    border-radius: 4px;
+    background-color: #f5f5f5;
+  }
+
+  .ls-fc__card-image img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ls-fc__card-info {
+    padding-top: 0.625rem;
+  }
+
+  .ls-fc__card-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.1875rem;
+    margin-bottom: 0.375rem;
+  }
+
+  .ls-fc__card-rating svg {
+    width: 0.625rem;
+    height: 0.625rem;
+    flex-shrink: 0;
+  }
+
+  .ls-fc__card-rating-count {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.625rem;
+    color: #192534;
+    margin-left: 0.125rem;
+  }
+
+  .ls-fc__card-title {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.4;
+    color: #192534;
+    margin: 0 0 0.25rem;
+  }
+
+  .ls-fc__card-price {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    color: #192534;
+    margin: 0;
+  }
+
+  /* Mobile: 2 columns */
+  @media (max-width: 749px) {
+    .ls-fc__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .ls-fc__view-all {
+      width: auto;
+      padding: 0 1.25rem;
+    }
+
+    .ls-fc__heading {
+      font-size: 1.5rem;
+    }
+  }
+</style>
+
+<section
+  class="section section--full-width color-{{ section.settings.color_scheme }}"
+  style="
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+>
+  <div class="ls-fc__wrapper">
+    <div class="ls-fc__header">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="ls-fc__heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+
+      {%- if section.settings.button_label != blank -%}
+        <a
+          class="ls-fc__view-all"
+          href="{{ section.settings.button_link | default: '#' }}"
+        >
+          {{ section.settings.button_label }}
+        </a>
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.collection != blank -%}
+      <div class="ls-fc__grid">
+        {%- for product in section.settings.collection.products limit: section.settings.max_products -%}
+          <a class="ls-fc__card" href="{{ product.url }}">
+            <div class="ls-fc__card-image">
+              {%- if product.featured_image != blank -%}
+                {{
+                  product.featured_image
+                  | image_url: width: 720
+                  | image_tag:
+                    widths: '360, 540, 720',
+                    sizes: '(max-width: 749px) 45vw, 25vw',
+                    loading: 'lazy',
+                    alt: product.title
+                }}
+              {%- endif -%}
+            </div>
+
+            <div class="ls-fc__card-info">
+              <div class="ls-fc__card-rating">
+                {%- for i in (1..5) -%}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 13 13" fill="none">
+                    <path d="M12.324 5.09717L8.19165 4.66077L6.5 0.866455L4.80835 4.66077L0.676025 5.09717L3.76257 7.87903L2.90088 11.9431L6.5 9.86743L10.0991 11.9431L9.23743 7.87903L12.324 5.09717Z" fill="#B9AA99"/>
+                  </svg>
+                {%- endfor -%}
+                <span class="ls-fc__card-rating-count">({{ product.metafields.reviews.rating_count | default: 0 }})</span>
+              </div>
+
+              <p class="ls-fc__card-title">{{ product.title }}</p>
+              <p class="ls-fc__card-price">{{ product.price | money }}</p>
+            </div>
+          </a>
+        {%- endfor -%}
+      </div>
+    {%- else -%}
+      <p style="font-family: 'Nunito Sans', sans-serif; color: #192534; opacity: 0.5;">Select a collection in the theme editor to display products.</p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "LS Featured Collection",
+  "tag": "section",
+  "class": "ls-featured-collection-section",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Trending Gifts"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "View All"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "Maximum products",
+      "min": 4,
+      "max": 12,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "LS Featured Collection"
+    }
+  ]
+}
+{% endschema %}
