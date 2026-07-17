@@ -1,5 +1,3 @@
-
-
 {% liquid
   if section.settings.collection_list != blank
     assign section_collections = section.settings.collection_list
@@ -13,41 +11,23 @@
   elsif section.settings.layout_type == 'grid'
     assign max_items = section.settings.columns
   endif
-
-  case section.settings.layout_type
-    when 'grid'
-      assign classes = 'resource-list--grid'
-      capture styles
-        echo '--resource-list-column-gap-desktop: ' | append: section.settings.columns_gap | append: 'px;'
-        echo '--resource-list-row-gap-desktop: ' | append: section.settings.rows_gap | append: 'px;'
-        echo '--resource-list-columns: repeat(' | append: section.settings.columns | append: ', 1fr);'
-        echo '--resource-list-columns-mobile: repeat(' | append: section.settings.mobile_columns | append: ', 1fr);'
-        echo '--column-count-mobile: ' | append: section.settings.mobile_columns | append: ';'
-      endcapture
-    when 'bento'
-      assign classes = 'resource-list--bento'
-      capture styles
-        echo '--resource-list-column-gap-desktop: ' | append: section.settings.bento_gap | append: 'px;'
-        echo '--bento-gap: var(--resource-list-column-gap);'
-      endcapture
-    when 'carousel'
-      assign classes = 'resource-list__carousel'
-      capture styles
-        echo '--resource-list-column-gap-desktop: ' | append: section.settings.columns_gap | append: 'px;'
-        echo '--column-count: ' | append: section.settings.columns | append: ';'
-        echo '--column-count-mobile: 1;'
-        echo '--mobile-card-size: ' | append: section.settings.mobile_card_size | append: ';'
-      endcapture
-  endcase
 %}
 
-<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+{% liquid
+  if section.settings.background_color != blank
+    render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
+  endif
+%}
+
+<div
+  class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+></div>
 
 <div
   class="
     section
     section--{{ section.settings.section_width }}
-    color-{{ section.settings.color_scheme }}
+    {% if section.settings.background_color != blank %}color-custom-{{ section.id }}{% endif %}
     section-resource-list
     spacing-style
     gap-style
@@ -55,8 +35,8 @@
   style="
     {% render 'spacing-style', settings: section.settings %}
     {% render 'gap-style', value: section.settings.gap %}
-    {{ styles }}
   "
+  data-testid="collection-list"
 >
   <div class="section-resource-list__content">
     {%- content_for 'blocks' -%}
@@ -86,70 +66,15 @@
     assign list_items_array = list_items | strip | split: '<!--@list/split-->'
   %}
 
-  <div
-    class="
-      resource-list
-      {% if section.settings.layout_type == 'carousel' %}
-        force-full-width
-      {% endif %}
-      {% if section.settings.carousel_on_mobile and section.settings.layout_type != 'carousel' %}
-        hidden--mobile
-      {% endif %}
-      {{ classes }}
-    "
-    style="{{ styles }}"
-    {% if section.settings.layout_type == 'grid' %}
-      data-testid="collections-list-grid"
-    {% endif %}
-  >
-    {% case section.settings.layout_type %}
-      {% when 'grid' %}
-        {{ list_items }}
-      {% when 'bento' %}
-        {% render 'bento-grid', items: list_items_array %}
-      {% when 'carousel' %}
-        {% render 'resource-list-carousel',
-          ref: 'collectionListCarousel',
-          slides: list_items_array,
-          slide_count: max_items,
-          settings: section.settings,
-          slide_width_max: '450px'
-        %}
-      {% when 'editorial' %}
-        {% render 'editorial-collection-grid', items: list_items_array %}
-    {% endcase %}
-  </div>
-
-  {% if section.settings.layout_type != 'carousel' and section.settings.carousel_on_mobile %}
-    {% liquid
-      assign mobile_carousel_gap = section.settings.columns_gap
-      if section.settings.layout_type == 'bento'
-        assign mobile_carousel_gap = section.settings.bento_gap
-      endif
-    %}
-    <div
-      class="
-        resource-list
-        hidden--desktop
-        resource-list__carousel
-        force-full-width
-      "
-      style="
-        --resource-list-column-gap-desktop: {{ mobile_carousel_gap }}px;
-        --column-count: {{ section.settings.columns }};
-        --column-count-mobile: 1;
-        --mobile-card-size: {{ section.settings.mobile_card_size }};
-      "
-    >
-      {% render 'resource-list-carousel',
-        ref: 'collectionListCarouselMobile',
-        slides: list_items_array,
-        slide_count: max_items,
-        settings: section.settings,
-        slide_width_max: '450px'
-      %}
-    </div>
-  {% endif %}
+  {% render 'resource-list',
+    list_items: list_items,
+    list_items_array: list_items_array,
+    settings: section.settings,
+    carousel_ref: 'collectionList',
+    slide_count: max_items,
+    content_type: 'collections',
+    test_id: 'collections-list-grid'
+  %}
 </div>
 
 {% schema %}
@@ -405,10 +330,10 @@
       "default": 12
     },
     {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "t:settings.color_scheme",
-      "default": "scheme-1"
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "placeholder": "t:settings.default"
     },
     {
       "type": "header",
@@ -433,6 +358,34 @@
       "step": 1,
       "unit": "px",
       "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "use_mobile_padding",
+      "label": "Use mobile padding",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start-mobile",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ section.settings.use_mobile_padding }}"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end-mobile",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ section.settings.use_mobile_padding }}"
     }
   ],
   "presets": [
@@ -465,8 +418,6 @@
             "custom_width_mobile": 100,
             "height": "fit",
             "custom_height": 100,
-            "inherit_color_scheme": true,
-            "color_scheme": "",
             "background_media": "none",
             "video_position": "cover",
             "background_image_position": "cover",
@@ -484,7 +435,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<h3>Shop by collection</h3>",
+                "text": "t:html_defaults.shop_by_collection",
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
                 "font_size": "",
@@ -512,8 +463,6 @@
             "horizontal_alignment": "flex-start",
             "vertical_alignment": "flex-end",
             "placement": "on_image",
-            "inherit_color_scheme": true,
-            "color_scheme": "",
             "border": "none",
             "border_width": 1,
             "border_opacity": 100,
@@ -577,8 +526,6 @@
             "custom_width_mobile": 100,
             "height": "fit",
             "custom_height": 100,
-            "inherit_color_scheme": true,
-            "color_scheme": "",
             "background_media": "none",
             "video_position": "cover",
             "background_image_position": "cover",
@@ -596,7 +543,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<h3>Shop by collection</h3>",
+                "text": "t:html_defaults.shop_by_collection",
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
                 "font_size": "",
@@ -624,8 +571,6 @@
             "horizontal_alignment": "flex-start",
             "vertical_alignment": "flex-start",
             "placement": "on_image",
-            "inherit_color_scheme": true,
-            "color_scheme": "",
             "border": "none",
             "border_width": 1,
             "border_opacity": 100,
@@ -679,7 +624,6 @@
         "icons_shape": "none",
         "section_width": "page-width",
         "gap": 12,
-        "color_scheme": "",
         "padding-block-start": 48,
         "padding-block-end": 48
       }
@@ -705,8 +649,6 @@
             "custom_width_mobile": 100,
             "height": "fit",
             "custom_height": 100,
-            "inherit_color_scheme": true,
-            "color_scheme": "",
             "background_media": "none",
             "video_position": "cover",
             "background_image_position": "cover",
@@ -724,7 +666,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<h3>Shop by collection</h3>",
+                "text": "t:html_defaults.shop_by_collection",
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
                 "font_size": "",
@@ -752,8 +694,6 @@
             "horizontal_alignment": "flex-start",
             "vertical_alignment": "center",
             "placement": "below_image",
-            "inherit_color_scheme": true,
-            "color_scheme": "",
             "border": "none",
             "border_width": 1,
             "border_opacity": 100,
@@ -805,7 +745,6 @@
         "icons_shape": "circle",
         "section_width": "page-width",
         "gap": 12,
-        "color_scheme": "",
         "padding-block-start": 48,
         "padding-block-end": 48
       }
@@ -834,8 +773,6 @@
             "custom_width_mobile": 100,
             "height": "fit",
             "custom_height": 100,
-            "inherit_color_scheme": true,
-            "color_scheme": "",
             "background_media": "none",
             "video_position": "cover",
             "background_image_position": "cover",
@@ -857,7 +794,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<h3>Shop by collection</h3>",
+                "text": "t:html_defaults.shop_by_collection",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -868,10 +805,6 @@
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
@@ -891,8 +824,6 @@
             "horizontal_alignment": "flex-start",
             "vertical_alignment": "center",
             "collection_card_gap": 8,
-            "inherit_color_scheme": true,
-            "color_scheme": "",
             "border": "none",
             "border_width": 1,
             "border_opacity": 100,
@@ -913,7 +844,6 @@
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
-                "color": "var(--color-foreground)",
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
@@ -960,7 +890,6 @@
         "icons_shape": "none",
         "section_width": "page-width",
         "gap": 64,
-        "color_scheme": "",
         "padding-block-start": 48,
         "padding-block-end": 48
       }

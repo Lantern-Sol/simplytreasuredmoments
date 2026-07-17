@@ -1,5 +1,3 @@
-
-
 {% liquid
   assign block_settings = block.settings
   assign ratio = 1
@@ -11,6 +9,8 @@
       assign ratio = '4 / 5'
     when 'adapt'
       assign ratio = block_settings.image.aspect_ratio
+    when 'custom'
+      assign ratio = block_settings.custom_ratio | default: '1 / 1'
   endcase
 
   if ratio == 0 or ratio == null
@@ -19,10 +19,11 @@
 %}
 
 {% capture class %}
-  image-block image-block--{{ block.id }} image-block--height-{{ block_settings.height }} spacing-style size-style
+  image-block image-block--{{ block.id }} image-block--height-{{ block_settings.height }} spacing-style size-style{% if block_settings.hide_on_mobile %} hidden--mobile{% endif %}{% if block_settings.hide_on_desktop %} hidden--desktop{% endif %}
 {% endcapture %}
 
 {% capture style %}
+  --object-fit: {{ block_settings.image_fit | default: 'cover' }};
   --ratio: {{ ratio }};
   {% render 'size-style', settings: block_settings %}
   {% render 'spacing-style', settings: block_settings %}
@@ -55,7 +56,7 @@
     }}
   {%- else -%}
     <div class="placeholder-image border-style size-style" style="{{ image_border_style }}">
-      {{ 'detailed-apparel-1' | placeholder_svg_tag: 'hero__image' }}
+      {{ 'detailed-apparel-1' | placeholder_svg_tag: 'image-block__placeholder' }}
     </div>
   {%- endif -%}
 {% endcapture %}
@@ -80,16 +81,19 @@
 {% endif %}
 
 {% stylesheet %}
+  .image-block__placeholder {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: center center;
+    overflow: hidden;
+    position: relative;
+  }
+
   .placeholder-image {
     position: relative;
     aspect-ratio: var(--ratio);
     overflow: hidden;
-  }
-
-  placeholder-image img {
-    width: 100%;
-    height: 100%;
-    aspect-ratio: var(--ratio);
   }
 
   .image-block {
@@ -104,7 +108,7 @@
   }
 
   .image-block__image {
-    object-fit: cover;
+    object-fit: var(--object-fit, cover);
     aspect-ratio: var(--ratio);
   }
 {% endstylesheet %}
@@ -125,12 +129,25 @@
       "label": "t:settings.link"
     },
     {
+      "type": "checkbox",
+      "id": "hide_on_mobile",
+      "label": "Hide on mobile",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_desktop",
+      "label": "Hide on desktop",
+      "default": false
+    },
+    {
       "type": "header",
       "content": "t:content.size"
     },
     {
       "type": "select",
       "id": "image_ratio",
+      "label": "t:settings.aspect_ratio",
       "options": [
         {
           "value": "adapt",
@@ -147,10 +164,46 @@
         {
           "value": "landscape",
           "label": "t:options.landscape"
+        },
+        {
+          "value": "custom",
+          "label": "t:options.custom"
         }
       ],
-      "default": "adapt",
-      "label": "t:settings.aspect_ratio"
+      "default": "adapt"
+    },
+    {
+      "type": "text",
+      "id": "custom_ratio",
+      "label": "Custom ratio (e.g. 3 / 2)",
+      "default": "1 / 1",
+      "info": "Define a custom aspect ratio using width / height format. Use a space before and after the slash.",
+      "visible_if": "{{ block.settings.image_ratio == 'custom' }}"
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Image fit",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Cover"
+        },
+        {
+          "value": "contain",
+          "label": "Contain"
+        },
+        {
+          "value": "fill",
+          "label": "Fill"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        }
+      ],
+      "default": "cover",
+      "visible_if": "{{ block.settings.image_ratio == 'custom' }}"
     },
     {
       "type": "select",
@@ -274,6 +327,13 @@
       "visible_if": "{{ block.settings.border != 'none' }}"
     },
     {
+      "type": "color",
+      "id": "border_color",
+      "label": "t:settings.color",
+      "placeholder": "t:settings.default",
+      "visible_if": "{{ block.settings.border != 'none' }}"
+    },
+    {
       "type": "range",
       "id": "border_radius",
       "label": "t:settings.border_radius",
@@ -326,6 +386,60 @@
       "step": 1,
       "unit": "px",
       "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Mobile padding"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_mobile_padding",
+      "label": "Use mobile padding",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start-mobile",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.use_mobile_padding }}"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end-mobile",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.use_mobile_padding }}"
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start-mobile",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.use_mobile_padding }}"
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end-mobile",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.use_mobile_padding }}"
     }
   ],
   "presets": [

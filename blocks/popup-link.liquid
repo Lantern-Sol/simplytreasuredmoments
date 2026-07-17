@@ -1,5 +1,3 @@
-
-
 {% assign block_settings = block.settings %}
 
 <script
@@ -22,9 +20,16 @@
 
   <dialog
     ref="dialog"
-    class="popup-link__content dialog-modal color-{{ settings.popover_color_scheme }}{% if block_settings.behavior == 'drawer' %} popup-link__content--drawer dialog-drawer{% endif %}"
+    class="popup-link__content dialog-modal color-custom-popover{% if block_settings.behavior == 'drawer' %} popup-link__content--drawer dialog-drawer{% endif %}"
     scroll-lock
+    aria-labelledby="popup-dialog-heading"
   >
+    <h2
+      id="popup-dialog-heading"
+      class="visually-hidden"
+    >
+      {{ block_settings.heading }}
+    </h2>
     <div class="popup-link__inner">
       {% content_for 'blocks' %}
     </div>
@@ -224,13 +229,13 @@
       "name": "t:names.popup_link",
       "category": "t:categories.links",
       "settings": {
-        "heading": "Learn more"
+        "heading": "t:text_defaults.learn_more"
       },
       "blocks": {
         "text_pexwUk": {
           "type": "text",
           "settings": {
-            "text": "<h2>What is the return policy?</h2>",
+            "text": "t:html_defaults.return_policy",
             "alignment": "left",
             "padding-block-end": 16
           }
@@ -238,7 +243,7 @@
         "text_g7mEh7": {
           "type": "text",
           "settings": {
-            "text": "<p>Our goal is for every customer to be totally satisfied with their purchase. If this isn’t the case, let us know and we’ll do our best to work with you to make it right.</p>",
+            "text": "t:html_defaults.goal_for_every_customer",
             "alignment": "left"
           }
         }

@@ -7,6 +7,11 @@
   @param {string} [icon_style] - The style of the icon, defaults to 'arrow'
   @param {string} [icon_shape] - The shape of the icon background (none, circle, square), defaults to 'none'
   @param {string} [arrows_position] - { 'left' | 'center' | 'right' } The position of the arrows, defaults to 'center'
+  @param {image} [custom_icon] - The custom icon image
+  @param {number} [custom_icon_width] - The width of the custom icon
+  @param {boolean} [show_arrows_desktop=true] - Whether to show arrows on mobile
+  @param {boolean} [show_arrows_mobile=true] - Whether to show arrows on mobile
+  @param {string} [mobile_arrows_position='center'] - Mobile arrow position (top, center, bottom)
 
   @example
   {%- render 'slideshow-arrows' -%}
@@ -21,9 +26,85 @@
 <slideshow-arrows
   position="{{ arrows_position }}"
   {% if class %}
-    class="{{ class }}"
+    class="{{ class }}
+      {% if show_arrows_desktop == false %} max-lg:slideshow-controls__arrows--hidden-desktop{% endif %}
+      {% if show_arrows_mobile == false %} lg:slideshow-controls__arrows--hidden-mobile{% endif %}
+      slideshow-controls__arrows--{{ arrows_position }}
+      slideshow-controls__arrows--mobile-{{ mobile_arrows_position }}
+    "
+  {% else %}
+   class="
+      {% if show_arrows_desktop == false %} max-lg:slideshow-controls__arrows--hidden-desktop{% endif %}
+      {% if show_arrows_mobile == false %} lg:slideshow-controls__arrows--hidden-mobile{% endif %}
+      slideshow-controls__arrows--{{ arrows_position }}
+      slideshow-controls__arrows--mobile-{{ mobile_arrows_position }}
+   "
   {% endif %}
 >
-  {%- render 'slideshow-arrow', action: 'previous', icon_style: icon_style, icon_shape: icon_shape -%}
-  {%- render 'slideshow-arrow', action: 'next', icon_style: icon_style, icon_shape: icon_shape -%}
+  {%- render 'slideshow-arrow',
+    action: 'previous',
+    icon_style: icon_style,
+    icon_shape: icon_shape,
+    custom_icon: custom_icon,
+    custom_icon_width: custom_icon_width
+  -%}
+  {%- render 'slideshow-arrow',
+    action: 'next',
+    icon_style: icon_style,
+    icon_shape: icon_shape,
+    custom_icon: custom_icon,
+    custom_icon_width: custom_icon_width
+  -%}
 </slideshow-arrows>
+
+{% stylesheet %}
+  slideshow-arrows {
+    --cursor-previous: w-resize;
+    --cursor-next: e-resize;
+
+    position: absolute;
+    inset: 0;
+    display: flex;
+    z-index: var(--layer-heightened);
+    pointer-events: none;
+    mix-blend-mode: difference;
+    align-items: flex-end;
+
+    &[position='left'] {
+      justify-content: flex-start;
+      padding-inline: var(--padding-xs);
+    }
+
+    &[position='right'] {
+      justify-content: flex-end;
+      padding-inline: var(--padding-xs);
+    }
+
+    &[position='center'] {
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+
+  slideshow-arrows:has(.slideshow-control--shape-square),
+  slideshow-arrows:has(.slideshow-control--shape-circle) {
+    mix-blend-mode: normal;
+  }
+
+  slideshow-component[disabled='true'] slideshow-arrows {
+    display: none;
+  }
+
+  slideshow-arrows .slideshow-control {
+    pointer-events: auto;
+    opacity: 0;
+    min-height: var(--minimum-touch-target);
+    min-width: var(--minimum-touch-target);
+    padding: 0 var(--padding-xs);
+    color: var(--color-white);
+  }
+
+  slideshow-arrows .slideshow-control.slideshow-control--style-none {
+    display: none;
+  }
+{% endstylesheet %}

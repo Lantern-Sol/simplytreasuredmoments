@@ -1,5 +1,3 @@
-
-
 {%- doc -%}
   Renders product recommendations.
   {section.id} - identifies the parent section for the Section Rendering API
@@ -20,12 +18,20 @@
     when 'carousel'
       assign classes = 'resource-list--carousel'
   endcase
+
+  if block_settings.background_color != blank
+    render 'contrast-override', background_color: block_settings.background_color, section_id: block.id
+  endif
 %}
 
 {% comment %}
   [data-section-id] {section.id} - used to fetch the product recommendations from the Section Rendering API
 {% endcomment %}
 
+{% render 'quick-add-styles' %}
+{% render 'quick-add-modal-styles' %}
+{% render 'variant-picker-styles' %}
+{% render 'product-badges-styles' %}
 <product-recommendations
   id="product-recommendations-{{ block.id }}"
   class="product-recommendations"
@@ -34,6 +40,7 @@
   data-product-id="{{ closest.product.id }}"
   data-intent="{{ block_settings.recommendation_type }}"
   data-recommendations-performed="{{ recommendations.performed }}"
+  data-hydration-key="product-recommendations-{{ block.id }}"
   {% if request.visual_preview_mode %}
     data-shopify-editor-preview
   {% endif %}
@@ -42,7 +49,7 @@
 >
   <div
     class="
-      color-{{ section.settings.color_scheme }}
+      {% if block_settings.background_color != blank %}color-custom-{{ block.id }}{% endif %}
       block-resource-list
       spacing-style
       gap-style
@@ -53,6 +60,7 @@
       --resource-list-column-gap-desktop: {{ block_settings.columns_gap }}px;
       --resource-list-row-gap-desktop: {{ block_settings.rows_gap }}px;
       --resource-list-columns-mobile: repeat(auto-fill, minmax(9.25rem, 1fr));
+      --border-radius: {{ block_settings.border_radius }}px;
     "
   >
     <div class="section-resource-list__content">
@@ -170,23 +178,23 @@
 </product-recommendations>
 
 {% stylesheet %}
+  .block-resource-list {
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--gap);
+    min-width: 0;
+    min-height: 0;
+    container-type: inline-size;
+    container-name: resource-list;
+    border-radius: var(--border-radius, 0);
+  }
+
   .product-recommendations-wrapper {
     width: 100%;
   }
 
   .product-recommendations-wrapper:has(product-recommendations[data-shopify-editor-preview]) {
     width: 100vw;
-  }
-
-  .product-recommendations {
-    display: block;
-  }
-
-  .product-recommendations__skeleton-item {
-    aspect-ratio: 3 / 4;
-    background-color: var(--color-foreground);
-    opacity: var(--skeleton-opacity);
-    border-radius: 4px;
   }
 {% endstylesheet %}
 
@@ -355,10 +363,20 @@
       "default": 12
     },
     {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "t:settings.color_scheme",
-      "default": "scheme-1"
+      "type": "range",
+      "id": "border_radius",
+      "label": "t:settings.border_radius",
+      "min": 0,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "placeholder": "t:settings.default"
     },
     {
       "type": "header",
@@ -383,6 +401,80 @@
       "step": 1,
       "unit": "px",
       "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Mobile padding"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_mobile_padding",
+      "label": "Use mobile padding",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start-mobile",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.use_mobile_padding }}"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end-mobile",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.use_mobile_padding }}"
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start-mobile",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.use_mobile_padding }}"
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end-mobile",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.use_mobile_padding }}"
     }
   ],
   "presets": [
@@ -390,13 +482,16 @@
       "name": "t:names.product_recommendations",
       "category": "t:categories.product",
       "settings": {
-        "recommendation_type": "related"
+        "recommendation_type": "related",
+        "border_radius": 0,
+        "padding-inline-start": 0,
+        "padding-inline-end": 0
       },
       "blocks": {
         "heading": {
           "type": "text",
           "settings": {
-            "text": "<h4>You may also like</h4>"
+            "text": "t:html_defaults.may_also_like"
           }
         },
         "static-product-card": {
@@ -427,14 +522,13 @@
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
-                "type_preset": "rte",
+                "type_preset": "paragraph",
                 "font": "var(--font-body--family)",
                 "font_size": "1rem",
                 "line_height": "normal",
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
-                "color": "var(--color-foreground)",
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
@@ -459,7 +553,6 @@
                 "line_height": "normal",
                 "letter_spacing": "normal",
                 "case": "none",
-                "color": "var(--color-foreground)",
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,

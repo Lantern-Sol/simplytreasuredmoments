@@ -1,11 +1,30 @@
+{%- doc -%}
+  Outputs a comma-separated list of CSS timeline names for use as the value of
+  the `timeline-scope` CSS property on a slideshow container. Each entry is
+  `--<prefix>-<i>` for i in [0, count - 1].
+
+  Matches the 0-based naming convention used by snippets/slideshow-slide.liquid,
+  which sets `--slideshow-timeline: --slide-{{ index }}` where `index` is
+  `forloop.index0` from the parent gallery loop.
+
+  @param {number} count - Number of timelines to scope.
+  @param {string} prefix - Name prefix (without leading dashes).
+
+  @example
+  {% render 'timeline-scope', count: 5, prefix: 'slide' %}
+  → --slide-0, --slide-1, --slide-2, --slide-3, --slide-4
+{%- enddoc -%}
 {%- liquid
-  assign timeline_scope = ''
-
-  for index in (1..count)
-    assign scope = '--prefix-index, ' | replace: 'prefix', prefix | replace: 'index', index
-    assign timeline_scope = timeline_scope | append: scope
-  endfor
-
-  assign timeline_scope = timeline_scope | strip | split: ',' | compact | join: ','
+  if count and count > 0
+    assign last_index = count | minus: 1
+    for i in (0..last_index)
+      echo '--'
+      echo prefix
+      echo '-'
+      echo i
+      unless forloop.last
+        echo ', '
+      endunless
+    endfor
+  endif
 -%}
-{{- timeline_scope -}}

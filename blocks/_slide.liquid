@@ -1,5 +1,3 @@
-
-
 {% assign block_settings = block.settings %}
 {%- assign block_index = section.blocks | find_index: 'id', block.id -%}
 {%- assign section_index = section.index -%}
@@ -9,6 +7,20 @@
     assign preview_image = block_settings.image_1
     if block_settings.media_type_1 == 'video'
       assign preview_image = block_settings.video_1.preview_image
+    endif
+
+    assign rounded_image_corners = false
+    if block_settings.background_color == blank or section.settings.background_color == block_settings.background_color
+      assign rounded_image_corners = true
+    endif
+
+    if block_settings.background_color != blank
+      assign skip_slide_contrast = false
+      if section.settings.content_position == 'on-media'
+        assign skip_slide_contrast = true
+      endif
+      render 'contrast-override', background_color: block_settings.background_color, section_id: block.id, skip_contrast: skip_slide_contrast
+      assign class = 'color-custom-' | append: block.id
     endif
   %}
   {% if section.settings.slide_height == 'adapt_image' and block_index == 0 and preview_image != blank %}
@@ -24,7 +36,7 @@
     {% endstyle %}
   {% endif %}
 
-  <div class="slide__image-container">
+  <div class="slide__image-container{% if rounded_image_corners %} slide__image-container--rounded{% endif %}">
     {%- if block_settings.toggle_overlay -%}
       {% render 'overlay', settings: block_settings %}
     {%- endif -%}
@@ -88,7 +100,7 @@
     {%- endif -%}
   </div>
   <div
-    class="spacing-style slide__content{% if block_settings.inherit_color_scheme == false %} color-{{ block_settings.color_scheme }}{% endif %}{% if preview_image or block_settings.toggle_overlay %} background-transparent{% endif %}"
+    class="spacing-style slide__content {{ class }}{% if preview_image or block_settings.toggle_overlay %} background-transparent{% endif %}"
     style="{% render 'spacing-style', settings: block_settings %}"
     {{ block.shopify_attributes }}
   >
@@ -104,17 +116,13 @@
   </div>
 {% endcapture %}
 
-{%- capture class -%}
-  {%- if block_settings.inherit_color_scheme == false -%}
-    color-{{ block_settings.color_scheme }}
-  {%- endif -%}
-{%- endcapture -%}
-
 {% render 'slideshow-slide',
   index: block_index,
   class: class,
   children: children,
-  attributes: block.shopify_attributes
+  attributes: block.shopify_attributes,
+  slide_size: section.settings.slide_height,
+  navigate_to_slide: true
 %}
 
 {% stylesheet %}
@@ -122,6 +130,17 @@
     height: 100%;
     position: relative;
     z-index: var(--layer-flat);
+
+    @supports (animation-timeline: auto) {
+      opacity: 0;
+      animation: slide-reveal both linear;
+      animation-timeline: var(--slideshow-timeline);
+    }
+
+    @media (prefers-reduced-motion) {
+      opacity: 1;
+      animation: none;
+    }
   }
 
   .slide__content > * {
@@ -140,11 +159,6 @@
     position: absolute;
   }
 
-  .slide__image-container > placeholder-image,
-  .slide__image-container > placeholder-image > img {
-    width: 100%;
-  }
-
   .slide__image-container > .slide__image,
   .slide__image-container > .slide__video,
   .slide__image-container > .slide__video-poster {
@@ -158,6 +172,17 @@
   .slide__image-container > .slide__video-poster {
     position: absolute;
   }
+
+  /*
+   * Force Safari to recalculate the timeline state on timeline refresh (after loop)
+   */
+  slideshow-component[refreshing-timeline] .slide__content {
+    animation: none;
+  }
+
+  slideshow-slide .slide__image-container--rounded {
+    border-radius: var(--corner-radius, 0);
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -165,6 +190,30 @@
   "name": "t:names.slide",
   "tag": null,
   "blocks": [
+    {
+      "type": "_heading"
+    },
+    {
+      "type": "button"
+    },
+    {
+      "type": "text"
+    },
+    {
+      "type": "group"
+    },
+    {
+      "type": "image"
+    },
+    {
+      "type": "video"
+    },
+    {
+      "type": "icon"
+    },
+    {
+      "type": "jumbo-text"
+    },
     {
       "type": "@theme"
     },
@@ -342,17 +391,10 @@
       "content": "t:content.appearance"
     },
     {
-      "type": "checkbox",
-      "id": "inherit_color_scheme",
-      "label": "t:settings.inherit_color_scheme",
-      "default": true
-    },
-    {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "t:settings.color_scheme",
-      "default": "scheme-1",
-      "visible_if": "{{ block.settings.inherit_color_scheme == false }}"
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "placeholder": "t:settings.default"
     },
     {
       "type": "checkbox",
@@ -450,50 +492,36 @@
     {
       "name": "t:names.slide",
       "settings": {
-        "horizontal_alignment_flex_direction_column": "center"
+        "horizontal_alignment_flex_direction_column": "center",
+        "padding-inline-start": 48,
+        "padding-inline-end": 48,
+        "padding-block-start": 48,
+        "padding-block-end": 48
       },
       "blocks": {
-        "group": {
-          "type": "group",
+        "heading": {
+          "type": "text",
+          "name": "t:names.heading",
           "settings": {
-            "horizontal_alignment_flex_direction_column": "center",
-            "width": "custom",
-            "custom_width": 50,
-            "width_mobile": "custom",
-            "inherit_color_scheme": false,
-            "color_scheme": "scheme-6",
-            "custom_width_mobile": 85,
-            "padding-inline-start": 48,
-            "padding-inline-end": 48,
-            "padding-block-start": 48,
-            "padding-block-end": 48
-          },
-          "blocks": {
-            "heading": {
-              "type": "text",
-              "settings": {
-                "text": "<h2>New arrivals</h2>"
-              }
-            },
-            "text": {
-              "type": "text",
-              "settings": {
-                "text": "<p>Introducing our latest products, made especially for the season. Shop your favorites before they're gone!</p>",
-                "padding-block-end": 20
-              }
-            },
-            "button": {
-              "type": "button",
-              "settings": {
-                "label": "Shop now",
-                "link": "shopify://collections/all"
-              }
-            }
-          },
-          "block_order": ["heading", "text", "button"]
+            "text": "t:html_defaults.new_arrivals_h3"
+          }
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "t:html_defaults.latest_products",
+            "padding-block-end": 20
+          }
+        },
+        "button": {
+          "type": "button",
+          "settings": {
+            "label": "t:text_defaults.shop_now_button_label",
+            "link": "shopify://collections/all"
+          }
         }
       },
-      "block_order": ["group"]
+      "block_order": ["heading", "text", "button"]
     }
   ]
 }

@@ -1,12 +1,41 @@
+{% liquid
+  assign custom_color = false
+  if section.settings.background_color != blank or section.settings.text_color != blank
+    assign custom_color = true
+    render 'contrast-override', background_color: section.settings.background_color, text_color: section.settings.text_color, section_id: section.id
+  endif
+%}
 
+{% capture cart_page_more_blocks_content %}
+  <div class="cart-page__more-blocks">
+    {%- content_for 'blocks' -%}
+  </div>
+{% endcapture %}
 
-<cart-items-component
-  class="cart-items-component"
-  data-section-id="{{ section.id }}"
->
-  <div class="section-background color-{{ section.settings.color_scheme }}"></div>
+{% capture cart_items_children %}
+  <template id="empty-cart-template">
+    <div class="section-background{% if custom_color %} color-custom-{{ section.id }}{% endif %}"></div>
+    <div
+      class="section{% if custom_color %} color-custom-{{ section.id }}{% endif %} section--{{ section.settings.section_width }}"
+    >
+      <div
+        class="cart-page spacing-style{% if cart.empty? %} cart-page--empty{% endif %}"
+        style="{% render 'spacing-style', settings: section.settings %}"
+      >
+        <div class="cart-page__title">
+          {%- content_for 'block', id: 'cart-page-title', type: '_cart-title', force_empty: true %}
+        </div>
+        <div class="cart-page__items">
+          {%- content_for 'block', id: 'cart-page-items', type: '_cart-products', force_empty: true %}
+        </div>
+        {{ cart_page_more_blocks_content }}
+      </div>
+    </div>
+  </template>
+
+  <div class="section-background{% if custom_color %} color-custom-{{ section.id }}{% endif %}"></div>
   <div
-    class="section color-{{ section.settings.color_scheme }} section--{{ section.settings.section_width }}"
+    class="section{% if custom_color %} color-custom-{{ section.id }}{% endif %} section--{{ section.settings.section_width }}"
   >
     <div
       class="cart-page spacing-style{% if cart.empty? %} cart-page--empty{% endif %}"
@@ -26,21 +55,14 @@
         </div>
       {%- endunless -%}
 
-      <div class="cart-page__more-blocks">
-        {%- content_for 'blocks' -%}
-      </div>
+      {{ cart_page_more_blocks_content }}
     </div>
   </div>
-</cart-items-component>
+{% endcapture %}
+{% render 'cart-items-component', children: cart_items_children, section_id: section.id %}
 
 {% stylesheet %}
   .cart-page {
-    --cart-font-size--2xs: var(--font-size--2xs);
-    --cart-font-size--xs: var(--font-size--xs);
-    --cart-font-size--sm: var(--font-size--sm);
-    --cart-font-size--md: var(--font-size--md);
-    --cart-font-size--2xl: var(--font-size--2xl);
-
     display: grid;
     grid-template-columns: 1fr;
     gap: 0 var(--padding-5xl);
@@ -74,6 +96,10 @@
     padding-top: var(--padding-xl);
   }
 
+  .cart-page__title + .cart-page__items {
+    margin-block-start: var(--margin-lg);
+  }
+
   @media screen and (min-width: 750px) {
     .cart-page {
       grid-template-columns: 1fr min(50vw, var(--sidebar-width));
@@ -93,16 +119,12 @@
       position: relative;
     }
 
-    .section--page-width .cart-page:has(.cart__container--extend) {
+    .section--page-width .cart-page:has(.cart-summary--extend) {
       grid-column: 2 / 4;
       grid-template-columns: 1fr minmax(
           var(--sidebar-width),
           calc((100vw - var(--page-width)) / 2 + var(--sidebar-width))
         );
-    }
-
-    .cart__container--extend {
-      height: 100%;
     }
   }
 
@@ -166,10 +188,16 @@
       "default": "page-width"
     },
     {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "t:settings.color_scheme",
-      "default": "scheme-1"
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "placeholder": "t:settings.default"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:settings.text_color",
+      "placeholder": "t:settings.default"
     },
     {
       "type": "header",

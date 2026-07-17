@@ -1,3 +1,9 @@
+{% doc %}
+  Renders an inline SVG icon path. Used inside an `<svg>` element.
+
+  @param {string} icon - The icon name to render (e.g. 'apple', 'cart', 'search').
+{% enddoc %}
+
 {% # To be removed when we can use the icon static block instead %}
 
 {%- case icon -%}
@@ -396,19 +402,4 @@
     /><path
       d="M12.91 5.362h1.083v3.274H12.91V5.362Zm-2.98 0h1.084v3.274H9.93V5.362Z"
     />
-  {%- when 'ls-star' -%}
-    <path d="M6.5 0.5L8.02 4.13L12 4.635L9.25 7.32L9.94 11.28L6.5 9.47L3.06 11.28L3.75 7.32L1 4.635L4.98 4.13L6.5 0.5Z" fill="currentColor" />
-  {%- when 'ls-shipping' -%}
-    <path d="M1 4C1 3.44772 1.44772 3 2 3H14C14.5523 3 15 3.44772 15 4V8H18.382C18.7607 8 19.107 8.214 19.2764 8.5528L21.8944 13.7889C21.9639 13.9278 22 14.0811 22 14.2361V17C22 17.5523 21.5523 18 21 18H19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-    <path d="M15 18H9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-    <path d="M5 18H3C2.44772 18 2 17.5523 2 17V13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-    <circle cx="7" cy="18" r="2" fill="none" stroke="currentColor" stroke-width="1.5" />
-    <circle cx="17" cy="18" r="2" fill="none" stroke="currentColor" stroke-width="1.5" />
-  {%- when 'ls-returns' -%}
-    <path d="M3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10C17 13.866 13.866 17 10 17H4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-    <path d="M7 14L4 17L7 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-  {%- when 'ls-lock' -%}
-    <path d="M5 11C5 10.4477 5.44772 10 6 10H18C18.5523 10 19 10.4477 19 11V20C19 20.5523 18.5523 21 18 21H6C5.44772 21 5 20.5523 5 20V11Z" fill="none" stroke="currentColor" stroke-width="1.5" />
-    <path d="M8 10V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-    <circle cx="12" cy="15" r="1.5" fill="currentColor" />
 {%- endcase -%}

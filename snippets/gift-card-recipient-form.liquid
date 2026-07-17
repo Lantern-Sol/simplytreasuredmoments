@@ -1,16 +1,30 @@
-{% comment %}
+{% doc %}
   Renders gift card recipient form.
-  Accepts:
-  - product: {Object} product object.
-  - form: {Object} the product form object.
-  - section: {Object} section to which this snippet belongs.
 
-  Usage:
-  {% render 'gift-card-recipient-form', product: product, form: form, section: section, block: block %}
-{% endcomment %}
+  @param {object} product - The product object.
+  @param {object} form - The product form object.
+  @param {object} section - The section object to which this snippet belongs.
+  @param {block} block - The block object, used for element IDs, editor attributes, and recipient form / input custom styling.
+{% enddoc %}
+
+<script
+  src="{{ 'gift-card-recipient-form.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
 
 <gift-card-recipient-form
   class="recipient-form"
+  style="
+    {% if block.settings.input_style == 'custom' %}
+      {% render 'input-custom-styles', block_settings: block.settings %}
+      --style-border-width-inputs: {{ block.settings.border_width }}px;
+      --style-border-radius-inputs: {{ block.settings.border_radius }}px;
+    {% endif %}
+    {% if block.settings.recipient_button_style == 'custom' or block.settings.selected_recipient_button_style == 'custom' %}
+      {% render 'gift-card-recipient-button-custom-styles', block_settings: block.settings %}
+    {% endif %}
+  "
   data-section-id="{{ section.id }}"
   data-product-variant-id="{{ product.selected_or_first_available_variant.id }}"
 >
@@ -63,6 +77,7 @@
           autocorrect="off"
           autocapitalize="off"
           autocomplete="email"
+          pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
           value="{{ form.email }}"
           {% if form.errors contains 'email' %}
             aria-invalid="true"
@@ -217,175 +232,4 @@
   ></div>
 </gift-card-recipient-form>
 
-{% stylesheet %}
-  .recipient-form {
-    --options-border-radius: var(--variant-picker-button-radius);
-    --options-border-width: var(--variant-picker-button-border-width);
-
-    display: flex;
-    flex-direction: column;
-    padding-bottom: var(--padding-2xl);
-  }
-
-  .recipient-form__send-to {
-    padding: 0;
-    margin-block-end: var(--margin-xs);
-  }
-
-  .gift-card-form-option {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--gap-sm);
-    padding: 0;
-    border: none;
-  }
-
-  .gift-card-form-option__button-label {
-    display: flex;
-    align-items: center;
-    position: relative;
-    padding-block: var(--padding-sm);
-    padding-inline: var(--padding-lg);
-    border: var(--style-border-width) solid var(--color-variant-border);
-    border-radius: var(--options-border-radius);
-    border-width: var(--options-border-width);
-    overflow: clip;
-    justify-content: center;
-    min-width: auto;
-    background-color: var(--color-variant-background);
-    color: var(--color-variant-text);
-    transition: background-color var(--animation-speed) var(--animation-easing),
-      border-color var(--animation-speed) var(--animation-easing);
-
-    &:hover {
-      background-color: var(--color-variant-hover-background);
-      border-color: var(--color-variant-hover-border);
-      color: var(--color-variant-hover-text);
-    }
-  }
-
-  .gift-card-form-option__button-label:has(:focus-visible) {
-    --variant-picker-stroke-color: var(--color-foreground);
-
-    border-color: var(--color-foreground);
-    outline: var(--focus-outline-width) solid var(--color-foreground);
-    outline-offset: var(--focus-outline-offset);
-  }
-
-  .gift-card-form-option__button-label:has(:checked) {
-    color: var(--color-selected-variant-text);
-    background-color: var(--color-selected-variant-background);
-    border-color: var(--color-selected-variant-border);
-    transition: background-color var(--animation-speed) var(--animation-easing),
-      border-color var(--animation-speed) var(--animation-easing);
-
-    &:hover {
-      background-color: var(--color-selected-variant-hover-background);
-      border-color: var(--color-selected-variant-hover-border);
-      color: var(--color-selected-variant-hover-text);
-    }
-  }
-
-  .gift-card-form-option__button-label input {
-    /* remove the checkbox from the page flow */
-    position: absolute;
-
-    /* set the dimensions to match those of the label */
-    inset: 0;
-
-    /* hide it */
-    opacity: 0;
-    margin: 0;
-    cursor: pointer;
-    width: 100%;
-    height: 100%;
-  }
-
-  .recipient-fields {
-    display: flex;
-    flex-direction: column;
-    gap: var(--gap-sm);
-    transition: opacity 0.3s var(--animation-easing);
-    padding-block-start: var(--padding-xl);
-  }
-
-  .recipient-fields[hidden] {
-    display: none;
-  }
-
-  .field--send-on {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .recipient-form__message {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: var(--gap-sm);
-    margin-top: var(--margin-sm);
-  }
-
-  .recipient-form-field-label {
-    position: absolute;
-    left: var(--padding-sm);
-    bottom: var(--padding-sm);
-    font-style: italic;
-  }
-
-  .recipient-fields__textarea {
-    min-height: 5.5rem;
-    overflow-y: auto;
-
-    /* Space for the character count */
-    padding-bottom: calc(var(--padding-sm) * 3);
-    scroll-padding-bottom: calc(var(--padding-sm) * 3);
-  }
-
-  .recipient-fields__input {
-    flex-grow: 1;
-    transition: background-color var(--animation-speed) ease;
-    padding: var(--input-padding);
-    background-color: var(--color-input-background);
-    color: var(--color-input-text);
-    text-align: left;
-    font-size: var(--font-paragraph--size);
-    border: var(--style-border-width-inputs) solid var(--color-input-border);
-    border-radius: var(--style-border-radius-inputs);
-
-    &:autofill {
-      background-color: var(--color-input-background);
-      color: var(--color-input-text);
-    }
-
-    &:is(:focus) {
-      outline-color: var(--color-input-background);
-    }
-  }
-  /* Date picker calendar icon cursor */
-  .field--send-on .recipient-fields__input::-webkit-calendar-picker-indicator {
-    cursor: pointer;
-  }
-
-  /* For Webkit browsers - text cursor for input area */
-  .field--send-on .recipient-fields__input::-webkit-datetime-edit {
-    cursor: text;
-  }
-
-  /* Fallback for other browsers */
-  .field--send-on .recipient-fields__input {
-    cursor: text;
-  }
-
-  /* For Firefox - entire field is clickable, so show pointer */
-  @supports (-moz-appearance: none) {
-    .field--send-on .recipient-fields__input {
-      cursor: pointer;
-    }
-  }
-
-  .field--send-on .recipient-fields__input:hover::-webkit-calendar-picker-indicator {
-    cursor: pointer;
-    opacity: 1;
-  }
-{% endstylesheet %}
+{% render 'gift-card-recipient-form-styles' %}

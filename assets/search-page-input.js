@@ -12,15 +12,6 @@ class SearchPageInputComponent extends Component {
   requiredRefs = ['searchPageInput'];
 
   /**
-   * Handles the click event on the clear button and submits an empty search.
-   * This clears the search input and resubmits the form if the page is not
-   * already in an empty state.
-   */
-  handleClearClick() {
-    this.#submitEmptySearch();
-  }
-
-  /**
    * Handles the keydown event on the search input and resets the search when
    * empty and Escape is pressed.
    *

@@ -1,5 +1,3 @@
-
-
 <script
   src="{{ 'marquee.js' | asset_url }}"
   type="module"
@@ -8,12 +6,15 @@
 
 {% assign block_settings = block.settings %}
 {% assign gap_between_elements = block_settings.gap_between_elements %}
+{% if block.settings.background_color != blank %}
+  {% render 'contrast-override', background_color: block.settings.background_color, section_id: block.id %}
+{% endif %}
 
 <marquee-component
   class="
     spacing-style
     gap-style
-    {% if block_settings.inherit_color_scheme == false %}color-{{ block_settings.color_scheme }}{% endif %}
+    {% if block.settings.background_color != blank %} color-custom-{{ block.id }}{% endif %}
   "
   style="
     {%- render 'spacing-style', settings: block_settings %};
@@ -21,7 +22,7 @@
     --marquee-direction: {{ block_settings.movement_direction }};
     {%- if block_settings.transparent_background == true -%}background-color: transparent;{%- endif -%}
   "
-  data-speed-factor="20"
+  data-speed-factor="25"
   data-movement-direction="{{ block_settings.movement_direction }}"
 >
   <div
@@ -32,7 +33,10 @@
       class="marquee__content"
       ref="content"
     >
-      <div class="marquee__repeated-items">
+      <div
+        class="marquee__repeated-items"
+        ref="marqueeItems[]"
+      >
         {% content_for 'blocks' %}
       </div>
     </div>
@@ -133,17 +137,10 @@
       "default": "normal"
     },
     {
-      "type": "checkbox",
-      "id": "inherit_color_scheme",
-      "label": "t:settings.inherit_color_scheme",
-      "default": true
-    },
-    {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "t:settings.color_scheme",
-      "default": "scheme-1",
-      "visible_if": "{{ block.settings.inherit_color_scheme == false }}"
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "placeholder": "t:settings.default"
     },
     {
       "type": "checkbox",
@@ -194,7 +191,7 @@
         "text": {
           "type": "text",
           "settings": {
-            "text": "<p>We make things that work better and last longer.</p>",
+            "text": "t:html_defaults.make_things_better",
             "type_preset": "custom",
             "font": "var(--font-body--family)",
             "font_size": "var(--font-size--h2)",

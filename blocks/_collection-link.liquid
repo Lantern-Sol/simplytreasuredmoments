@@ -1,5 +1,3 @@
-
-
 {%- doc -%}
   Renders a collection link block.
 
@@ -12,13 +10,20 @@
   {% assign loading = 'lazy' %}
 {% endunless %}
 
+{% liquid
+  assign onboarding = false
+  if closest.collection == empty
+    assign onboarding = true
+  endif
+%}
+
 {% if block.settings.show_count %}
   {% assign count = closest.collection.all_products_count %}
   {%- capture count -%}
     &nbsp;<sup class="collection-links__count">{{ count }}</sup>
   {%- endcapture -%}
 
-  {% if closest.collection == empty %}
+  {% if onboarding %}
     {%- capture count -%}
       &nbsp;<sup class="collection-links__count">5</sup>
     {%- endcapture -%}
@@ -34,7 +39,7 @@
     assign placeholder_variant = index | modulo: 4 | plus: 1
     assign placeholder_name = 'collection-apparel-' | append: placeholder_variant
   -%}
-  {% content_for 'block', type: '_image', id: 'image', loading: loading, placeholder: placeholder_name %}
+  {% content_for 'block', type: '_image', id: 'image', loading: loading, placeholder: placeholder_name, decorative_image: true %}
 {% endcapture %}
 
 {% if image_only %}
@@ -42,6 +47,11 @@
     href="{{ closest.collection.url }}"
     class="collection-links__image"
     size="{{ section.settings.image_height }}"
+    tabindex="-1"
+    aria-hidden="true"
+    {% if onboarding %}
+      data-placeholder="true"
+    {% endif %}
   >
     {{ image_block }}
   </a>
@@ -52,7 +62,14 @@
     ref="links[]"
     on:pointerenter="/select/{{ index }}"
     on:focus="/select/{{ index }}"
+    {% if section.settings.layout == 'text' %}
+      on:pointerleave="/clearSelections"
+      on:blur="/clearSelections"
+    {% endif %}
     aria-current="{{ current }}"
+    {% if onboarding %}
+      data-placeholder="true"
+    {% endif %}
     {{ block.shopify_attributes }}
   >
     {{ title_block }}
@@ -80,32 +97,41 @@
     text-wrap: pretty;
     font-size: clamp(var(--min-font-size), 4.5vw, var(--max-font-size));
 
+    /* When hovering over container, dim non-current links (text layout only) */
     @media (hover: hover) {
-      opacity: var(--disabled-opacity);
+      collection-links-component:not([layout='spotlight']) .collection-links__container:hover & {
+        opacity: var(--opacity-subdued-text);
+      }
+
+      collection-links-component:not([layout='spotlight']) .collection-links__container:hover &[aria-current='true'] {
+        opacity: 1;
+      }
     }
 
     [layout='spotlight'] & {
+      /* Spotlight layout: dimmed by default */
       opacity: var(--disabled-opacity);
-    }
 
-    &[aria-current='true'] {
-      opacity: 1;
+      &[aria-current='true'] {
+        opacity: 1;
+      }
     }
 
     .text-block {
       display: inline-block;
     }
 
-    @media (max-width: 749px) {
+    @media screen and (max-width: 749px) {
       --min-font-size: var(--font-size--3xl);
       --max-font-size: var(--font-size--5xl);
 
       [layout='spotlight'] & {
-        white-space: nowrap;
+        white-space: normal;
         scroll-snap-align: start;
+        text-wrap: pretty;
 
         span {
-          text-wrap: nowrap;
+          text-wrap: pretty;
         }
       }
     }

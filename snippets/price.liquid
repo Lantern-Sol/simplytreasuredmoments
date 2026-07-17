@@ -23,52 +23,124 @@
     assign price = 1999
   endif
 
-  # Checks if product handle matches the closest product's handle (i.e. product page)
-  # and if the currency code is enabled for product pages
-  if product.handle == closest.product.handle and settings.currency_code_enabled_product_pages
+  # Check if variant has volume pricing
+  assign has_volume_pricing = null
+  assign price_min = null
+  assign price_max = null
+
+  # For product cards (collection/search pages), calculate min/max across all variants
+  # For product pages, only use the selected variant's pricing
+  assign is_product_card = false
+  if template.name != 'product'
+    assign is_product_card = true
+  endif
+
+  assign show_from_prefix = false
+  if is_product_card
+    assign price_min = product_resource.price_min
+    assign price_max = product_resource.price_max
+    assign has_volume_pricing = product_resource.quantity_price_breaks_configured? | default: false
+
+    if product_resource.price_varies and has_volume_pricing == false
+      assign show_from_prefix = true
+    endif
+  else
+    # Product page: only use selected variant's pricing
+    if selected_variant.quantity_price_breaks.size > 0
+      assign has_volume_pricing = true
+      assign price_min = selected_variant.quantity_price_breaks.last.price
+      assign price_max = selected_variant.price
+    endif
+  endif
+
+  # Determine if currency code should be shown
+  assign use_currency = false
+  if product.handle == product_resource.handle
+    if settings.currency_code_enabled_product_pages
+      assign use_currency = true
+    endif
+  elsif settings.currency_code_enabled_product_cards
+    assign use_currency = true
+  endif
+
+  # Format all prices
+  if use_currency
     assign price = price | money_with_currency
     assign compare_at_price = compare_at_price | money_with_currency
-
-    # Checks if product handle does not match the closest product's handle (i.e. product card)
-    # and if the currency code is enabled for product cards
-  elsif product.handle != closest.product.handle and settings.currency_code_enabled_product_cards
-    assign price = price | money_with_currency
-    assign compare_at_price = compare_at_price | money_with_currency
-
+    assign price_min = price_min | money_with_currency
+    assign price_max = price_max | money_with_currency
   else
     assign price = price | money
     assign compare_at_price = compare_at_price | money
+    assign price_min = price_min | money
+    assign price_max = price_max | money
   endif
 -%}
 
 <div ref="priceContainer">
-  {% if show_sale_price_first == false and show_compare_price %}
-    <span role="group">
-      <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
-      <span class="compare-at-price">{{- compare_at_price -}}</span>
-    </span>
-  {% endif %}
-
-  {% if show_compare_price %}
-    <span role="group">
-      <span class="visually-hidden">{{ 'content.price_sale' | t }}&nbsp;</span>
-      <span class="price">{{ price | default: '&nbsp;' }}</span>
+  {% if has_volume_pricing %}
+    {% comment %} Volume pricing display {% endcomment %}
+    {% if show_compare_price %}
+      <span class="price-item__group">
+        <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
+        <span class="compare-at-price">{{- compare_at_price -}}</span>
+      </span>
+    {% endif %}
+    <span class="price-item__group">
+      <span class="visually-hidden">{{ 'content.price_range' | t }}&nbsp;</span>
+      <span class="price">{{ price_min }} - {{ price_max }}</span>
     </span>
   {% else %}
-    <span class="price">{{ price | default: '&nbsp;' }}</span>
-  {% endif %}
-
-  {% if show_sale_price_first == true and show_compare_price %}
-    <span role="group">
-      <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
-      <span class="compare-at-price">{{- compare_at_price -}}</span>
-    </span>
+    {% comment %} Standard pricing display {% endcomment %}
+    {%- liquid
+      if show_from_prefix
+        assign display_price = 'content.price_from' | t: price: price_min
+      else
+        assign display_price = price | default: '&nbsp;'
+      endif
+    -%}
+    <div
+      class="
+        price__regular
+        {% if show_compare_price %}
+          price__hidden
+        {% endif %}
+      "
+    >
+      <span class="price">{{ display_price }}</span>
+    </div>
+    <div
+      class="
+        price__sale
+        {% unless show_compare_price %}
+          price__hidden
+        {% endunless %}
+      "
+    >
+      {% if show_sale_price_first %}
+        <span class="price-item__group">
+          <span class="visually-hidden">{{ 'content.price_sale' | t }}&nbsp;</span>
+          <span class="price-item--sale price">{{ price | default: '&nbsp;' }}</span>
+        </span>
+        <span class="price-item__group">
+          <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
+          <span class="price-item--regular compare-at-price">{{- compare_at_price -}}</span>
+        </span>
+      {% else %}
+        <span class="price-item__group">
+          <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
+          <span class="price-item--regular compare-at-price">{{- compare_at_price -}}</span>
+        </span>
+        <span class="price-item__group">
+          <span class="visually-hidden">{{ 'content.price_sale' | t }}&nbsp;</span>
+          <span class="price-item--sale price">{{ price | default: '&nbsp;' }}</span>
+        </span>
+      {% endif %}
+    </div>
   {% endif %}
   {%- if selected_variant.unit_price and show_unit_price %}
     {%- liquid
-      if product.handle == closest.product.handle and settings.currency_code_enabled_product_pages
-        assign unit_price = selected_variant.unit_price | money_with_currency
-      elsif product.handle != closest.product.handle and settings.currency_code_enabled_product_cards
+      if use_currency
         assign unit_price = selected_variant.unit_price | money_with_currency
       else
         assign unit_price = selected_variant.unit_price | money
@@ -77,3 +149,11 @@
     {% render 'unit-price', price: unit_price, measurement: selected_variant.unit_price_measurement %}
   {%- endif -%}
 </div>
+{%- if has_volume_pricing -%}
+  <small
+    ref="volumePricingNote"
+    class="volume-pricing-note"
+  >
+    {{- 'content.volume_pricing_available' | t -}}
+  </small>
+{%- endif -%}

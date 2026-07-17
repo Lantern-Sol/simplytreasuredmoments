@@ -1,5 +1,3 @@
-
-
 {% assign block_settings = block.settings %}
 
 {%- if block_settings.zoom -%}
@@ -160,11 +158,11 @@
       }
 
       /* Desktop constraint wrapper sizing */
-      /* @media screen and (min-width: 750px) {
+      @media screen and (min-width: 750px) {
         .product-media-constraint-wrapper {
           width: min(100%, calc(var(--constrained-height) * {{ block_settings.aspect_ratio }}));
         }
-      } */
+      }
     {% endif %}
 
     /* Constrain all deferred-media content to parent bounds when specific aspect ratio is set */
@@ -423,7 +421,7 @@
   {%- if block_settings.zoom -%}
     <zoom-dialog
       ref="zoomDialogComponent"
-      id="zoom-dialog-{{ block_id }}"
+      id="zoom-dialog-{{ block.id }}"
     >
       <dialog
         ref="dialog"
@@ -463,6 +461,12 @@
                     aria-selected="true"
                   {% endif %}
                 >
+                  {% liquid
+                    assign focal_point_style = ''
+                    if media.presentation.focal_point != blank
+                      assign focal_point_style = 'object-position: ' | append: media.presentation.focal_point | append: ';'
+                    endif
+                  %}
                   {{
                     media.preview_image
                     | image_url: width: 1024
@@ -470,7 +474,8 @@
                       loading: 'lazy',
                       sizes: 'auto, 110, (min-width: 750px) 160',
                       widths: '240, 352, 832, 1200',
-                      alt: media.alt
+                      alt: media.alt,
+                      style: focal_point_style
                     | escape
                   }}
                 </button>
@@ -484,7 +489,7 @@
           {%- for media in sorted_media -%}
             <li
               id="product-{{ media.id}}-{{ forloop.index }}"
-              class="{{ product_media_container_class }} product-media-container--{{ media.media_type }}{% if media.media_type == 'image' %} product-media-container--zoomable{% endif %}"
+              class="{{ product_media_container_class | remove: 'media-fit-cover' }} product-media-container--{{ media.media_type }}{% if media.media_type == 'image' %} product-media-container--zoomable{% endif %}"
               style="{% if block_settings.aspect_ratio == 'adapt' %} --media-preview-ratio: {{ media.preview_image.aspect_ratio | default: 1.0 }};{% endif %}"
               ref="media[]"
               {% if media.media_type == 'image' %}
@@ -493,12 +498,20 @@
             >
               {% if media.media_type == 'image' %}
                 <drag-zoom-wrapper class="product-media__drag-zoom-wrapper">
-                  {%- render 'product-media',
-                    media: media,
-                    sizes: '100vw',
-                    loading: 'lazy',
-                    is_main_product_media: forloop.first
-                  -%}
+                  {%- comment -%}
+                    Inject ref="image" after rendering. Shopify's image_tag filter
+                    drops ref attribute values, so the snippet can't render the ref
+                    correctly. We wrap the output and replace the first <img tag.
+                  {%- endcomment -%}
+                  {%- capture zoom_product_media -%}
+                    {%- render 'product-media',
+                      media: media,
+                      sizes: '100vw',
+                      loading: 'lazy',
+                      is_main_product_media: forloop.first
+                    -%}
+                  {%- endcapture -%}
+                  {{- zoom_product_media | replace_first: '<img ', '<img ref="image" ' -}}
                 </drag-zoom-wrapper>
               {% else %}
                 {%- render 'product-media',
@@ -656,7 +669,7 @@
   }
 
   .dialog-zoomed-gallery__close-button {
-    color: white;
+    color: #fff;
     mix-blend-mode: difference;
     z-index: var(--layer-raised);
   }
@@ -812,13 +825,17 @@
         {
           "value": "hint",
           "label": "t:options.hint"
+        },
+        {
+          "value": "thumbnails",
+          "label": "t:options.thumbnails"
         }
       ]
     },
     {
       "type": "header",
       "content": "t:content.thumbnails",
-      "visible_if": "{{ block.settings.media_presentation == 'carousel' and block.settings.slideshow_controls_style == 'thumbnails' }}"
+      "visible_if": "{{ block.settings.media_presentation == 'carousel' and block.settings.slideshow_controls_style == 'thumbnails' or block.settings.media_presentation == 'carousel' and block.settings.slideshow_mobile_controls_style == 'thumbnails' }}"
     },
     {
       "type": "select",
@@ -839,7 +856,7 @@
         }
       ],
       "default": "bottom",
-      "visible_if": "{{ block.settings.media_presentation == 'carousel' and block.settings.slideshow_controls_style == 'thumbnails' }}"
+      "visible_if": "{{ block.settings.media_presentation == 'carousel' and block.settings.slideshow_controls_style == 'thumbnails' or block.settings.media_presentation == 'carousel' and block.settings.slideshow_mobile_controls_style == 'thumbnails' }}"
     },
     {
       "type": "range",
@@ -850,7 +867,7 @@
       "step": 1,
       "unit": "px",
       "default": 64,
-      "visible_if": "{{ block.settings.media_presentation == 'carousel' and block.settings.slideshow_controls_style == 'thumbnails' }}"
+      "visible_if": "{{ block.settings.media_presentation == 'carousel' and block.settings.slideshow_controls_style == 'thumbnails' or block.settings.media_presentation == 'carousel' and block.settings.slideshow_mobile_controls_style == 'thumbnails' }}"
     },
     {
       "type": "header",

@@ -1,4 +1,3 @@
-
 <script
   src="{{ 'product-recommendations.js' | asset_url }}"
   type="module"
@@ -25,6 +24,10 @@
   endcapture
 %}
 
+{% render 'quick-add-styles' %}
+{% render 'quick-add-modal-styles' %}
+{% render 'variant-picker-styles' %}
+{% render 'product-badges-styles' %}
 <product-recommendations
   id="product-recommendations-{{ section.id }}"
   class="product-recommendations"
@@ -34,14 +37,23 @@
   data-intent="{{ section.settings.recommendation_type }}"
   data-testid="product-recommendations-section"
   data-recommendations-performed="{{ recommendations.performed }}"
+  data-hydration-key="product-recommendations-{{ section.id }}"
   {{ section.shopify_attributes }}
 >
-  <div class="section-background color-{{ section.settings.color_scheme }}"></div>
+  {% liquid
+    if section.settings.background_color != blank
+      render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
+    endif
+  %}
+
+  <div
+    class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+  ></div>
   <div
     class="
       section
       section--{{ section.settings.section_width }}
-      color-{{ section.settings.color_scheme }}
+      {% if section.settings.background_color != blank %}color-custom-{{ section.id }}{% endif %}
       section-resource-list
       spacing-style
       gap-style
@@ -81,7 +93,12 @@
       {% capture list_items %}
         {% for product in products limit: section.settings.max_products %}
           <div class="resource-list__item">
-            {% content_for 'block', type: '_product-card', id: 'static-product-card', closest.product: product %}
+            {% content_for 'block',
+              type: '_product-card',
+              id: 'static-product-card',
+              closest.product: product,
+              product_view_context: 'recommendation'
+            %}
           </div>
           {% unless forloop.last %}
             <!--@list/split-->
@@ -167,25 +184,6 @@
     {%- endif -%}
   </div>
 </product-recommendations>
-
-{% stylesheet %}
-  .product-recommendations__skeleton-item {
-    aspect-ratio: 3 / 4;
-    background-color: var(--color-foreground);
-    opacity: var(--skeleton-opacity);
-    border-radius: 4px;
-  }
-
-  @media screen and (max-width: 749px) {
-    .product-recommendations__skeleton-item:nth-child(2n + 1) {
-      display: none;
-    }
-  }
-
-  product-recommendations:has([data-has-recommendations='false']) {
-    display: none;
-  }
-{% endstylesheet %}
 
 {% schema %}
 {
@@ -421,10 +419,10 @@
       "default": 12
     },
     {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "t:settings.color_scheme",
-      "default": "scheme-1"
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "placeholder": "t:settings.default"
     },
     {
       "type": "header",
@@ -449,6 +447,38 @@
       "step": 1,
       "unit": "px",
       "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Mobile padding"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_mobile_padding",
+      "label": "Use mobile padding",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start-mobile",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ section.settings.use_mobile_padding }}"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end-mobile",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ section.settings.use_mobile_padding }}"
     }
   ],
   "presets": [
@@ -469,7 +499,6 @@
         "icons_shape": "none",
         "section_width": "page-width",
         "gap": 28,
-        "color_scheme": "scheme-1",
         "padding-block-start": 48,
         "padding-block-end": 48
       },
@@ -478,7 +507,8 @@
           "type": "text",
           "name": "t:names.header",
           "settings": {
-            "text": "<h3>Related products</h3>"
+            "text": "t:html_defaults.related_product",
+            "type_preset": "h3"
           }
         },
         "static-product-card": {
@@ -511,14 +541,13 @@
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
-                "type_preset": "rte",
+                "type_preset": "paragraph",
                 "font": "var(--font-body--family)",
                 "font_size": "1rem",
                 "line_height": "normal",
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
-                "color": "var(--color-foreground)",
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
@@ -543,7 +572,6 @@
                 "line_height": "normal",
                 "letter_spacing": "normal",
                 "case": "none",
-                "color": "var(--color-foreground)",
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,

@@ -1,23 +1,37 @@
-
-
 <script
   src="{{ 'results-list.js' | asset_url }}"
   type="module"
   fetchpriority="low"
 ></script>
 
-<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+{% liquid
+  if section.settings.background_color != blank
+    render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
+  endif
+%}
+
+<div
+  class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+></div>
+
 <results-list
-  class="section product-grid-container spacing-style color-{{ section.settings.color_scheme }}"
+  class="section product-grid-container spacing-style{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
   style="--padding-block-start: {{ section.settings.padding-block-start }}px; --padding-block-end: {{ section.settings.padding-block-end }}px;"
   section-id="{{ section.id }}"
+  infinite-scroll="{{ section.settings.enable_infinite_scroll }}"
 >
   {% render 'skip-to-content-link', href: '#ResultsList', text: 'accessibility.skip_to_results_list' %}
 
   <div
     class="collection-wrapper grid gap-style"
   >
-    {% paginate search.results by 24 %}
+    {% assign products_per_page = 24 %}
+
+    {% if section.settings.enable_infinite_scroll == false %}
+      {% assign products_per_page = section.settings.products_per_page %}
+    {% endif %}
+
+    {% paginate search.results by products_per_page %}
       {% if search.results_count > 0 %}
         {% content_for 'block', type: 'filters', id: 'filters', results: search, results_size: search.results_count %}
         {% assign products = search.results | where: 'object_type', 'product' %}
@@ -37,7 +51,12 @@
             data-product-id="{{ product.id }}"
             ref="cards[]"
           >
-            {% content_for 'block', type: '_product-card', id: 'product-card', closest.product: product %}
+            {% content_for 'block',
+              type: '_product-card',
+              id: 'product-card',
+              closest.product: product,
+              product_view_context: 'search'
+            %}
           </li>
         {% endfor %}
       {% endcapture %}
@@ -47,6 +66,7 @@
         children: children,
         products: products,
         paginate: paginate,
+        enable_infinite_scroll: section.settings.enable_infinite_scroll,
         title: title
       %}
     {% endpaginate %}
@@ -117,6 +137,22 @@
         }
       ],
       "default": "small"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_infinite_scroll",
+      "label": "t:settings.auto_load_products",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "t:settings.products_per_page",
+      "min": 8,
+      "max": 36,
+      "step": 4,
+      "default": 24,
+      "visible_if": "{{ section.settings.enable_infinite_scroll == false }}"
     },
     {
       "type": "header",
@@ -190,10 +226,10 @@
       "content": "t:content.section_layout"
     },
     {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "t:settings.color_scheme",
-      "default": "scheme-1"
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "placeholder": "t:settings.default"
     },
     {
       "type": "range",

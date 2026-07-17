@@ -6,6 +6,7 @@
   @param {number} slide_count - The number of slides to display in the carousel
   @param {object} settings - The block or sections settings from the parent block/section.
   @param {string} [slide_width_max] - The maximum width of the slides in the carousel.
+  @param {boolean} [show_dots] - Whether to render slideshow dot pagination controls.
 
   @example
   {% render 'resource-list-carousel', slides: slides, slide_count: slide_count, settings: block.settings %}
@@ -13,10 +14,30 @@
 
 {% liquid
   assign slideshow_ref = ref | default: 'resourceListCarousel'
-  if settings.section_width == 'page-width'
+
+  if settings.section_width == 'page-width' and settings.show_dots != true
     assign slideshow_gutters = 'start end'
+    assign gutter_style = '--gutter-slide-width: var(--util-page-margin-offset);'
   else
     assign slideshow_gutters = null
+    assign gutter_style = '--gutter-slide-width: 0px;'
+  endif
+
+  assign show_arrows = false
+  if settings.icons_style != 'none'
+    assign show_arrows = true
+  endif
+
+  # When the dots row is visible we move the arrows down beside the dots
+  # so they sit outside the slide track instead of overlaying the images.
+  assign arrows_in_controls = false
+  if show_arrows and settings.show_dots
+    assign arrows_in_controls = true
+  endif
+
+  assign show_overlay_arrows = show_arrows
+  if arrows_in_controls
+    assign show_overlay_arrows = false
   endif
 %}
 
@@ -30,30 +51,196 @@
   {% endfor %}
 {% endcapture %}
 
-{% capture slideshow_arrows %}
-  {% render 'slideshow-arrows', icon_style: settings.icons_style, icon_shape: settings.icons_shape %}
-{% endcapture %}
+{%- capture controls -%}
+  {%- if show_dots and slide_count > 1 -%}
+    {%- render 'slideshow-controls',
+      style: 'dots',
+      item_count: slide_count,
+      show_arrows: arrows_in_controls,
+      arrows_on_media: false,
+      controls_on_media: false,
+      pagination_position: 'center',
+      icon_style: settings.icons_style,
+      shape: settings.icons_shape
+    -%}
+  {%- endif -%}
+{%- endcapture -%}
 
 <div
-  class="resource-list__carousel"
-  style="
-    {% if settings.section_width == 'page-width' %}
-      --gutter-slide-width: var(--util-page-margin-offset);
-    {% elsif settings.section_width == 'full-width' %}
-      --gutter-slide-width: 0px;
-    {% endif %}
-    --slide-width-max: {{ slide_width_max | default: '300px' }};
-  "
+  class="resource-list__carousel{% if arrows_in_controls %} resource-list__carousel--arrows-outside{% endif %}"
+  style="{{ gutter_style }} --slide-width-max: {{ slide_width_max | default: '300px' }};"
 >
   {% render 'slideshow',
     ref: slideshow_ref,
     class: 'resource-list__carousel',
     slides: slides,
-    slideshow_arrows: slideshow_arrows,
+    show_arrows: show_overlay_arrows,
+    icon_style: settings.icons_style,
+    icon_shape: settings.icons_shape,
     auto_hide_controls: false,
     infinite: false,
     initial_slide: 0,
     slide_count: slide_count,
-    slideshow_gutters: slideshow_gutters
+    slideshow_gutters: slideshow_gutters,
+    controls: controls
   %}
 </div>
+
+{% stylesheet %}
+  /*
+   * Slideshow controls row sits beneath the slides — give it a
+   * consistent top breathing-room whether it's just dots or
+   * dots + outside arrows.
+   */
+  .resource-list__carousel slideshow-controls {
+    padding-block-start: 2.5rem;
+  }
+
+  /*
+   * Visual pagination dots for the resource-list carousel.
+   * Mirrors the slideshow-auto-component styling but scoped to
+   * resource-list__carousel so the original numbered <ol> isn't shown.
+   */
+  .resource-list__carousel .slideshow-controls__dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .resource-list__carousel .slideshow-controls__dots > li {
+    display: block;
+    list-style: none;
+  }
+
+  .resource-list__carousel .slideshow-controls__dots .slideshow-control {
+    width: 9px;
+    height: 9px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background-color: currentColor;
+    opacity: 0.25;
+    font-size: 0;
+    line-height: 0;
+    color: var(--color-foreground);
+    cursor: pointer;
+    transition: opacity var(--animation-speed, 0.2s) ease;
+  }
+
+  .resource-list__carousel .slideshow-controls__dots .slideshow-control[aria-selected='true'] {
+    opacity: 1;
+  }
+
+  /*
+   * "Arrows outside the slider" mode — when show_dots is on, the
+   * floating overlay arrows are disabled and we render previous/next
+   * inline beside the dots so they sit below the slide track.
+   */
+  .resource-list__carousel--arrows-outside slideshow-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .resource-list__carousel--arrows-outside .slideshow-controls__arrows {
+    /* Reset the absolute / overlay positioning that the in-slide arrows
+       use; here each arrow is just an inline flex item. */
+    position: static;
+    inset: auto;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    pointer-events: auto;
+    mix-blend-mode: normal;
+  }
+
+  .resource-list__carousel--arrows-outside .slideshow-controls__arrows .slideshow-control {
+    /* Always-visible (the overlay version fades in on hover only). */
+    opacity: 1;
+    color: var(--color-foreground);
+    pointer-events: auto;
+  }
+
+  .resource-list__carousel--arrows-outside .slideshow-controls__arrows .slideshow-control[disabled] {
+    opacity: 0.25;
+    cursor: not-allowed;
+  }
+
+  .resource-list__carousel {
+    --slide-width: 60vw;
+    width: 100%;
+    position: relative;
+    container-type: inline-size;
+    container-name: resource-list-carousel;
+
+    .slideshow-control[disabled] {
+      display: none;
+    }
+
+    .slideshow-control--next {
+      margin-inline-start: auto;
+    }
+  }
+
+  @container resource-list-carousel (max-width: 749px) {
+    .resource-list__carousel .resource-list__slide {
+      --slide-width: clamp(150px, var(--mobile-card-size, 60cqw), var(--slide-width-max));
+    }
+  }
+
+  @container resource-list-carousel (min-width: 750px) {
+    .resource-list__carousel .resource-list__slide {
+      --section-slide-width: calc(
+        (100% - (var(--resource-list-column-gap) * (var(--column-count) - 1)) - var(--peek-next-slide-size)) /
+          var(--column-count)
+      );
+      --fallback-slide-width: clamp(150px, var(--mobile-card-size, 60cqw), var(--slide-width-max));
+      --slide-width: var(--section-slide-width, var(--fallback-slide-width));
+    }
+  }
+
+  .resource-list__carousel slideshow-slides {
+    gap: var(--resource-list-column-gap);
+
+    /* Add padding to prevent hover animations from being clipped in slideshow
+     15px accommodates:
+     - Scale effect (9px on each side from 1.03 scale)
+     - Lift effect (4px upward movement)
+     - Shadow (15px spread with -5px offset)
+     Using 16px for better alignment with our spacing scale */
+    margin-block: -16px;
+    padding-block: 16px;
+  }
+
+  .resource-list__carousel slideshow-arrows {
+    padding-inline: var(--util-page-margin-offset);
+  }
+
+  .resource-list__carousel .resource-list__slide {
+    width: var(--slide-width);
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    min-width: 0;
+  }
+
+  /*
+   * Resource list carousels have peeking slides on both sides.
+   * We try to kick load them beforehand (they are lazy loaded otherwise).
+   */
+  .resource-list__carousel
+    :is(
+      slideshow-slide:has(+ slideshow-slide[aria-hidden='false']),
+      slideshow-slide[aria-hidden='false'] + slideshow-slide
+    ) {
+    content-visibility: auto;
+
+    slideshow-component[actioned] & {
+      content-visibility: visible;
+    }
+  }
+{% endstylesheet %}

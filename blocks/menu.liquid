@@ -1,10 +1,7 @@
-
-
 {% liquid
   assign block_settings = block.settings
   assign menu = block_settings.menu
   assign heading = block_settings.heading
-  assign color_scheme = block_settings.color_scheme
   assign show_as_accordion = block_settings.show_as_accordion
   if show_as_accordion == true and block_settings.accordion_dividers == true
     assign dividers_enabled = true
@@ -12,60 +9,110 @@
 %}
 
 {% if menu != blank or heading != blank %}
-  <accordion-custom
-    class="
-      menu
-      {% if show_as_accordion == true %} menu--accordion menu--{{ block_settings.accordion_icon }}{% endif %}
-      {% if dividers_enabled == true %} menu--dividers{% endif %}
-    "
-    data-disable-on-desktop="true"
-    open-by-default-on-desktop
-    {% if show_as_accordion == false %}
-      data-disable-on-mobile="true"
-      open-by-default-on-mobile
-    {% endif %}
-  >
+  {% render 'contrast-override',
+    background_color: block_settings.background_color,
+    text_color: block_settings.text_color,
+    section_id: block.id
+  %}
+  {%- liquid
+    assign menu_class = 'menu'
+    if show_as_accordion == true
+      assign menu_class = menu_class | append: ' menu--accordion'
+    endif
+    if dividers_enabled == true
+      assign menu_class = menu_class | append: ' menu--dividers'
+    endif
+    assign should_disable_on_mobile = false
+    assign should_open_by_default_on_mobile = false
+    if show_as_accordion == false
+      assign should_disable_on_mobile = true
+      assign should_open_by_default_on_mobile = true
+    endif
+  -%}
+  {% capture menu_accordion_children %}
     <details
       class="
         menu__details
         spacing-style
-        {% if block_settings.inherit_color_scheme == false %} color-{{ color_scheme }}{% endif %}
+        {% if block_settings.background_color != blank or block_settings.text_color != blank %} color-custom-{{ block.id }}{% endif %}
       "
       data-testid="menu-details"
       style="
         --spacing--size: {{ block_settings.menu_spacing }}px;
         {% render 'spacing-style', settings: block_settings %}
       "
+      {% if show_as_accordion == false %}
+        open
+      {% endif %}
       {{ block.shopify_attributes }}
     >
-      <summary class="menu__heading{% if heading == blank %} menu__heading--empty{% endif %} {{ block_settings.heading_preset }}">
-        <span class="menu__heading__default">{{ heading }}</span>
+      <summary
+        class="menu__heading{% if heading == blank and menu.title == blank %} menu__heading--empty{% endif %} {{ block_settings.heading_preset }}"
+        {%- if block_settings.heading_preset == 'custom' -%}
+          style="
+            font-family: {{ block_settings.heading_font }};
+            {%- if block_settings.heading_enable_custom_font_weight -%}
+              font-weight: {{ block_settings.heading_weight }};
+            {%- else -%}
+              font-weight: {{ block_settings.heading_font | replace: 'family', 'weight' }};
+            {%- endif -%}
+            {%- if block_settings.heading_font_size != blank -%}
+              font-size: {{ block_settings.heading_font_size }};
+            {%- endif -%}
+            {%- if block_settings.heading_line_height == 'custom' -%}
+              line-height: {{ block_settings.heading_custom_line_height }};
+            {%- else -%}
+              line-height: var(--line-height--heading-{{ block_settings.heading_line_height }});
+            {%- endif -%}
+            letter-spacing: var(--letter-spacing--heading-{{ block_settings.heading_letter_spacing }});
+            text-transform: {{ block_settings.heading_case }};
+            color: {{ block_settings.heading_color }};
+          "
+        {%- endif -%}
+      >
+        <span class="menu__heading__default">{{ heading | default: menu.title }}</span>
         <span class="menu__heading__accordion">
           {{ heading | default: menu.title }}
-          <span class="menu__heading__toggle svg-wrapper icon-caret icon-animated">
-            {{- 'icon-caret.svg' | inline_asset_content -}}
-          </span>
-          <span class="menu__heading__toggle svg-wrapper icon-plus">
-            {{- 'icon-plus.svg' | inline_asset_content -}}
-          </span>
+          {% if block_settings.accordion_icon == 'plus' %}
+            <span class="menu__heading__toggle svg-wrapper icon-plus">
+              {{- 'icon-plus.svg' | inline_asset_content -}}
+            </span>
+          {% else %}
+            <span class="menu__heading__toggle svg-wrapper icon-caret icon-animated">
+              {{- 'icon-caret.svg' | inline_asset_content -}}
+            </span>
+          {% endif %}
         </span>
       </summary>
 
-      <div class="details-content">
+      <nav
+        class="details-content"
+        {% if heading == blank %}
+          aria-label="{{ menu.title | escape }}"
+        {% endif %}
+      >
         {% if menu %}
           <ul class="list-unstyled">
             {% for link in menu.links %}
               <li class="menu__item {{ block_settings.link_preset }}">
                 <a href="{{ link.url }}">
-                  {{ link.title }}
+                  {{ link.title }}{% if link.data_sharing_opt_out_icon %}{{ link.data_sharing_opt_out_icon }}{% endif %}
                 </a>
               </li>
             {% endfor %}
           </ul>
         {% endif %}
-      </div>
+      </nav>
     </details>
-  </accordion-custom>
+  {% endcapture %}
+  {% render 'accordion-custom-component',
+    children: menu_accordion_children,
+    class: menu_class,
+    disable_on_desktop: true,
+    open_by_default_on_desktop: true,
+    disable_on_mobile: should_disable_on_mobile,
+    open_by_default_on_mobile: should_open_by_default_on_mobile
+  %}
 {% endif %}
 
 {% stylesheet %}
@@ -74,11 +121,14 @@
   }
 
   .menu:not(:has(.menu__heading--empty)) .details-content {
+    --spacing--size: 0.25rem;
     margin-block-start: var(--spacing--size);
   }
 
   .menu__item + .menu__item {
+    --spacing--size: 1rem;
     margin-block-start: var(--spacing--size);
+    margin-block-end: 0.5rem;
   }
 
   .menu .menu__heading--empty {
@@ -122,11 +172,6 @@
     .menu--dividers .details-content {
       padding-block-end: var(--padding-sm);
     }
-  }
-
-  .menu--caret .icon-plus,
-  .menu--plus .icon-caret {
-    display: none;
   }
 {% endstylesheet %}
 
@@ -191,17 +236,16 @@
       "visible_if": "{{ block.settings.show_as_accordion == true }}"
     },
     {
-      "type": "checkbox",
-      "id": "inherit_color_scheme",
-      "label": "t:settings.inherit_color_scheme",
-      "default": true
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "placeholder": "t:settings.default"
     },
     {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "t:settings.color_scheme",
-      "default": "scheme-1",
-      "visible_if": "{{ block.settings.inherit_color_scheme == false }}"
+      "type": "color",
+      "id": "text_color",
+      "label": "t:settings.text_color",
+      "placeholder": "t:settings.default"
     },
     {
       "type": "header",
@@ -243,9 +287,144 @@
         {
           "value": "h6",
           "label": "t:options.h6"
+        },
+        {
+          "value": "custom",
+          "label": "t:options.custom"
         }
       ],
       "default": "h3"
+    },
+    {
+      "type": "select",
+      "id": "heading_font",
+      "label": "t:settings.font",
+      "options": [
+        {
+          "value": "var(--font-body--family)",
+          "label": "t:options.body"
+        },
+        {
+          "value": "var(--font-subheading--family)",
+          "label": "t:options.subheading"
+        },
+        {
+          "value": "var(--font-heading--family)",
+          "label": "t:options.heading"
+        },
+        {
+          "value": "var(--font-accent--family)",
+          "label": "t:options.accent"
+        }
+      ],
+      "default": "var(--font-heading--family)",
+      "visible_if": "{{ block.settings.heading_preset == 'custom' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "heading_enable_custom_font_weight",
+      "label": "Custom font weight",
+      "default": false,
+      "visible_if": "{{ block.settings.heading_preset == 'custom' }}"
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Weight",
+      "options": [
+        { "value": "100", "label": "Thin" },
+        { "value": "200", "label": "Extra Light" },
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra Bold" },
+        { "value": "900", "label": "Black" }
+      ],
+      "default": "600",
+      "visible_if": "{{ block.settings.heading_preset == 'custom' and block.settings.heading_enable_custom_font_weight }}"
+    },
+    {
+      "type": "select",
+      "id": "heading_font_size",
+      "label": "t:settings.size",
+      "options": [
+        { "value": "", "label": "t:options.default" },
+        { "value": "0.625rem", "label": "10px" },
+        { "value": "0.75rem", "label": "12px" },
+        { "value": "0.875rem", "label": "14px" },
+        { "value": "0.9375rem", "label": "15px" },
+        { "value": "1rem", "label": "16px" },
+        { "value": "1.125rem", "label": "18px" },
+        { "value": "1.25rem", "label": "20px" },
+        { "value": "1.3125rem", "label": "21px" },
+        { "value": "1.5rem", "label": "24px" },
+        { "value": "1.875rem", "label": "30px" },
+        { "value": "2rem", "label": "32px" },
+        { "value": "2.5rem", "label": "40px" },
+        { "value": "3rem", "label": "48px" }
+      ],
+      "default": "1rem",
+      "visible_if": "{{ block.settings.heading_preset == 'custom' }}"
+    },
+    {
+      "type": "select",
+      "id": "heading_line_height",
+      "label": "t:settings.line_height",
+      "options": [
+        { "value": "tight", "label": "t:options.tight" },
+        { "value": "normal", "label": "t:options.normal" },
+        { "value": "loose", "label": "t:options.loose" },
+        { "value": "custom", "label": "Custom" }
+      ],
+      "default": "normal",
+      "visible_if": "{{ block.settings.heading_preset == 'custom' }}"
+    },
+    {
+      "type": "range",
+      "id": "heading_custom_line_height",
+      "label": "Line height value",
+      "min": 1,
+      "max": 3,
+      "step": 0.1,
+      "default": 1.2,
+      "visible_if": "{{ block.settings.heading_preset == 'custom' and block.settings.heading_line_height == 'custom' }}"
+    },
+    {
+      "type": "select",
+      "id": "heading_letter_spacing",
+      "label": "t:settings.letter_spacing",
+      "options": [
+        { "value": "tight", "label": "t:options.tight" },
+        { "value": "normal", "label": "t:options.normal" },
+        { "value": "loose", "label": "t:options.loose" }
+      ],
+      "default": "normal",
+      "visible_if": "{{ block.settings.heading_preset == 'custom' }}"
+    },
+    {
+      "type": "select",
+      "id": "heading_case",
+      "label": "t:settings.case",
+      "options": [
+        { "value": "none", "label": "t:options.default" },
+        { "value": "uppercase", "label": "t:options.uppercase" }
+      ],
+      "default": "none",
+      "visible_if": "{{ block.settings.heading_preset == 'custom' }}"
+    },
+    {
+      "type": "select",
+      "id": "heading_color",
+      "label": "t:settings.color",
+      "options": [
+        { "value": "var(--color-foreground)", "label": "t:options.text" },
+        { "value": "var(--color-foreground-heading)", "label": "t:options.heading" },
+        { "value": "var(--color-primary)", "label": "t:options.link" }
+      ],
+      "default": "var(--color-foreground-heading)",
+      "visible_if": "{{ block.settings.heading_preset == 'custom' }}"
     },
     {
       "type": "select",

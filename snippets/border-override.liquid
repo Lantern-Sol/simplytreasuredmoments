@@ -2,6 +2,31 @@
   Renders border override CSS
 {%- endcomment -%}
 
+{% liquid
+
+%}
 --border-width: {{ settings.border_width }}px; --border-style: {{ settings.border }}; --border-color:
-rgb(var(--color-border-rgb) / {{ settings.border_opacity | divided_by: 100.0 }}); --border-radius:
-{{ settings.border_radius }}px; {% if settings.border_radius > 0 %} overflow: hidden; {% endif %}
+{% if settings.border_color != blank -%}
+  rgb({{ settings.border_color.rgba }})
+{%- else -%}
+  rgb(var(--color-border-rgb) / {{ settings.border_opacity | divided_by: 100.0 }})
+{%- endif -%}
+; --border-radius: {{ settings.border_radius }}px; {% if settings.border_radius > 0 %} overflow: hidden; {% endif %}
+{% if settings.border == 'shadow' %}
+  box-shadow: 0px 0px {{ settings.shadow_blur }}px {{ settings.shadow_spread }}px {{ settings.shadow_color }};
+{% endif %}
+{% if settings.use_mobile_appearance %}
+  --border-width-mobile: {{ settings.vertical-border_width-mobile }}px {{ settings.horizontal-border_width-mobile }}px; --border-style-mobile: {{ settings.border-mobile }}; --border-color-mobile:
+  rgb(var(--color-border-rgb) / {{ settings.border_opacity-mobile | divided_by: 100.0 }}); --border-radius-mobile:
+  {{ settings.border_radius-mobile }}px; {% if settings.border_radius-mobile > 0 %} overflow: hidden; {% endif %}
+  {% if settings.border-mobile == 'shadow' %}
+    box-shadow: 0px 0px {{ settings.shadow_blur-mobile }}px {{ settings.shadow_spread-mobile }}px {{ settings.shadow_color-mobile }};
+  {% endif %}
+{%  else %}
+  --border-width-mobile: {{ settings.border_width }}px; --border-style-mobile: {{ settings.border }}; --border-color-mobile:
+  rgb(var(--color-border-rgb) / {{ settings.border_opacity | divided_by: 100.0 }}); --border-radius-mobile:
+  {{ settings.border_radius }}px; {% if settings.border_radius > 0 %} overflow: hidden; {% endif %}
+  {% if settings.border == 'shadow' %}
+    box-shadow: 0px 0px {{ settings.shadow_blur }}px {{ settings.shadow_spread }}px {{ settings.shadow_color }};
+  {% endif %}
+{% endif %}

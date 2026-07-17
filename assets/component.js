@@ -1,5 +1,22 @@
-import { DeclarativeShadowElement } from '@theme/critical';
 import { requestIdleCallback } from '@theme/utilities';
+
+/*
+ * Declarative shadow DOM is only initialized on the initial render of the page.
+ * If the component is mounted after the browser finishes the initial render,
+ * the shadow root needs to be manually hydrated.
+ */
+export class DeclarativeShadowElement extends HTMLElement {
+  connectedCallback() {
+    if (!this.shadowRoot) {
+      const template = this.querySelector(':scope > template[shadowrootmode="open"]');
+
+      if (!(template instanceof HTMLTemplateElement)) return;
+
+      const shadow = this.attachShadow({ mode: 'open' });
+      shadow.append(template.content.cloneNode(true));
+    }
+  }
+}
 
 /**
  * @typedef {Record<string, Element | Element[] | undefined>} Refs
@@ -68,7 +85,9 @@ export class Component extends DeclarativeShadowElement {
   }
 
   /**
-   * Called when the element is re-rendered by the Section Rendering API.
+   * Called when the Section Rendering API re-renders this element and morph detects a change in
+   * its subtree. morph skips subtrees it finds unchanged (oldNode.isEqualNode(newNode)), so this
+   * does not fire when a re-render leaves this component's own subtree identical.
    */
   updatedCallback() {
     this.#mutationObserver.takeRecords();
@@ -196,7 +215,21 @@ function registerEventListeners() {
   if (initialized) return;
   initialized = true;
 
-  const events = ['click', 'change', 'select', 'focus', 'blur', 'submit', 'input', 'keydown', 'keyup', 'toggle'];
+  const events = [
+    'click',
+    'change',
+    'select',
+    'focus',
+    'blur',
+    'submit',
+    'input',
+    'keydown',
+    'keyup',
+    'toggle',
+    // `pointerdown` bubbles, so a press landing on a descendant of the
+    // `on:pointerdown` element still resolves to it via `closest()`.
+    'pointerdown',
+  ];
   const shouldBubble = ['focus', 'blur'];
   const expensiveEvents = ['pointerenter', 'pointerleave'];
 
@@ -239,7 +272,35 @@ function registerEventListeners() {
             : element.closest(selector)
           : getClosestComponent(element);
 
-        if (!(instance instanceof Component) || !method) return;
+        if (!method) return;
+
+        // Close the custom-element upgrade race: the resolved instance may be a
+        // `<foo-component>` element that's already in the DOM but whose JS module
+        // hasn't yet executed connectedCallback as a `Component` subclass. Without
+        // this, the click/change/etc. is silently dropped because
+        // `instance instanceof Component` returns false. `customElements.upgrade`
+        // is synchronous, idempotent, and a no-op if the element is already
+        // upgraded or its class isn't registered yet.
+        if (
+          !(instance instanceof Component) &&
+          instance instanceof HTMLElement &&
+          instance.tagName.toLowerCase().endsWith('-component')
+        ) {
+          customElements.upgrade(instance);
+
+          if (!(instance instanceof Component)) {
+            // Surface the drop instead of swallowing it. This typically means the
+            // module defining `<{tagName}>` hasn't yet been parsed/executed —
+            // a real bug for users on slow connections, and the silent failure
+            // mode that has caused the bulk of recent Playwright flakes.
+            console.warn(
+              `[component] Dropped "${event.type}" on <${instance.tagName.toLowerCase()}> — element not yet upgraded`
+            );
+            return;
+          }
+        }
+
+        if (!(instance instanceof Component)) return;
 
         method = method.replace(/\?.*/, '');
 

@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "blocks": {
     "load_video": "Naloži videoposnetek: {{ description }}",
@@ -16,7 +25,8 @@
       "comment": "Komentar",
       "post_success": "Hvala za vaše sporočilo. Z vami bomo v stiku takoj, ko bo mogoče.",
       "error_heading": "Prilagodite naslednje:"
-    }
+    },
+    "slider_label": "Drsnik"
   },
   "accessibility": {
     "play_model": "Predvajaj 3D-model",
@@ -43,7 +53,7 @@
       "few": "Št. uporabljenih filtrov: {{ count }}",
       "two": "Št. uporabljenih filtrov: {{ count }}"
     },
-    "account": "Odpri meni za račun",
+    "account": "Račun",
     "cart": "Košarica",
     "cart_count": "Skupno število izdelkov v košarici",
     "menu": "Meni",
@@ -53,32 +63,44 @@
     "loading_product_recommendations": "Nalaganje priporočil za izdelke",
     "discount": "Uporabi kodo za popust",
     "discount_applied": "Uporabljena koda za popust: {{ code }}",
-    "open_cart_drawer": "Odpri košarico",
     "inventory_status": "Status zaloge",
     "pause_video": "Zaustavi videoposnetek",
     "find_country": "Poišči državo",
-    "localization_region_and_language": "Odpri izbirnik za regijo in jezik",
-    "open_search_modal": "Odpri iskanje",
+    "localization_region_and_language": "Izbirnik za regijo in jezik",
     "decrease_quantity": "Zmanjšaj količino",
     "increase_quantity": "Povečaj količino",
     "quantity": "Količina",
     "rating": "Ocena tega izdelka je {{ rating }} od 5",
-    "nested_product": "{{ product_title }} za {{ parent_title }}"
+    "nested_product": "{{ product_title }} za {{ parent_title }}",
+    "discount_menu": "Kode za popust",
+    "remove": "Odstrani",
+    "view_pricing_info": "Prikaži podatke o cenah",
+    "slideshow": "Slikovni prikaz",
+    "header_navigation_label": "Glavno",
+    "home_logo_alt": "{{ store_name }} – Domov",
+    "active_filters": "Aktivni filtri:",
+    "product_details": "Podrobnosti o izdelku",
+    "show_product_details": "Prikaži podrobnosti o izdelku {{ product_name }}",
+    "featured_product": "Izpostavljen izdelek",
+    "search_suggestions_available": "Predlogi za iskanje, ki so na voljo za »{{ query }}«",
+    "price_filter_low": "Nizka cena",
+    "price_filter_high": "Visoka cena",
+    "view_disclosure_information_for_product": "Ogled informacij o razkritjih za {{ product_title }}"
   },
   "actions": {
     "add_to_cart": "Dodaj v košarico",
     "clear_all": "Počisti vse",
     "remove": "Odstrani",
-    "view_in_your_space": "Prikaži v prostoru",
+    "view_in_your_space": "Oglejte si v svojem prostoru",
     "show_filters": "Filter",
     "clear": "Počisti",
-    "continue_shopping": "Nadaljuj nakup",
+    "continue_shopping": "Nadaljuj nakupovanje",
     "log_in_html": "Imate račun? Za hitrejši zaključek nakupa se <a href=\"{{ link }}\">prijavite</a>.",
     "see_items": {
       "one": "Prikaži {{ count }} artikel",
-      "other": "Prikaži {{ count }} artiklov",
-      "few": "Prikaži {{ count }} artiklov",
-      "two": "Prikaži {{ count }} artiklov"
+      "other": "Oglejte si {{ count }} kosov",
+      "few": "Oglejte si {{ count }} kosov",
+      "two": "Oglejte si {{ count }} kosov"
     },
     "view_all": "Prikaži vse",
     "add": "Dodaj",
@@ -104,7 +126,10 @@
     "sign_up": "Prijava",
     "open_image_in_full_screen": "Odpri sliko v celozaslonskem načinu",
     "sort": "Razvrsti",
-    "show_all_options": "Prikaži vse možnosti"
+    "show_all_options": "Prikaži vse možnosti",
+    "open": "Odpri",
+    "back_to": "Nazaj na: {{ title }}",
+    "zoom_media": "Povečava predstavnosti {{ index }}"
   },
   "content": {
     "reviews": "ocen.",
@@ -227,14 +252,50 @@
     "recipient_form_send_to": "Pošlji na",
     "recipient_form_email_label": "E-poštni naslov prejemnika",
     "recipient_form_email_label_my_email": "Moj e-poštni naslov",
-    "recipient_form_email_label_optional_for_no_js_behavior": "E-poštni naslov prejemnika (izbirno)",
     "recipient_form_email_address": "E-poštni naslov prejemnika",
     "recipient_form_name_label": "Ime prejemnika (izbirno)",
-    "recipient_form_message_label": "Sporočilo (izbirno)",
     "recipient_form_message": "Sporočilo (izbirno)",
     "recipient_form_characters_used": "Uporabljeno št. znakov: {{ used_chars }}/{{ max_chars }}",
     "recipient_form_send_on": "LLLL-MM-DD",
-    "recipient_form_send_on_label": "Pošlji na datum (izbirno)"
+    "recipient_form_send_on_label": "Pošlji na datum (izbirno)",
+    "recipient_form_fields_visible": "Polja obrazca prejemnika so zdaj vidna",
+    "recipient_form_fields_hidden": "Polja obrazca prejemnika so zdaj skrita",
+    "recipient_form_error": "Pri pošiljanju obrazca je prišlo do napake",
+    "product_custom_property_character_count": "Uporabljeno št. znakov: {{ used_chars }}/{{ max_chars }}",
+    "terms_and_policies": "Pogoji in pravilniki",
+    "pagination": {
+      "nav_label": "Oštevilčenje strani",
+      "previous": "Nazaj",
+      "next": "Naprej",
+      "page": "Stran {{ page }}"
+    },
+    "volume_pricing_available": "Na voljo je količinski popust",
+    "volume_pricing": "Količinski popust",
+    "at_price_each": "po ceni {{ price }}/kos",
+    "each": "{{ price }}/kos",
+    "each_abbreviation": "kos",
+    "price_at": "po",
+    "price_range": "Cenovni razpon",
+    "item_count_cutoff": "več kot {{ count }} artiklov",
+    "cancel": "Prekliči",
+    "product_subtotal": "Vmesna vsota",
+    "quantity_per_item": "/kos",
+    "remove_all": "Odstrani vse",
+    "remove_all_items_confirmation": "Ali želite iz košarice odstraniti vse izdelke ({{ count }})?",
+    "remove_one_item_confirmation": "Ali želite iz košarice odstraniti 1 izdelek?",
+    "total_items": "Skupno število izdelkov",
+    "variant": "Različica",
+    "variant_total": "Skupna cena različice",
+    "view_cart": "Prikaži košarico",
+    "your_cart": "Vaša košarica",
+    "items_added_to_cart": {
+      "one": "1 izdelek je dodan v košarico",
+      "other": "Toliko izdelkov je dodanih v košarico: {{ count }}",
+      "few": "Toliko izdelkov je dodanih v košarico: {{ count }}",
+      "two": "Toliko izdelkov je dodanih v košarico: {{ count }}"
+    },
+    "quick_order_list": "Seznam za hitro naročanje",
+    "product_disclosures": "Razkritja o izdelku"
   },
   "gift_cards": {
     "issued": {
@@ -254,7 +315,12 @@
     "password": "Geslo",
     "search": "Išči",
     "product_title": "Naslov izdelka",
-    "collection_title": "Naslov zbirke"
+    "collection_title": "Naslov zbirke",
+    "blog_posts": "Objave v spletnem dnevniku",
+    "blog_post_title": "Naslov",
+    "blog_post_author": "Avtor",
+    "blog_post_date": "Datum",
+    "blog_post_description": "Odlomek vsebine vaše objave v spletnem dnevniku"
   },
   "products": {
     "product": {
@@ -263,7 +329,15 @@
       "adding_to_cart": "Dodajanje ...",
       "add_to_cart_error": "Pri dodajanju v košarico je prišlo do napake",
       "sold_out": "Razprodano",
-      "unavailable": "Ni na voljo"
+      "unavailable": "Ni na voljo",
+      "quantity_error_max": "Ta artikel ima največ {{ maximum }}",
+      "quantity": "Količina",
+      "quantity_increments": "V korakih po {{ increment }}",
+      "quantity_minimum": "Najmanj od {{ minimum }}",
+      "quantity_maximum": "Največ od {{ maximum }}",
+      "in_cart": "v košarici",
+      "default_title": "Privzeti naslov",
+      "sticky_add_to_cart": "Vrstica »Hitro dodajanje v košarico«"
     }
   },
   "fields": {

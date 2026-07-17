@@ -1,40 +1,135 @@
+{% liquid
+  assign product = closest.product
+  assign has_applied_colour_filter = false
+  assign filters_to_check = collection.filters | default: search.filters
 
+  for filter in filters_to_check
+    if filter.type == 'list' and filter.param_name contains 'color' and filter.active_values.size > 0
+      assign has_applied_colour_filter = true
+      break
+    endif
+  endfor
 
-{% assign has_applied_colour_filter = false %}
-{% if collection.filters %}
-  {% for filter in collection.filters %}
-    {% if filter.type == 'list' and filter.param_name contains 'color' %}
-      {% if filter.active_values.size > 0 %}
-        {% assign has_applied_colour_filter = true %}
-      {% endif %}
-    {% endif %}
-  {% endfor %}
-{% endif %}
+  assign hover_tagline = product.metafields.custom.card_hover_tagline.value
+  assign hover_background = product.metafields.custom.card_hover_background.value
+  assign hover_icon = product.metafields.custom.card_hover_icon.value
+  assign show_hover_panel = false
+  if block.settings.show_hover_label and hover_tagline != blank
+    assign show_hover_panel = true
+  endif
+%}
 
 {% capture children %}
-  {% unless closest.product == blank %}
-    {% render 'product-card-badges', product: closest.product %}
-    {%  if settings.quick_add or settings.mobile_quick_add %}
-      {% render 'quick-add', product: closest.product, section_id: section.id %}
-    {% endif %}
+  {% unless product == blank %}
+    {%- if show_hover_panel -%}
+      <div
+        class="card-hover-panel"
+        style="{% if hover_background != blank %}--card-hover-bg: {{ hover_background }};{% endif %}"
+        aria-hidden="true"
+      >
+        {%- if hover_icon != blank -%}
+          <div class="card-hover-panel__icon">
+            {{ hover_icon | image_url: width: 80 | image_tag: loading: 'lazy', width: 40, height: 40, alt: '' }}
+          </div>
+        {%- endif -%}
+        <p class="card-hover-panel__tagline">{{ hover_tagline }}</p>
+      </div>
+    {%- endif -%}
+    <div
+      class="product-badges product-badges--{{ settings.badge_position }}"
+      style="
+        --badge-border-radius: {{ settings.badge_corner_radius }}px;
+        --badge-font-family: var(--font-{{ settings.badge_font_family }}--family); --badge-font-weight: var(--font-{{ settings.badge_font_family }}--weight); --badge-text-transform: {{ settings.badge_text_transform }};
+      "
+    >
+      {%- if product.available == false or product.compare_at_price > product.price -%}
+        <div
+          class="
+            product-badges__badge product-badges__badge--rectangle
+            {% if product.available == false %} color-custom-badge-sold-out{% elsif product.compare_at_price > product.price %} color-custom-badge-sale{% endif %}
+          "
+        >
+          {%- if product.available == false -%}
+            {{ 'content.product_badge_sold_out' | t }}
+          {%- elsif product.compare_at_price > product.price -%}
+            {{ 'content.product_badge_sale' | t }}
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+    {%- if block.settings.show_overlay_quick_add and settings.quick_add or block.settings.show_overlay_quick_add and settings.mobile_quick_add -%}
+      {% render 'quick-add', product: product, section_id: section.id %}
+    {%- endif -%}
   {% endunless %}
 {% endcapture %}
 
-{% render 'card-gallery', children: children, has_applied_colour_filter: has_applied_colour_filter %}
+{% render 'card-gallery', children: children %}
 
 {% # Title and price for the zoomed out grid view %}
 <div class="product-grid-view-zoom-out--details">
-  {% if closest.product == blank %}
+  {% if product == blank %}
     <h3 class="h4">{{ 'content.product_card_placeholder' | t }}</h3>
   {% else %}
-    <h3 class="h4">{{ closest.product.title }}</h3>
-    <div class="h6">
-      <product-price data-product-id="{{ closest.product.id }}">
-        {% render 'price', product_resource: closest.product, show_unit_price: false %}
-      </product-price>
-    </div>
+    <h3 class="h4">{{ product.title }}</h3>
   {% endif %}
 </div>
+
+{% render 'product-badges-styles' %}
+
+{% stylesheet %}
+  .card-hover-panel {
+    position: absolute;
+    inset: 0;
+    z-index: calc(var(--layer-flat) - 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--padding-md);
+    padding: var(--padding-lg);
+    background: var(--card-hover-bg, var(--color-foreground));
+    color: var(--color-background);
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .product-card:hover .card-hover-panel,
+  .product-card:focus-within .card-hover-panel {
+    opacity: 1;
+  }
+
+  .card-hover-panel__icon img {
+    width: 1.5625rem;
+    height: auto;
+    display: block;
+  }
+
+  .card-hover-panel__tagline {
+    margin: 0;
+    font-family: var(--font-body--family);
+    font-weight: var(--font-body--weight);
+    font-size: var(--font-size--xl);
+    line-height: normal;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    max-width: 16.25rem;
+
+    @media only screen and (max-width: 749px) {
+      font-size: var(--font-size--md);
+    }
+  }
+
+  @media (hover: none) {
+    .card-hover-panel {
+      display: none;
+    }
+  }
+  slideshow-slide.product-media-container.product-media-container--image {
+    background-color: var(--color-background, transparent);
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
@@ -71,6 +166,20 @@
       "info": "t:info.aspect_ratio_adjusted"
     },
     {
+      "type": "checkbox",
+      "id": "show_hover_label",
+      "label": "Show hover label (category metafield)",
+      "info": "On hover, replaces the image with the product's card_hover_background, card_hover_icon, and card_hover_tagline custom metafields. Requires these metafields to be set on the product.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_overlay_quick_add",
+      "label": "Show quick-add over media",
+      "info": "Turn off if you're using the separate Quick add block elsewhere on the card. Requires the theme-wide Quick add setting to be enabled.",
+      "default": true
+    },
+    {
       "type": "header",
       "content": "t:content.borders"
     },
@@ -94,7 +203,7 @@
       "type": "range",
       "id": "border_width",
       "min": 0,
-      "max": 100,
+      "max": 4,
       "step": 1,
       "unit": "px",
       "label": "t:settings.thickness",
@@ -113,11 +222,18 @@
       "visible_if": "{{ block.settings.border != 'none' }}"
     },
     {
+      "type": "color",
+      "id": "border_color",
+      "label": "t:settings.color",
+      "placeholder": "t:settings.default",
+      "visible_if": "{{ block.settings.border != 'none' }}"
+    },
+    {
       "type": "range",
       "id": "border_radius",
       "label": "t:settings.border_radius",
       "min": 0,
-      "max": 32,
+      "max": 100,
       "step": 1,
       "unit": "px",
       "default": 0

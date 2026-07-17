@@ -14,6 +14,12 @@
   @param {string} [aspect_ratio] - The aspect ratio of thumbnails, if applicable. defaults to 'adapt'
   @param {string} [class] - Additional classes to apply to the controls
   @param {boolean} [secondary] - Whether the controls are secondary
+  @param {image} [custom_icon] - The custom icon image
+  @param {number} [custom_icon_width] - The width of the custom icon
+  @param {boolean} [show_arrows_desktop=true] - Whether to show arrows on desktop
+  @param {boolean} [show_arrows_mobile=true] - Whether to show arrows on mobile
+  @param {string} [arrows_position='center'] - Desktop arrow position (top, center, bottom)
+  @param {string} [mobile_arrows_position='center'] - Mobile arrow position (top, center, bottom)
 
   @example
   {%- render 'slideshow-controls', style: 'dots', item_count: 10 -%}
@@ -66,11 +72,28 @@
   {% endif %}
 >
   {% if show_arrows_separately == false and show_arrows and pagination_position != 'left' %}
-    <div class="slideshow-controls__arrows">
-      {%- render 'slideshow-arrow', action: 'previous', icon_style: icon_style, icon_shape: shape -%}
+    <div class="slideshow-controls__arrows
+        {% unless show_arrows_desktop %} max-lg:slideshow-controls__arrows--hidden-desktop{% endunless %}
+        {% unless show_arrows_mobile %} lg:slideshow-controls__arrows--hidden-mobile{% endunless %}
+        slideshow-controls__arrows--{{ arrows_position }}
+        slideshow-controls__arrows--mobile-{{ mobile_arrows_position }}
+    ">
+      {%- render 'slideshow-arrow',
+        action: 'previous',
+        icon_style: icon_style,
+        icon_shape: shape,
+        custom_icon: custom_icon,
+        custom_icon_width: custom_icon_width
+      -%}
 
       {% if pagination_position == 'right' %}
-        {%- render 'slideshow-arrow', action: 'next', icon_style: icon_style, icon_shape: shape -%}
+        {%- render 'slideshow-arrow',
+          action: 'next',
+          icon_style: icon_style,
+          icon_shape: shape,
+          custom_icon: custom_icon,
+          custom_icon_width: custom_icon_width
+        -%}
       {% endif %}
     </div>
   {% endif %}
@@ -112,7 +135,18 @@
                 aria-selected="true"
               {% endif %}
             >
-              {{ media.preview_image | image_url: width: 144 | image_tag: loading: 'lazy', alt: media.alt | escape }}
+              {% liquid
+                assign focal_point_style = ''
+                if media.presentation.focal_point != blank
+                  assign focal_point_style = 'object-position: ' | append: media.presentation.focal_point | append: ';'
+                endif
+              %}
+              {{
+                media.preview_image
+                | image_url: width: 144
+                | image_tag: loading: 'lazy', alt: media.alt, style: focal_point_style
+                | escape
+              }}
 
               {% if media.media_type == 'video' or media.media_type == 'external_video' %}
                 <span class="slideshow-controls__thumbnail-badge">
@@ -164,7 +198,13 @@
   {% if show_arrows_separately == false and show_arrows and pagination_position != 'right' %}
     <div class="slideshow-controls__arrows">
       {% if pagination_position == 'left' %}
-        {%- render 'slideshow-arrow', action: 'previous', icon_style: icon_style, icon_shape: shape -%}
+        {%- render 'slideshow-arrow',
+          action: 'previous',
+          icon_style: icon_style,
+          icon_shape: shape,
+          custom_icon: custom_icon,
+          custom_icon_width: custom_icon_width
+        -%}
       {% endif %}
 
       {%- render 'slideshow-arrow', action: 'next', icon_style: icon_style, icon_shape: shape -%}
@@ -173,8 +213,25 @@
 </slideshow-controls>
 
 {% if show_arrows_separately and show_arrows %}
-  <div class="slideshow-controls__arrows">
-    {%- render 'slideshow-arrow', action: 'previous', icon_style: icon_style, icon_shape: shape -%}
-    {%- render 'slideshow-arrow', action: 'next', icon_style: icon_style, icon_shape: shape -%}
+  <div class="slideshow-controls__arrows
+      {% if show_arrows_desktop == false %} max-lg:slideshow-controls__arrows--hidden-desktop{% endif %}
+      {% if show_arrows_mobile == false %} lg:slideshow-controls__arrows--hidden-mobile{% endif %}
+      slideshow-controls__arrows--{{ arrows_position }}
+      slideshow-controls__arrows--mobile-{{ mobile_arrows_position }}
+  ">
+    {%- render 'slideshow-arrow',
+      action: 'previous',
+      icon_style: icon_style,
+      icon_shape: shape,
+      custom_icon: custom_icon,
+      custom_icon_width: custom_icon_width
+    -%}
+    {%- render 'slideshow-arrow',
+      action: 'next',
+      icon_style: icon_style,
+      icon_shape: shape,
+      custom_icon: custom_icon,
+      custom_icon_width: custom_icon_width
+    -%}
   </div>
 {% endif %}

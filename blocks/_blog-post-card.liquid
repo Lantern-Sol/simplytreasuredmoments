@@ -1,42 +1,72 @@
-
-
 {%- assign block_settings = block.settings -%}
 
-{% capture title %}
-  {% content_for 'block', id: 'heading', type: '_heading', text: article.title %}
-{% endcapture %}
+{%- liquid
+  assign show_tag = block_settings.show_tag
+  assign show_button = block_settings.show_button
+  assign button_label = block_settings.button_label | default: 'Read article'
 
-{% capture details %}
-  {% content_for 'block',
-    id: 'blog-post-details',
-    type: '_blog-post-info-text',
-    alignment: block_settings.alignment,
-    article: article
-  %}
-{% endcapture %}
+  assign first_tag = ''
+  if article.tags.size > 0
+    assign first_tag = article.tags | first
+  endif
 
-{% capture description %}
-  {% content_for 'block', id: 'content', type: '_blog-post-description', article: article %}
-{% endcapture %}
+  if block_settings.background_color != blank
+    render 'contrast-override', background_color: block_settings.background_color, section_id: block.id
+  endif
+-%}
+
+{% if block_settings.background_color != blank %}
+  {% style %}
+    blog-posts-list[section-id="{{ section.id }}"] .blog-post-item {
+      --color-background: {{ block_settings.background_color }};
+    }
+  {% endstyle %}
+{% endif %}
 
 <div
-  class="blog-post-card"
+  class="blog-post-card{% if block_settings.background_color != blank %} color-custom-{{ block.id }}{% endif %}"
   style="--text-align: {{ block_settings.alignment }}"
 >
-  {%- if article.image -%}
-    <div class="blog-post-card__image-container">
-      <a href="{{ article.url }}">
-        {% content_for 'block', id: 'image', type: '_blog-post-image', image: article.image %}
-      </a>
-    </div>
-  {%- endif -%}
+  {% if article.image %}
+    {% content_for 'block', id: 'image', type: '_blog-post-image', article: article %}
+  {% endif %}
 
   <div class="blog-post-card__content">
-    <a href="{{ article.url }}">{{ title }}</a>
+    {%- if show_tag and first_tag != blank -%}
+      <a
+        class="blog-post-card__tag"
+        href="{{ blog.url }}/tagged/{{ first_tag | handleize }}"
+      >{{ first_tag }}</a>
+    {%- endif -%}
 
-    {{ details }}
+    <a
+      class="blog-post-card__title-link"
+      href="{{ article.url }}"
+      data-testid="blog-post-link"
+    >
+      {%- content_for 'block', id: 'heading', type: '_heading', text: article.title -%}
+    </a>
 
-    {{ description }}
+    {% content_for 'block',
+      id: 'blog-post-details',
+      type: '_blog-post-info-text',
+      alignment: block_settings.alignment,
+      article: article
+    %}
+
+    {% content_for 'block',
+      id: 'content',
+      type: '_blog-post-description',
+      article: article,
+      show_read_more: false
+    %}
+
+    {%- if show_button -%}
+      <a
+        class="blog-post-card__button button button--primary"
+        href="{{ article.url }}"
+      >{{ button_label }}</a>
+    {%- endif -%}
   </div>
 </div>
 
@@ -45,6 +75,31 @@
     display: flex;
     flex-direction: column;
     text-align: var(--text-align);
+    column-gap: var(--columns-gap);
+  }
+
+  .blog-post-item--horizontal:has(.blog-post-card__image-container) .blog-post-card {
+    & > *:first-child {
+      flex-basis: 50%;
+    }
+
+    & > *:last-child {
+      flex-basis: 50%;
+    }
+  }
+
+  .blog-post-card__content {
+    padding-block-start: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  .blog-post-item--horizontal .blog-post-card__title-link .spacing-style,
+  .blog-post-item--horizontal .blog-post-details,
+  .blog-post-item--horizontal .blog-post-card__content-text {
+    padding-inline-start: 0;
   }
 
   .blog-post-item .blog-post-card__image-container,
@@ -52,56 +107,77 @@
     width: 100%;
   }
 
-  .blog-post-item:first-child .blog-post-card {
+  /**
+   * Horizontal layout (image left, content right)
+   * Applied to hero posts based on total article count
+   * Only applies the split layout when an image is actually present
+   */
+  .blog-post-item--horizontal .blog-post-card {
     flex-direction: row;
+    align-items: stretch;
 
     @media screen and (max-width: 749px) {
       flex-direction: column;
     }
   }
 
-  .blog-post-item:first-child .blog-post-card__image-container {
-    width: 70%;
-
+  .blog-post-item--horizontal .blog-post-card__content {
+    padding-inline: clamp(1rem, 3vw, 2.5rem);
+    padding-block: clamp(1rem, 3vw, 2.5rem);
+    
     @media screen and (max-width: 749px) {
-      width: 100%;
+      padding-inline: 0;
+      padding-block: 1.5rem 0;
     }
-  }
-
-  .blog-post-item:first-child:has(.blog-post-card__image-container) .blog-post-card__content {
-    padding-inline-start: var(--columns-gap);
-    width: 30%;
-
-    @media screen and (max-width: 749px) {
-      padding-inline-start: 0;
-      width: 100%;
-    }
-  }
-
-  .blog-post-card__content {
-    padding-block-start: 0.4rem;
-    display: flex;
-    flex-direction: column;
   }
 
   .blog-post-card__content a {
     display: block;
     text-wrap: pretty;
     text-decoration: none;
-    padding-block-start: 0.75rem;
+    color: var(--color-foreground);
   }
 
-  .blog-post-card__content a:hover,
-  .blog-post-card__content a:hover [style*='--color: var(--color-primary)'] {
-    color: var(--color-primary-hover);
+  .blog-post-card__content a:hover {
+    color: var(--color-foreground-subdued);
   }
 
-  .blog-post-card__content a:hover [style*='--color: var(--color-foreground-heading)'] {
-    color: rgb(var(--color-foreground-heading-rgb) / var(--opacity-subdued-text));
+  .blog-post-card__content > a:not(.blog-post-card__tag):not(.blog-post-card__button) {
+    padding-block-start: 0.5rem;
   }
 
-  .blog-post-card__content a:hover [style*='--color: var(--color-foreground)'] {
-    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+  @media screen and (max-width: 749px) {
+    .blog-post-item--horizontal .blog-post-card__content > a:not(.blog-post-card__tag):not(.blog-post-card__button) {
+      padding-block: 0.75rem 1rem;
+    }
+  }
+
+  a.blog-post-card__title-link {
+    color: var(--color-foreground);
+
+    &:hover {
+      color: var(--color-foreground-subdued);
+    }
+  }
+
+  .blog-post-card__tag {
+    display: inline-block;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: var(--color-link, currentColor);
+    text-decoration: none;
+    margin-block-end: 0.25rem;
+  }
+
+  .blog-post-card__button {
+    align-self: var(--button-self-align, flex-start);
+    margin-block-start: 0.75rem;
+    width: fit-content;
+    display: inline-flex;
+
+    @media screen and (max-width: 749px) {
+      margin-block-start: 1rem;
+    }
   }
 {% endstylesheet %}
 
@@ -114,6 +190,40 @@
       "id": "alignment",
       "label": "t:settings.alignment",
       "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "placeholder": "t:settings.default"
+    },
+    {
+      "type": "header",
+      "content": "Category tag"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tag",
+      "label": "Show category tag",
+      "info": "Displays the article's first tag above the title.",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_button",
+      "label": "Show \"Read article\" button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Read article",
+      "visible_if": "{{ block.settings.show_button }}"
     }
   ]
 }
