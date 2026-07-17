@@ -1,97 +1,23 @@
 {% style %}
   {%- liquid
-    assign primary_font_thin = settings.type_body_font | font_modify: 'weight', '100'
-    assign primary_font_extra_light = settings.type_body_font | font_modify: 'weight', '200'
-    assign primary_font_light = settings.type_body_font | font_modify: 'weight', '300'
-    assign primary_font_regular = settings.type_body_font | font_modify: 'weight', '400'
-    assign primary_font_medium = settings.type_body_font | font_modify: 'weight', '500'
-    assign primary_font_semibold = settings.type_body_font | font_modify: 'weight', '600'
     assign primary_font_bold = settings.type_body_font | font_modify: 'weight', 'bold'
-    assign primary_font_extra_bold = settings.type_body_font | font_modify: 'weight', '800'
-    assign primary_font_black = settings.type_body_font | font_modify: 'weight', '900'
-
     assign primary_font_italic = settings.type_body_font | font_modify: 'style', 'italic'
-    assign primary_font_thin_italic = primary_font_thin | font_modify: 'style', 'italic'
-    assign primary_font_extra_light_italic = primary_font_extra_light | font_modify: 'style', 'italic'
-    assign primary_font_light_italic = primary_font_light | font_modify: 'style', 'italic'
-    assign primary_font_regular_italic = primary_font_regular | font_modify: 'style', 'italic'
-    assign primary_font_medium_italic = primary_font_medium | font_modify: 'style', 'italic'
-    assign primary_font_semibold_italic = primary_font_semibold | font_modify: 'style', 'italic'
     assign primary_font_bold_italic = primary_font_bold | font_modify: 'style', 'italic'
-    assign primary_font_extra_bold_italic = primary_font_extra_bold | font_modify: 'style', 'italic'
-    assign primary_font_black_italic = primary_font_black | font_modify: 'style', 'italic'
   %}
 
   {{ settings.type_body_font | font_face: font_display: 'swap' }}
-  {{ primary_font_thin | font_face: font_display: 'swap' }}
-  {{ primary_font_extra_light | font_face: font_display: 'swap' }}
-  {{ primary_font_light | font_face: font_display: 'swap' }}
-  {{ primary_font_regular | font_face: font_display: 'swap' }}
-  {{ primary_font_medium | font_face: font_display: 'swap' }}
-  {{ primary_font_semibold | font_face: font_display: 'swap' }}
   {{ primary_font_bold | font_face: font_display: 'swap' }}
-  {{ primary_font_extra_bold | font_face: font_display: 'swap' }}
-  {{ primary_font_black | font_face: font_display: 'swap' }}
-
   {{ primary_font_italic | font_face: font_display: 'swap' }}
-  {{ primary_font_thin_italic | font_face: font_display: 'swap' }}
-  {{ primary_font_extra_light_italic | font_face: font_display: 'swap' }}
-  {{ primary_font_light_italic | font_face: font_display: 'swap' }}
-  {{ primary_font_regular_italic | font_face: font_display: 'swap' }}
-  {{ primary_font_medium_italic | font_face: font_display: 'swap' }}
-  {{ primary_font_semibold_italic | font_face: font_display: 'swap' }}
   {{ primary_font_bold_italic | font_face: font_display: 'swap' }}
-  {{ primary_font_extra_bold_italic | font_face: font_display: 'swap' }}
-  {{ primary_font_black_italic | font_face: font_display: 'swap' }}
 
   {% if settings.type_subheading_font != settings.type_body_font %}
     {%- liquid
-      assign secondary_font_thin = settings.type_subheading_font | font_modify: 'weight', '100'
-      assign secondary_font_extra_light = settings.type_subheading_font | font_modify: 'weight', '200'
-      assign secondary_font_light = settings.type_subheading_font | font_modify: 'weight', '300'
-      assign secondary_font_regular = settings.type_subheading_font | font_modify: 'weight', '400'
-      assign secondary_font_medium = settings.type_subheading_font | font_modify: 'weight', '500'
-      assign secondary_font_semibold = settings.type_subheading_font | font_modify: 'weight', '600'
       assign secondary_font_bold = settings.type_subheading_font | font_modify: 'weight', 'bold'
-      assign secondary_font_extra_bold = settings.type_subheading_font | font_modify: 'weight', '800'
-      assign secondary_font_black = settings.type_subheading_font | font_modify: 'weight', '900'
-
-      assign secondary_font_italic_thin = secondary_font_thin | font_modify: 'style', 'italic'
-      assign secondary_font_italic_extra_light = secondary_font_extra_light | font_modify: 'style', 'italic'
-      assign secondary_font_italic_light = secondary_font_light | font_modify: 'style', 'italic'
-      assign secondary_font_italic_regular = secondary_font_regular | font_modify: 'style', 'italic'
-      assign secondary_font_italic_medium = secondary_font_medium | font_modify: 'style', 'italic'
-      assign secondary_font_italic_semibold = secondary_font_semibold | font_modify: 'style', 'italic'
-      assign secondary_font_italic_bold = secondary_font_bold | font_modify: 'style', 'italic'
-      assign secondary_font_italic_extra_bold = secondary_font_extra_bold | font_modify: 'style', 'italic'
-      assign secondary_font_italic_black = secondary_font_black | font_modify: 'style', 'italic'
-
       assign secondary_font_italic = settings.type_subheading_font | font_modify: 'style', 'italic'
       assign secondary_font_bold_italic = secondary_font_bold | font_modify: 'style', 'italic'
     %}
 
     {{ settings.type_subheading_font | font_face: font_display: 'swap' }}
-    {{ secondary_font_thin | font_face: font_display: 'swap' }}
-    {{ secondary_font_extra_light | font_face: font_display: 'swap' }}
-    {{ secondary_font_light | font_face: font_display: 'swap' }}
-    {{ secondary_font_regular | font_face: font_display: 'swap' }}
-    {{ secondary_font_medium | font_face: font_display: 'swap' }}
-    {{ secondary_font_semibold | font_face: font_display: 'swap' }}
-    {{ secondary_font_bold | font_face: font_display: 'swap' }}
-    {{ secondary_font_extra_bold | font_face: font_display: 'swap' }}
-    {{ secondary_font_black | font_face: font_display: 'swap' }}
-
-    {{ secondary_font_italic | font_face: font_display: 'swap' }}
-    {{ secondary_font_italic_thin | font_face: font_display: 'swap' }}
-    {{ secondary_font_italic_extra_light | font_face: font_display: 'swap' }}
-    {{ secondary_font_italic_light | font_face: font_display: 'swap' }}
-    {{ secondary_font_italic_regular | font_face: font_display: 'swap' }}
-    {{ secondary_font_italic_medium | font_face: font_display: 'swap' }}
-    {{ secondary_font_italic_semibold | font_face: font_display: 'swap' }}
-    {{ secondary_font_italic_bold | font_face: font_display: 'swap' }}
-    {{ secondary_font_italic_extra_bold | font_face: font_display: 'swap' }}
-    {{ secondary_font_italic_black | font_face: font_display: 'swap' }}
-    
     {{ secondary_font_bold | font_face: font_display: 'swap' }}
     {{ secondary_font_italic | font_face: font_display: 'swap' }}
     {{ secondary_font_bold_italic | font_face: font_display: 'swap' }}
@@ -123,21 +49,9 @@
     {{ accent_font_bold_italic | font_face: font_display: 'swap' }}
   {% endif %}
 
-  @media only screen and (max-width: 1440px) and (min-width: 750px) { 
-    html {
-      font-size: calc(16 * 100vw / 1440);
-    }
-  }
-  @media only screen and (max-width: 749px) { 
-    html {
-      font-size: calc(16 * 100vw / 393);
-    }
-  }
-
   :root {
     /* Page Layout */
     --sidebar-width: 25rem;
-    --theme-drawer-width: 30rem;
     --narrow-content-width: 36rem;
     --normal-content-width: 42rem;
     --wide-content-width: 46rem;
@@ -187,11 +101,15 @@
     --font-h4--spacing: 0.25em;
     --font-h5--spacing: 0.25em;
     --font-h6--spacing: 0.25em;
-    --font-h7--spacing: 0.25em;
     --font-paragraph--spacing: 0.5em;
 
-    /* Heading color (h1-h6 are defined per color scheme in color-schemes.liquid; h7 is an LS addition) */
-    --font-h7--color: var(--color-foreground-heading);
+    /* Heading colors */
+    --font-h1--color: var(--color-foreground-heading);
+    --font-h2--color: var(--color-foreground-heading);
+    --font-h3--color: var(--color-foreground-heading);
+    --font-h4--color: var(--color-foreground-heading);
+    --font-h5--color: var(--color-foreground-heading);
+    --font-h6--color: var(--color-foreground-heading);
 
     /** Z-Index / Layering */
     --layer-section-background: -2;
@@ -248,7 +166,7 @@
 
     /* Typography presets */
     {% liquid
-      assign font_sizes = "paragraph, h1, h2, h3, h4, h5, h6, h7" | split: ", "
+      assign font_sizes = "paragraph, h1, h2, h3, h4, h5, h6" | split: ", "
       assign fluid_size_cutoff = 48
       assign absolute_font_size_min = 10
 
@@ -324,7 +242,7 @@
         endif
       endfor
 
-      assign type_presets = "paragraph, h1, h2, h3, h4, h5, h6, h7" | split: ", "
+      assign type_presets = "paragraph, h1, h2, h3, h4, h5, h6" | split: ", "
 
       for preset_name in type_presets
         assign preset_size = '--font-size--[preset_name]' | replace: '[preset_name]', preset_name
@@ -409,8 +327,7 @@
     --opacity-80: 0.8;
     --opacity-85: 0.85;
     --opacity-90: 0.9;
-    --opacity-subdued-text: 0.8;
-    --opacity-muted-text: 0.6;
+    --opacity-subdued-text: var(--opacity-70);
 
     --shadow-button: 0 2px 3px rgb(0 0 0 / 20%);
     --gradient-image-overlay: linear-gradient(to top, rgb(0 0 0 / 0.5), transparent);
@@ -459,7 +376,7 @@
     --spacing-scale-default: 1.0;
 
     /* Checkout buttons gap */
-    --checkout-button-gap: 10px;
+    --checkout-button-gap: 8px;
 
     /* Borders */
     --style-border-width: 1px;
@@ -476,8 +393,8 @@
     --style-border-width-secondary: {{ settings.secondary_button_border_width }}px;
     --style-border-width-inputs: {{ settings.input_border_width }}px;
     --style-border-radius-popover: {{ settings.popover_border_radius }}px;
-    --style-border-popover: {{ settings.popover_border_width }}px solid {{ settings.popover_border_color }};
-    --style-border-drawer: 1px solid {{ settings.drawer_border_color }};
+    --style-border-popover: {{ settings.popover_border_width }}px {{ settings.popover_border }} rgb(var(--color-border-rgb) / {{ settings.popover_border_opacity }}%);
+    --style-border-drawer: {{ settings.drawer_border_width }}px {{ settings.drawer_border }} rgb(var(--color-border-rgb) / {{ settings.drawer_border_opacity }}%);
     --style-border-swatch-opacity: {{ settings.variant_swatch_border_opacity }}%;
     --style-border-swatch-width: {{ settings.variant_swatch_border_width }}px;
     --style-border-swatch-style: {{ settings.variant_swatch_border_style }};
@@ -552,26 +469,16 @@
     --button-size-sm: 30px;
     --button-size-md: 36px;
     --button-size: var(--minimum-touch-target);
-    --primary-button-shadow-horizontal: {{ settings.primary_button_shadow_horizontal_offset | default: 0 }}px;
-    --primary-button-shadow-vertical: {{ settings.primary_button_shadow_vertical_offset | default: 0 }}px;
-    --primary-button-shadow-blur: {{ settings.primary_button_shadow_blur_radius | default: 0 }}px;
-    --primary-button-shadow-spread: {{ settings.primary_button_shadow_spread_radius | default: 0 }}px;
-    --primary-button-desktop-font-size: {{ settings.button_primary_desktop_font_size }};
-    --primary-button-mobile-font-size: {{ settings.button_primary_mobile_font_size }};
-    --primary-button-font-weight: {{ settings.primary_button_font_weight }};
-    --button-padding-inline: {{ settings.primary-button-padding-inline-start | default: 24 | divided_by: 16.0 }}rem {{ settings.primary-button-padding-inline-end | default: 24 | divided_by: 16.0 }}rem;
-    --button-padding-block: {{ settings.primary-button-padding-block-start | default: 16 | divided_by: 16.0 }}rem {{ settings.primary-button-padding-block-end | default: 16 | divided_by: 16.0 }}rem;
-    {% if settings.use_mobile_padding_primary_button %}
-      --mobile-button-padding-inline: {{ settings.primary-button-padding-inline-start-mobile | default: 24 | divided_by: 16.0 }}rem {{ settings.primary-button-padding-inline-end-mobile | default: 24 | divided_by: 16.0 }}rem;
-      --mobile-button-padding-block: {{ settings.primary-button-padding-block-start-mobile | default: 16 | divided_by: 16.0 }}rem {{ settings.primary-button-padding-block-end-mobile | default: 16 | divided_by: 16.0 }}rem;
-    {% else %}
-      --mobile-button-padding-inline: var(--button-padding-inline);
-      --mobile-button-padding-block: var(--button-padding-block);
-    {% endif %}
+    --button-padding-inline: 24px;
+    --button-padding-block: 16px;
 
     /* Button font-family */
     --button-font-family-primary: var(--font-{{ settings.type_font_button_primary }}--family);
     --button-font-family-secondary: var(--font-{{ settings.type_font_button_secondary }}--family);
+
+    /* Button font-weight */
+    --button-font-weight-primary: {{ settings.button_font_weight_primary }};
+    --button-font-weight-secondary: {{ settings.button_font_weight_secondary }};
 
     /* Button text case */
     --button-text-case: {{ settings.button_text_case }};
@@ -608,7 +515,6 @@
     /* Variant Picker Buttons */
     --variant-picker-button-radius: {{ settings.variant_button_radius | append: 'px' }};
     --variant-picker-button-border-width: {{ settings.variant_button_border_width | append: 'px' }};
-    --variant-option-label-color: var(--color, var(--color-foreground));
 
     /* Slideshow */
     --slideshow-controls-size: 3.5rem;
@@ -631,9 +537,7 @@
     /* Buy buttons */
     --height-buy-buttons: calc(var(--padding-lg) * 2 + var(--icon-size-sm));
 
-    /* Card image width and height variables */
-    --card-width-small: 10rem;
-
+    /* Card image height variables */
     --height-small: 10rem;
     --height-medium: 11.5rem;
     --height-large: 13rem;
@@ -662,33 +566,3 @@
     --cart-secondary-font-weight: var(--font-{{ settings.cart_price_font }}--weight);
   }
 {% endstyle %}
-
-{% render 'contrast-override',
-  background_color: settings.popover_background_color,
-  text_color: settings.popover_text_color,
-  border_color: settings.popover_border_color,
-  section_id: 'popover',
-  preset: 'ui'
-%}
-
-{% render 'contrast-override',
-  background_color: settings.drawer_background_color,
-  text_color: settings.drawer_text_color,
-  border_color: settings.drawer_border_color,
-  section_id: 'drawer',
-  preset: 'ui'
-%}
-
-{% render 'contrast-override',
-  background_color: settings.badge_sale_background_color,
-  text_color: settings.badge_sale_text_color,
-  section_id: 'badge-sale',
-  preset: 'ui'
-%}
-
-{% render 'contrast-override',
-  background_color: settings.badge_sold_out_background_color,
-  text_color: settings.badge_sold_out_text_color,
-  section_id: 'badge-sold-out',
-  preset: 'ui'
-%}

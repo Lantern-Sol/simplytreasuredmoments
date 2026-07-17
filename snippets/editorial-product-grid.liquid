@@ -72,15 +72,13 @@
     /* Make the aspect ratio super high on width, then increase the height of
      * slideshow containers until they fill all the available space */
     .card-gallery {
-      /* stylelint-disable-next-line declaration-no-important */
       --gallery-aspect-ratio: 99 !important;
     }
 
     .card-gallery,
     slideshow-component,
     slideshow-container,
-    slideshow-slides,
-    .product-media__image {
+    slideshow-slides {
       height: 100%;
     }
   }
@@ -89,7 +87,7 @@
     aspect-ratio: 1;
   }
 
-  @media screen and (max-width: 749px) {
+  @media (max-width: 768px) {
     .editorial-product__grid {
       display: flex;
       flex-direction: column;

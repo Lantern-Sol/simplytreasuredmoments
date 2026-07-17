@@ -1,11 +1,6 @@
+import { calculateHeaderGroupHeight } from '@theme/critical';
 import { Component } from '@theme/component';
-import { onDocumentLoaded, changeMetaThemeColor, setHeaderMenuStyle } from '@theme/utilities';
-import {
-  getScrollTop,
-  getScrollEventTarget,
-  getIntersectionRoot,
-  scrollContainerMediaQuery,
-} from '@theme/scroll-container';
+import { onDocumentLoaded, changeMetaThemeColor } from '@theme/utilities';
 
 /**
  * @typedef {Object} HeaderComponentRefs
@@ -39,9 +34,6 @@ class HeaderComponent extends Component {
    */
   #intersectionObserver = null;
 
-  /** @type {EventTarget | null} */
-  #scrollContainer = null;
-
   /**
    * Whether the header has been scrolled offscreen, when sticky behavior is 'scroll-up'
    * @type {boolean}
@@ -61,22 +53,20 @@ class HeaderComponent extends Component {
   #timeout = null;
 
   /**
-   * RAF ID for scroll handler throttling
-   * @type {number | null}
+   * The duration to wait for hiding animation, when sticky behavior is 'scroll-up'
+   * @constant {number}
    */
-  #scrollRafId = null;
+  #animationDelay = 150;
 
   /**
    * Keeps the global `--header-height` custom property up to date,
    * which other theme components can then consume
    */
   #resizeObserver = new ResizeObserver(([entry]) => {
-    if (!entry || !entry.borderBoxSize[0]) return;
+    if (!entry) return;
 
-    // The initial height is calculated using the .offsetHeight property, which returns an integer.
-    // We round to the nearest integer to avoid unnecessaary reflows.
-    const roundedHeaderHeight = Math.round(entry.borderBoxSize[0].blockSize);
-    document.body.style.setProperty('--header-height', `${roundedHeaderHeight}px`);
+    const { height } = entry.target.getBoundingClientRect();
+    document.body.style.setProperty('--header-height', `${height}px`);
 
     // Check if the menu drawer should be hidden in favor of the header menu
     if (this.#menuDrawerHiddenWidth && window.innerWidth > this.#menuDrawerHiddenWidth) {
@@ -93,7 +83,6 @@ class HeaderComponent extends Component {
 
     const config = {
       threshold: alwaysSticky ? 1 : 0,
-      root: getIntersectionRoot(),
     };
 
     this.#intersectionObserver = new IntersectionObserver(([entry]) => {
@@ -103,7 +92,7 @@ class HeaderComponent extends Component {
 
       if (alwaysSticky) {
         this.dataset.stickyState = isIntersecting ? 'inactive' : 'active';
-        if (this.dataset.themeColor) changeMetaThemeColor(this.dataset.themeColor);
+        changeMetaThemeColor(this.refs.headerRowTop);
       } else {
         this.#offscreen = !isIntersecting || this.dataset.stickyState === 'active';
       }
@@ -126,66 +115,30 @@ class HeaderComponent extends Component {
    */
   #updateMenuVisibility(hideMenu) {
     if (hideMenu) {
+      this.refs.headerDrawerContainer.classList.remove('desktop:hidden');
       this.#menuDrawerHiddenWidth = window.innerWidth;
+      this.refs.headerMenu.classList.add('hidden');
     } else {
+      this.refs.headerDrawerContainer.classList.add('desktop:hidden');
       this.#menuDrawerHiddenWidth = null;
-      // The drawer squeeze can trigger minimum-reached at desktop widths where
-      // it normally wouldn't. Once the menu hides, the overflow-list is
-      // display:none and can't measure to clear it. Resetting it here so
-      // setHeaderMenuStyle() sees a clean state.
-      const overflowList = this.querySelector('overflow-list');
-      if (overflowList) overflowList.removeAttribute('minimum-reached');
+      this.refs.headerMenu.classList.remove('hidden');
     }
-    setHeaderMenuStyle();
   }
 
-  /**
-   * Rebinds the scroll listener and IntersectionObserver when the viewport
-   * crosses the squeeze breakpoint (990px). The scroll container switches
-   * between `.page-wrapper` (desktop) and `document.scrollingElement` (mobile),
-   * so cached bindings from initialization become stale after a resize.
-   */
-  #handleBreakpointChange = () => {
-    const stickyMode = this.getAttribute('sticky');
-    if (!stickyMode) return;
-
-    // Rebind scroll listener
-    if (this.#scrollContainer) {
-      this.#scrollContainer.removeEventListener('scroll', this.#handleWindowScroll);
-      this.#scrollContainer = getScrollEventTarget();
-      this.#scrollContainer.addEventListener('scroll', this.#handleWindowScroll);
-    }
-
-    // Recreate IntersectionObserver with the new root
-    this.#intersectionObserver?.disconnect();
-    this.#intersectionObserver = null;
-    this.#observeStickyPosition(stickyMode === 'always');
-  };
-
   #handleWindowScroll = () => {
-    if (this.#scrollRafId !== null) return;
-
-    this.#scrollRafId = requestAnimationFrame(() => {
-      this.#scrollRafId = null;
-      this.#updateScrollState();
-    });
-  };
-
-  #updateScrollState = () => {
     const stickyMode = this.getAttribute('sticky');
     if (!this.#offscreen && stickyMode !== 'always') return;
 
-    const scrollTop = getScrollTop();
-    const headerTop = this.getBoundingClientRect().top;
+    const scrollTop = document.scrollingElement?.scrollTop ?? 0;
     const isScrollingUp = scrollTop < this.#lastScrollTop;
-    const isAtTop = headerTop >= 0;
-
     if (this.#timeout) {
       clearTimeout(this.#timeout);
       this.#timeout = null;
     }
 
     if (stickyMode === 'always') {
+      const isAtTop = this.getBoundingClientRect().top >= 0;
+
       if (isAtTop) {
         this.dataset.scrollDirection = 'none';
       } else if (isScrollingUp) {
@@ -199,7 +152,9 @@ class HeaderComponent extends Component {
     }
 
     if (isScrollingUp) {
-      if (isAtTop) {
+      this.removeAttribute('data-animating');
+
+      if (this.getBoundingClientRect().top >= 0) {
         // reset sticky state when header is scrolled up to natural position
         this.#offscreen = false;
         this.dataset.stickyState = 'inactive';
@@ -211,8 +166,13 @@ class HeaderComponent extends Component {
       }
     } else if (this.dataset.stickyState === 'active') {
       this.dataset.scrollDirection = 'none';
+      // delay transitioning to idle hidden state for hiding animation
+      this.setAttribute('data-animating', '');
 
-      this.dataset.stickyState = 'idle';
+      this.#timeout = setTimeout(() => {
+        this.dataset.stickyState = 'idle';
+        this.removeAttribute('data-animating');
+      }, this.#animationDelay);
     } else {
       this.dataset.scrollDirection = 'none';
       this.dataset.stickyState = 'idle';
@@ -231,11 +191,8 @@ class HeaderComponent extends Component {
       this.#observeStickyPosition(stickyMode === 'always');
 
       if (stickyMode === 'scroll-up' || stickyMode === 'always') {
-        this.#scrollContainer = getScrollEventTarget();
-        this.#scrollContainer.addEventListener('scroll', this.#handleWindowScroll);
+        document.addEventListener('scroll', this.#handleWindowScroll);
       }
-
-      scrollContainerMediaQuery.addEventListener('change', this.#handleBreakpointChange);
     }
   }
 
@@ -244,13 +201,7 @@ class HeaderComponent extends Component {
     this.#resizeObserver.disconnect();
     this.#intersectionObserver?.disconnect();
     this.removeEventListener('overflowMinimum', this.#handleOverflowMinimum);
-    scrollContainerMediaQuery.removeEventListener('change', this.#handleBreakpointChange);
-    this.#scrollContainer?.removeEventListener('scroll', this.#handleWindowScroll);
-    this.#scrollContainer = null;
-    if (this.#scrollRafId !== null) {
-      cancelAnimationFrame(this.#scrollRafId);
-      this.#scrollRafId = null;
-    }
+    document.removeEventListener('scroll', this.#handleWindowScroll);
     document.body.style.setProperty('--header-height', '0px');
   }
 }
@@ -260,41 +211,19 @@ if (!customElements.get('header-component')) {
 }
 
 onDocumentLoaded(() => {
-  const header = document.querySelector('header-component');
+  const header = document.querySelector('#header-component');
   const headerGroup = document.querySelector('#header-group');
-
-  // Note: Initial header heights are set via inline script in theme.liquid
-  // This ResizeObserver handles dynamic updates after page load
 
   // Update header group height on resize of any child
   if (headerGroup) {
-    const resizeObserver = new ResizeObserver((entries) => {
-      const headerGroupHeight = entries.reduce((totalHeight, entry) => {
-        if (
-          entry.target !== header ||
-          (header.hasAttribute('transparent') && header.parentElement?.nextElementSibling)
-        ) {
-          return totalHeight + (entry.borderBoxSize[0]?.blockSize ?? 0);
-        }
-        return totalHeight;
-      }, 0);
-      // The initial height is calculated using the .offsetHeight property, which returns an integer.
-      // We round to the nearest integer to avoid unnecessaary reflows.
-      const roundedHeaderGroupHeight = Math.round(headerGroupHeight);
-      document.body.style.setProperty('--header-group-height', `${roundedHeaderGroupHeight}px`);
-    });
-
-    if (header instanceof HTMLElement) {
-      resizeObserver.observe(header);
-    }
+    const resizeObserver = new ResizeObserver(() => calculateHeaderGroupHeight(header, headerGroup));
 
     // Observe all children of the header group
     const children = headerGroup.children;
     for (let i = 0; i < children.length; i++) {
       const element = children[i];
-      if (element instanceof HTMLElement) {
-        resizeObserver.observe(element);
-      }
+      if (element === header || !(element instanceof HTMLElement)) continue;
+      resizeObserver.observe(element);
     }
 
     // Also observe the header group itself for child changes
@@ -305,9 +234,8 @@ onDocumentLoaded(() => {
           const children = headerGroup.children;
           for (let i = 0; i < children.length; i++) {
             const element = children[i];
-            if (element instanceof HTMLElement) {
-              resizeObserver.observe(element);
-            }
+            if (element === header || !(element instanceof HTMLElement)) continue;
+            resizeObserver.observe(element);
           }
         }
       }

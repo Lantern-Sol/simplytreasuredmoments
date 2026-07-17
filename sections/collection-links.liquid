@@ -1,3 +1,5 @@
+
+
 {% liquid
   assign collection_list = section.settings.collection_list
 
@@ -20,21 +22,11 @@
   fetchpriority="low"
 ></script>
 
-{% liquid
-  if section.settings.background_color != blank
-    render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
-  endif
-%}
-
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
 <div
-  class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
-></div>
-<div
-  class="section section--{{ section.settings.section_width }}{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %} spacing-style"
+  class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }} spacing-style"
   style="{% render 'spacing-style', settings: section.settings %}"
-  data-testid="collection-links-{{ section.id }}"
 >
-  {% content_for 'blocks' %}
   <collection-links-component
     layout="{{ section.settings.layout }}"
     alignment="{{ section.settings.alignment }}"
@@ -77,6 +69,7 @@
           %}
 
           {% capture slide %}
+            {% # theme-check-disable UniqueStaticBlockId %}
             {% content_for 'block',
               type: '_collection-link',
               id: 'link',
@@ -85,6 +78,7 @@
               current: current,
               image_only: true
             %}
+            {% # theme-check-enable UniqueStaticBlockId %}
           {% endcapture %}
 
           {% render 'slideshow-slide', children: slide, index: forloop.index0 %}
@@ -101,6 +95,7 @@
   </collection-links-component>
 </div>
 
+{% # theme-check-disable ValidBlockTarget %}
 {% stylesheet %}
   collection-links-component {
     --alignment: flex-start;
@@ -142,18 +137,16 @@
       grid-template-columns: 1fr var(--template-column-ratio);
       grid-template-areas: 'text image';
 
-      @media screen and (min-width: 750px) {
-        &[reverse] {
-          grid-template-areas: 'image text';
-          grid-template-columns: var(--template-column-ratio) 1fr;
-        }
+      &[reverse] {
+        grid-template-areas: 'image text';
+        grid-template-columns: var(--template-column-ratio) 1fr;
       }
 
       .collection-links__container {
         align-items: var(--alignment);
       }
 
-      @media screen and (max-width: 749px) {
+      @media (max-width: 749px) {
         grid-template-columns: 1fr;
         grid-template-areas: 'text' 'image';
         grid-gap: var(--gap-2xl);
@@ -188,7 +181,7 @@
     overflow: hidden;
     grid-area: image;
 
-    @media screen and (max-width: 749px) {
+    @media (max-width: 749px) {
       image-block {
         max-width: 100%;
       }
@@ -202,16 +195,6 @@
   "disabled_on": {
     "groups": ["header", "footer"]
   },
-  "blocks": [
-    { "type": "@theme" },
-    { "type": "@app" },
-    { "type": "text" },
-    { "type": "icon" },
-    { "type": "image" },
-    { "type": "button" },
-    { "type": "spacer" },
-    { "type": "_divider" }
-  ],
   "settings": [
     {
       "type": "collection_list",
@@ -292,10 +275,10 @@
       "visible_if": "{{ section.settings.layout == \"spotlight\" }}"
     },
     {
-      "type": "color",
-      "id": "background_color",
-      "label": "t:settings.background_color",
-      "placeholder": "t:settings.default"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
     },
     {
       "type": "header",
@@ -385,3 +368,4 @@
   ]
 }
 {% endschema %}
+{% # theme-check-enable ValidBlockTarget %}

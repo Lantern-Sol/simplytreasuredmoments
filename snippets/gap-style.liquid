@@ -18,8 +18,8 @@
 
 {%- if value != blank -%}
   {%- if disable_scaling != true and value > min -%}
-    --{{ name }}: max({{ min }}px, calc(var(--gap-scale, 1.0) * {{ value | divided_by: 16.0 }}rem));
+    --{{ name }}: max({{ min }}px, calc(var(--gap-scale, 1.0) * {{ value }}px));
   {%- else -%}
-    --{{ name }}: {{ value | divided_by: 16.0 }}rem;
+    --{{ name }}: {{ value }}px;
   {%- endif -%}
 {%- endif -%}

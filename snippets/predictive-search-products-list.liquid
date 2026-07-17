@@ -12,7 +12,6 @@
 -%}
 <div
   id="predictive-search-products"
-  class="predictive-search-results__products"
   {% if products_test_id %}
     data-testid="{{ products_test_id }}"
   {% endif %}
@@ -37,6 +36,8 @@
       </h4>
       <ul
         class="predictive-search-results__list predictive-search-results__wrapper-products list-unstyled"
+        role="listbox"
+        aria-label="{{ title }}"
       >
         {% liquid
           assign limit = limit | default: 8
@@ -58,8 +59,7 @@
                 resource: product,
                 image_width: 500,
                 image_hover: true,
-                image_aspect_ratio: '4 / 5',
-                product_view_context: 'search'
+                image_aspect_ratio: '4 / 5'
               %}
             </li>
           {% endfor %}
@@ -74,8 +74,7 @@
                 resource: product,
                 image_width: 500,
                 image_hover: true,
-                image_aspect_ratio: '4 / 5',
-                product_view_context: 'search'
+                image_aspect_ratio: '4 / 5'
               %}
             </li>
           {% endfor %}
@@ -88,6 +87,8 @@
     </h4>
     <ul
       class="predictive-search-results__list predictive-search-results__wrapper-products list-unstyled"
+      role="listbox"
+      aria-label="{{ title }}"
     >
       {% liquid
         assign limit = limit | default: 8
@@ -102,8 +103,7 @@
             resource: product,
             image_width: 500,
             image_hover: true,
-            image_aspect_ratio: '4 / 5',
-            product_view_context: 'search'
+            image_aspect_ratio: '4 / 5'
           %}
         </li>
       {% endfor %}

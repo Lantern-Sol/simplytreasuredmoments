@@ -10,7 +10,7 @@
   capture slides
     for resource in resources
       capture children
-        render 'resource-card', resource_type: resource_type, resource: resource, image_aspect_ratio: '4 / 5', collection_thumbnails: 'multiple', product_view_context: 'search'
+        render 'resource-card', resource_type: resource_type, resource: resource, image_aspect_ratio: '4 / 5', collection_thumbnails: 'multiple'
       endcapture
       render 'slideshow-slide', index: forloop.index0, children: children, class: 'predictive-search-results__card'
     endfor
@@ -50,3 +50,16 @@
   icon_style: 'chevron',
   slideshow_gutters: 'start end'
 %}
+
+{% stylesheet %}
+  .predictive-search-results__wrapper slideshow-slides {
+    /* Add padding to prevent hover animations from being clipped in slideshow
+       15px accommodates:
+       - Scale effect (9px on each side from 1.03 scale)
+       - Lift effect (4px upward movement)
+       - Shadow (15px spread with -5px offset)
+       Using 16px for better alignment with our spacing scale */
+    padding-block: var(--padding-xl);
+    margin-block: calc(-1 * var(--padding-xl));
+  }
+{% endstylesheet %}

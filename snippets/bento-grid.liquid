@@ -26,24 +26,16 @@
     else
       assign item_modulo = forloop.index | modulo: 12
     endif
-
-    # Calculate items in current box when starting a new box
-    if forloop.first or item_modulo == 1
-      assign remaining_items = items.size | minus: forloop.index0
-      if remaining_items >= first_box_size
-        assign box_item_count = first_box_size
-      else
-        assign box_item_count = remaining_items
-      endif
-    endif
   %}
 
+  {% # theme-check-disable UnclosedHTMLElement %}
   {% if forloop.first or item_modulo == 1 %}
     <div
-      class="bento-box bento-box--items-{{ box_item_count }}"
+      class="bento-box"
       data-testid="bento-box"
     >
   {% endif %}
+  {% # theme-check-disable UnclosedHTMLElement %}
 
   <div class="bento-box__item">
     {{ item }}
@@ -70,15 +62,9 @@
     padding-block-start: var(--bento-gap);
   }
 
-  @media screen and (max-width: 900px) {
+  @media (max-width: 900px) {
     .bento-box {
       grid-template-columns: repeat(2, 1fr);
-    }
-
-    .bento-box__item {
-      /* Prevent grid items from overflowing their cells when children have aspect-ratio */
-      min-width: 0;
-      overflow: hidden;
     }
 
     .bento-box__item:nth-child(3n + 1) {
@@ -103,7 +89,7 @@
     }
   }
 
-  @media screen and (min-width: 901px) {
+  @media (min-width: 901px) {
     .bento-box {
       grid-template-columns: repeat(12, 1fr);
       grid-template-areas:
@@ -161,34 +147,34 @@
       grid-area: L;
     }
 
-    /* === Overrides for specific item counts === */
+    /* === Overrides for specific cases === */
 
     /* Exactly 1 item */
-    .bento-box--items-1 {
+    .bento-box:has(.bento-box__item:first-child:nth-last-child(1)) {
       grid-template-areas: 'A A A A A A A A A A A A';
     }
 
     /* Exactly 2 items */
-    .bento-box--items-2 {
+    .bento-box:has(.bento-box__item:first-child:nth-last-child(2)) {
       grid-template-areas: 'A A A A A A B B B B B B';
     }
 
     /* Exactly 4 items */
-    .bento-box--items-4 {
+    .bento-box:has(.bento-box__item:first-child:nth-last-child(4)) {
       grid-template-areas:
         'A A A A B B B B B B B B'
         'C C C C C C C C D D D D';
     }
 
     /* Exactly 5 items */
-    .bento-box--items-5 {
+    .bento-box:has(.bento-box__item:first-child:nth-last-child(5)) {
       grid-template-areas:
         'A A A B B B B B B C C C'
         'D D D D D D E E E E E E';
     }
 
     /* Exactly 7 items */
-    .bento-box--items-7 {
+    .bento-box:has(.bento-box__item:first-child:nth-last-child(7)) {
       grid-template-areas:
         'A A A B B B B B B C C C'
         'D D D D D D D D D E E E'
@@ -196,7 +182,7 @@
     }
 
     /* Exactly 8 items */
-    .bento-box--items-8 {
+    .bento-box:has(.bento-box__item:first-child:nth-last-child(8)) {
       grid-template-areas:
         'A A A B B B B B B C C C'
         'D D D D D D E E E F F F'
@@ -204,7 +190,7 @@
     }
 
     /* Exactly 10 items */
-    .bento-box--items-10 {
+    .bento-box:has(.bento-box__item:first-child:nth-last-child(10)) {
       grid-template-areas:
         'A A A B B B B B B C C C'
         'D D D D D D E E E F F F'
@@ -213,7 +199,7 @@
     }
 
     /* Exactly 11 items */
-    .bento-box--items-11 {
+    .bento-box:has(.bento-box__item:first-child:nth-last-child(11)) {
       grid-template-areas:
         'A A A B B B B B B C C C'
         'D D D D D D E E E F F F'

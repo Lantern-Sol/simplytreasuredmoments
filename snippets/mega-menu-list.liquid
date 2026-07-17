@@ -9,7 +9,6 @@
   @param {string} [menu_content_type] - Type of content: 'featured_products', 'featured_collections', 'collection_images', or 'text'.
   @param {number} [content_aspect_ratio] - Aspect ratio for content images.
   @param {number} [image_border_radius] - Border radius for content images.
-  @param {object} [section] - The section object.
 
   @example
   {% render 'mega-menu-list', parent_link: link, id: 'MegaMenuList-1', grid_columns_count: 6, menu_content_type: 'featured_products' %}
@@ -25,20 +24,6 @@
   assign links_before_wrap = 10
   assign max_menu_columns = grid_columns_count | default: 6
   assign max_menu_columns_tablet = grid_columns_count_tablet | default: 4
-
-  ##
-  # We only eager load heavy elements of the page when rendering this template
-  # through the Section Rendering API.
-  #
-  # This keeps the initial render lightweight, minimizing the impact on TTFB.
-  # The second render then refreshes the page with additional content.
-  #
-  # At the moment, we check if the Section Rendering API is being used by
-  # checking if section.index is blank.
-  assign eager_loading = false
-  if section.index == blank
-    assign eager_loading = true
-  endif
 
   if menu_content_type == 'collection_images'
     assign collection_links = parent_link.links | where: 'type', 'collection_link'
@@ -77,14 +62,6 @@
   style="--menu-image-border-radius: {{ image_border_radius }}px;"
 >
   {% for link in parent_link.links %}
-    {%- liquid
-      # When the menu is in featured_collections mode, the collection-type links
-      # are already rendered as image cards on the right side of the mega menu,
-      # so skip them in the text/links column to avoid duplication.
-      if menu_content_type == 'featured_collections' and link.type == 'collection_link'
-        continue
-      endif
-    -%}
     {% liquid
       # Decide whether to open a column span, and how many columns of the grid to span
       if forloop.first or open_column_span == false
@@ -99,19 +76,15 @@
         assign column_span = link.links.size | divided_by: break_after_float | ceil | at_least: 1
         assign column_count = column_count | plus: column_span
         assign should_break_columns = true
-        assign span_class = ''
-
+        assign span_class = 'mega-menu__column mega-menu__column--span-' | append: column_span
         if menu_content_type == 'collection_images'
           assign should_break_columns = false
-          # For collection image mode, we have an 8-column grid when 4 or fewer parent links are used. Set column span to 2 in that case, otherwise use 1 column
-          if parent_link.links.size <= 4
-            assign span_class = 'mega-menu__column--wide-collection-image'
+          # temporary fix to use 8 column grid (spanning 2) when fewer than 5 collection image links
+          if parent_link.links.size < 5
+            assign span_class = span_class | append: ' mega-menu__column--collection-image'
           endif
-        else
-          # For all other modes, column span is determined by the number of links in the parent link
-          assign span_class = 'mega-menu__column--span-' | append: column_span
         endif
-        echo '<li class="mega-menu__column ' | append: span_class | append: '">'
+        echo '<li class="' | append: span_class | append: '">'
       endif
     %}
     <div>
@@ -121,7 +94,7 @@
       >
         {% if menu_content_type == 'collection_images' %}
           {%- capture collection_image_sizes -%}
-            {%- if parent_link.links.size <= 4 -%}
+            {%- if parent_link.links.size < 5 -%}
               {%- assign columns_per_item = 2 -%}
             {%- else -%}
               {%- assign columns_per_item = 1 -%}
@@ -139,12 +112,11 @@
 
           {% render 'link-featured-image', link: link, class: 'mega-menu__link-image', sizes: collection_image_sizes %}
         {% endif %}
-        <span class="wrap-text">
+        <span
+          class="mega-menu__link-title"
+        >
           {{- link.title -}}
         </span>
-        {%- if link.links != blank -%}
-          {% render 'icon-chevron-down' %}
-        {%- endif -%}
       </a>
       {% if link.links != blank %}
         <ul
@@ -164,7 +136,7 @@
                 href="{{ childLink.url }}"
                 class="mega-menu__link"
               >
-                <span class="wrap-text">{{- childLink.title -}}</span>
+                <span class="mega-menu__link-title">{{- childLink.title -}}</span>
               </a>
             </li>
           {% endfor %}
@@ -212,11 +184,7 @@
       assign max_product_columns = max_menu_columns | minus: column_count | at_most: max_products
     endif
 
-    if eager_loading
-      assign max_product_columns = max_product_columns | at_most: collection_object.products_count
-    else
-      assign max_product_columns = 0
-    endif
+    assign max_product_columns = max_product_columns | at_most: collection_object.products.size
 
     assign max_featured_products = max_product_columns
     assign max_menu_columns = max_menu_columns | minus: max_product_columns
@@ -230,7 +198,7 @@
       assign max_product_columns_tablet = max_menu_columns_tablet | minus: column_count | at_most: max_products_tablet
     endif
 
-    assign max_product_columns_tablet = max_product_columns_tablet | at_most: max_product_columns
+    assign max_product_columns_tablet = max_product_columns_tablet | at_most: collection_object.products.size
 
     assign max_featured_products_tablet = max_product_columns_tablet
     assign max_menu_columns_tablet = max_menu_columns_tablet | minus: max_product_columns_tablet
@@ -297,22 +265,19 @@
       <ul
         class="mega-menu__content-list mega-menu__content-list--products list-unstyled"
       >
-        {% if eager_loading %}
-          {% paginate collection_object.products by max_featured_products %}
-            {% for item in collection_object.products %}
-              <li class="mega-menu__content-list-item {% if forloop.index > max_featured_products_tablet %} mega-menu__content-list-item--hidden-tablet{% endif %}">
-                {% render 'resource-card',
-                  resource: item,
-                  resource_type: 'product',
-                  image_hover: true,
-                  image_aspect_ratio: content_aspect_ratio,
-                  image_sizes: image_sizes,
-                  product_view_context: 'dialog'
-                %}
-              </li>
-            {% endfor %}
-          {% endpaginate %}
-        {% endif %}
+        {% paginate collection_object.products by max_featured_products %}
+          {% for item in collection_object.products %}
+            <li class="mega-menu__content-list-item {% if forloop.index > max_featured_products_tablet %} mega-menu__content-list-item--hidden-tablet{% endif %}">
+              {% render 'resource-card',
+                resource: item,
+                resource_type: 'product',
+                image_hover: true,
+                image_aspect_ratio: content_aspect_ratio,
+                image_sizes: image_sizes
+              %}
+            </li>
+          {% endfor %}
+        {% endpaginate %}
       </ul>
     </span>
   {% when 'featured_collections' %}
@@ -342,20 +307,13 @@
           {% else %}
             {% assign collection_object = collections[handle] %}
           {% endif %}
-          <li
-            class="
-              mega-menu__content-list-item
-              {% if forloop.index > max_featured_collections_tablet %} mega-menu__content-list-item--hidden-tablet{% endif %}
-            "
-          >
+          <li class="mega-menu__content-list-item{% if forloop.index > max_featured_collections_tablet %} mega-menu__content-list-item--hidden-tablet{% endif %}">
             {% render 'resource-card',
               resource: collection_object,
               resource_type: 'collection',
               style: 'overlay',
               image_aspect_ratio: content_aspect_ratio,
-              image_sizes: image_sizes,
-              button_label: feature_button_label,
-              button_style_class: feature_button_style_class
+              image_sizes: image_sizes
             %}
           </li>
         {% endfor %}

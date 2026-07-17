@@ -1,48 +1,33 @@
-import { ThemeEvents } from '@theme/events';
+import { ThemeEvents, VariantUpdateEvent } from '@theme/events';
 import { morph } from '@theme/morph';
-import { Component } from '@theme/component';
-import { StandardEvents, ProductSelectEvent } from '@shopify/events';
 
-class ProductInventory extends Component {
+class ProductInventory extends HTMLElement {
   connectedCallback() {
-    super.connectedCallback();
     const closestSection = this.closest('.shopify-section, dialog');
-    closestSection?.addEventListener(StandardEvents.productSelect, this.#handleProductSelect);
+    closestSection?.addEventListener(ThemeEvents.variantUpdate, this.updateInventory);
   }
 
   disconnectedCallback() {
-    super.disconnectedCallback();
     const closestSection = this.closest('.shopify-section, dialog');
-    closestSection?.removeEventListener(StandardEvents.productSelect, this.#handleProductSelect);
+    closestSection?.removeEventListener(ThemeEvents.variantUpdate, this.updateInventory);
   }
 
   /**
-   * Handles product select event by updating the inventory.
-   * @param {ProductSelectEvent} event - The product select event.
+   * Updates the inventory.
+   * @param {VariantUpdateEvent} event - The variant update event.
    */
-  #handleProductSelect = (event) => {
-    if (!(event.target instanceof Element) || event.target.closest('product-card')) return;
+  updateInventory = (event) => {
+    if (event.detail.data.newProduct) {
+      this.dataset.productId = event.detail.data.newProduct.id;
+    } else if (event.target instanceof HTMLElement && event.target.dataset.productId !== this.dataset.productId) {
+      return;
+    }
 
-    event.promise
-      .then(({ detail }) => {
-        if (!detail?.html) return;
+    const newInventory = event.detail.data.html.querySelector('product-inventory');
 
-        const { html, newProduct } = detail;
+    if (!newInventory) return;
 
-        if (newProduct) {
-          this.dataset.productId = newProduct.id;
-        } else if (detail.productId && detail.productId !== this.dataset.productId) {
-          return;
-        }
-
-        const newInventory = html.querySelector('product-inventory');
-        if (!newInventory) return;
-
-        morph(this, newInventory, { childrenOnly: true });
-      })
-      .catch((error) => {
-        if (error?.name !== 'AbortError') console.warn('[product-inventory] Event promise rejected:', error);
-      });
+    morph(this, newInventory, { childrenOnly: true });
   };
 }
 

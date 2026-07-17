@@ -5,6 +5,7 @@
   @param {string} filter_style - The filter style ('horizontal' | 'vertical')
   @param {number} active_value_count - The number of active values
   @param {number} sectionId - The section ID
+  @param {boolean} [autofocus] - Whether to autofocus the filter
   @param {boolean} [should_render_clear] - Whether to render the clear button
   @param {boolean} [show_swatch_label] - Whether to show the swatch label
   @param {boolean} [in_drawer] - Whether the filter is in a drawer
@@ -24,25 +25,24 @@
   endif
 %}
 
-{%- liquid
-  assign is_horizontal = false
-  assign is_vertical = false
-  if filter_style == 'horizontal'
-    assign is_horizontal = true
-  elsif filter_style == 'vertical'
-    assign is_vertical = true
-  endif
-  assign filter_param_name = filter.param_name | escape | replace: '.', '-'
--%}
-{% capture accordion_children %}
+<accordion-custom
+  class="facets__item"
+  {% if filter_style == 'horizontal' %}
+    data-disable-animation-on-desktop="true"
+    data-close-with-escape="true"
+  {% endif %}
+  open-by-default-on-mobile
+  {% if filter_style == 'vertical' %}
+    open
+    open-by-default-on-desktop
+  {% endif %}
+  data-filter-param-name="{{ filter.param_name | escape | replace: '.', '-' }}"
+>
   <details
     id="Facet-Details-{{ sectionId }}-{{ filter.param_name | escape | replace: '.', '-' }}"
     class="facets__panel"
     {% if filter_style == 'horizontal' %}
       data-auto-close-details="desktop"
-    {% endif %}
-    {% if filter_style == 'vertical' %}
-      open
     {% endif %}
   >
     <summary class="facets__summary">
@@ -63,7 +63,7 @@
                   echo active_value_count
                 elsif active_value_count > 0 and active_value_count <= 3
                   for value in filter.active_values
-                    render 'swatch', swatch: value.swatch, mode: 'filter', label: value.label
+                    render 'swatch', swatch: value.swatch, mode: 'filter'
                   endfor
                 endif
               -%}
@@ -73,27 +73,18 @@
           <facet-status-component
             class="facets__status"
             facet-type="list"
-            data-filter-style="{{ filter_style }}"
           >
             <span
-              class="
-                {%- if filter_style == 'horizontal' -%}
-                  {%- if active_value_count > 1 -%}
-                    bubble facets__bubble
-                  {%- endif -%}
-                {%- else -%}
-                  {%- if active_value_count > 0 -%}
-                    bubble facets__bubble
-                  {%- endif -%}
-                {%- endif %}
-                hide-when-empty
-              "
+              {% if active_value_count > 1 %}
+                class="bubble facets__bubble"
+              {% endif %}
+              hide-when-empty
               ref="facetStatus"
             >
               {%- liquid
-                if filter_style == 'horizontal' and active_value_count == 1
+                if active_value_count == 1
                   echo filter.active_values[0].label
-                elsif active_value_count > 0
+                elsif active_value_count > 1
                   echo active_value_count
                 endif
               -%}
@@ -101,7 +92,7 @@
           </facet-status-component>
         {% endif %}
         <span class="svg-wrapper icon-caret icon-animated">
-          {{- 'icon-caret-custom.svg' | inline_asset_content -}}
+          {{- 'icon-caret.svg' | inline_asset_content -}}
         </span>
       </div>
     </summary>
@@ -109,7 +100,7 @@
       {% unless filter_style == 'vertical' %}
         data-close-on-resize
       {% endunless %}
-      class="facets__inputs facets__panel-content details-content{% if filter_style == 'horizontal' %} color-custom-popover{% endif %}"
+      class="facets__inputs facets__panel-content details-content{% if filter_style == 'horizontal' %} color-{{ settings.popover_color_scheme }}{% endif %}"
       id="facet-inputs-{{ filter.param_name | escape | replace: '.', '-' }}"
     >
       <facet-inputs-component
@@ -215,11 +206,7 @@
               %}
               <li
                 data-skip-node-update="true"
-                class="
-                  facets__inputs-list-item
-                  {% if hidden_class %} {{ hidden_class }}{% endif %}
-                  {% if is_disabled %} facets__inputs-list-item--disabled{% endif %}
-                "
+                class="facets__inputs-list-item{% if hidden_class %} {{ hidden_class }}{% endif %}"
                 {% if hidden_class %}
                   ref="showMoreItems[]"
                 {% endif %}
@@ -235,7 +222,7 @@
                   >
                     <div class="facets__image-wrapper">
                       {% if value.image %}
-                        {{ value.image | image_url: width: 300 | image_tag: alt: '' }}
+                        {{ value.image | image_url: width: 300 | image_tag: alt: value.alt }}
                       {% endif %}
                       {% if is_disabled %}
                         <svg
@@ -262,6 +249,9 @@
                       {% if is_disabled %}
                         disabled
                       {% endif %}
+                      {% if autofocus %}
+                        autofocus
+                      {% endif %}
                       ref="facetInputs[]"
                     >
                     <label
@@ -279,10 +269,9 @@
                     on:keydown="#facet-inputs-component-{{ filter.param_name | escape | replace: '.', '-' }}/handleKeyDown"
                   >
                     <label
-                      class="variant-option__button-label variant-option__button-label--has-swatch"
+                      class="variant-option__button-label variant-option__button-label--has-swatch swatch-rounded"
                       on:pointerenter="/prefetchPage"
                       on:pointerleave="/cancelPrefetchPage"
-                      on:pointerdown="/prefetchPageImmediate"
                     >
                       <div
                         class="variant-option__swatch-wrapper"
@@ -299,6 +288,9 @@
                           {% endif %}
                           {% if is_disabled %}
                             disabled
+                          {% endif %}
+                          {% if autofocus %}
+                            autofocus
                           {% endif %}
                           ref="facetInputs[]"
                         >
@@ -343,6 +335,9 @@
                         {% if is_disabled %}
                           disabled
                         {% endif %}
+                        {% if autofocus %}
+                          autofocus
+                        {% endif %}
                         ref="facetInputs[]"
                         tabindex="-1"
                       >
@@ -374,7 +369,8 @@
                       id: input_id,
                       disabled: is_disabled,
                       inputRef: 'facetInputs[]',
-                      events: 'on:pointerenter="/prefetchPage" on:pointerleave="/cancelPrefetchPage" on:pointerdown="/prefetchPageImmediate"'
+                      events: 'on:pointerenter="/prefetchPage" on:pointerleave="/cancelPrefetchPage"',
+                      autofocus: autofocus
                     %}
                   {% endif %}
                 {% endif %}
@@ -413,7 +409,7 @@
                 type="button"
                 on:click="/clearFilter"
                 on:keydown="/clearFilter"
-                class="clear-filter button button-unstyled"
+                class="clear-filter button button-secondary"
               >
                 {{- 'actions.clear' | t -}}
               </button>
@@ -423,17 +419,7 @@
       </facet-inputs-component>
     </floating-panel-component>
   </details>
-{% endcapture %}
-{% render 'accordion-custom-component',
-  children: accordion_children,
-  class: 'facets__item',
-  open: is_vertical,
-  open_by_default_on_desktop: is_vertical,
-  open_by_default_on_mobile: is_vertical,
-  disable_animation_on_desktop: is_horizontal,
-  close_with_escape: is_horizontal,
-  data_filter_param_name: filter_param_name
-%}
+</accordion-custom>
 
 {% stylesheet %}
   .facets input:checked + label {
@@ -444,21 +430,17 @@
     transition: border-color 0.2s ease, background-color 0.2s ease;
   }
 
-  .facets .checkbox:not(.checkbox--disabled):hover .icon-checkmark {
+  .facets .checkbox:not(:has(.checkbox__input:disabled)):hover .icon-checkmark {
     border-color: rgb(var(--color-foreground-rgb) / var(--opacity-40-60));
     background-color: rgb(var(--color-foreground-rgb) / var(--opacity-5));
   }
 
-  /* Hover state for checked checkboxes - targeting via adjacent sibling */
-  .facets .checkbox:not(.checkbox--disabled):hover .checkbox__input:checked + .checkbox__label .icon-checkmark {
-    background-color: var(--color-foreground-subdued);
+  .facets .checkbox:has(.checkbox__input:checked):not(:has(.checkbox__input:disabled)):hover .icon-checkmark {
+    background-color: rgb(var(--color-foreground-rgb) / var(--opacity-85));
   }
 
-  .facets .checkbox:not(.checkbox--disabled) .checkbox__label-text {
-    color: var(--color-foreground-subdued);
-  }
-  .facets .checkbox:not(.checkbox--disabled):hover .checkbox__label-text {
-    color: var(--color-foreground-rgb);
+  .facets .checkbox:not(:has(.checkbox__input:disabled)):hover .checkbox__label-text {
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-90));
   }
 
   .facets .checkbox .checkbox__label-text {
@@ -497,11 +479,6 @@
     &:hover {
       --pill-label-border-opacity: 100%;
     }
-  }
-
-  .facets__pill-input:not(:checked) + .facets__pill-label:hover {
-    --pill-label-color-rgb: var(--color-foreground-rgb);
-    background-color: rgb(var(--color-foreground-rgb) / var(--opacity-5));
   }
 
   .facets__pill-input {
@@ -562,15 +539,6 @@
     position: absolute;
     inset: 0;
     margin: 0;
-    padding: 0;
-    width: auto;
-    height: auto;
-    aspect-ratio: unset;
-    border: none;
-    border-radius: 0;
-    background: transparent;
-    appearance: auto;
-    display: block;
     opacity: 0;
     cursor: pointer;
   }
@@ -584,19 +552,77 @@
     display: flex;
   }
 
-  .variant-option__swatch-wrapper {
-    position: relative;
+  .facets__inputs-list--swatches .variant-option__button-label {
+    --color-variant-text: var(--color-foreground);
+  }
+
+  .facets__inputs-list--swatches {
+    --variant-picker-swatch-width: 32px;
+    --variant-picker-swatch-height: 32px;
+
+    @media screen and (min-width: 750px) {
+      --variant-picker-swatch-width: 26px;
+      --variant-picker-swatch-height: 26px;
+    }
+  }
+
+  .facets--vertical .facets__inputs-wrapper .facets__inputs-list--swatches-grid {
+    gap: var(--gap-sm);
+  }
+
+  .facets--vertical .facets__inputs-list--swatches .facets__inputs-list-item {
+    display: flex;
+  }
+
+  .facets__inputs-wrapper .facets__inputs-list--swatches-grid {
+    --columns: 2;
+
+    display: grid;
+    grid-template-columns: repeat(var(--columns), 1fr);
+  }
+
+  .facets__inputs-wrapper .facets__inputs-list--swatches-grid .variant-option--swatches {
+    cursor: pointer;
     overflow: visible;
-    border-radius: var(--options-border-radius);
+
+    &.variant-option--swatches-disabled,
+    &:has(input:disabled) {
+      cursor: not-allowed;
+    }
   }
 
-  .variant-option--swatches-disabled {
-    pointer-events: none;
-    cursor: not-allowed;
+  .facets__inputs-wrapper .facets__inputs-list--swatches-grid label {
+    cursor: pointer;
+    word-break: break-word;
+    white-space: normal;
+
+    .variant-option--swatches-disabled &,
+    .variant-option--swatches:has(input:disabled) & {
+      cursor: not-allowed;
+    }
   }
 
-  .variant-option--swatches-disabled .variant-option__swatch-wrapper {
-    overflow: hidden;
+  .facets__inputs-wrapper .facets__inputs-list--swatches-grid .variant-option__button-label--has-swatch {
+    align-items: center;
+    overflow: visible;
+    justify-content: flex-start;
+    display: flex;
+    width: 100%;
+    flex-basis: unset;
+    gap: var(--gap-sm);
+  }
+
+  .facets__inputs-wrapper .facets__inputs-list--swatches-grid .variant-option__button-label:has(:checked) {
+    color: rgb(var(--color-foreground-rgb));
+    background-color: rgb(var(--color-background-rgb));
+    font-weight: 500;
+    transition: font-weight 0.2s ease;
+  }
+
+  .facets .variant-option--swatches {
+    --options-border-radius: var(--variant-picker-swatch-radius);
+
+    width: auto;
   }
 
   .facets--horizontal .facets__status--swatches {
@@ -607,13 +633,7 @@
 
   .facets--horizontal .sorting-filter .facets__status {
     @media screen and (min-width: 750px) {
-      display: inline;
-      font-size: 0.875rem;
-      text-transform: capitalize;
-      font-family: var(--font-body--family);
-      font-weight: var(--font-body--weight);
-      line-height: normal;
-      padding-inline: 0 0.75rem;
+      display: none;
     }
   }
 
@@ -625,6 +645,62 @@
   .facets__status--swatches .swatch + .swatch {
     margin-left: calc(var(--variant-picker-swatch-width) / -3);
     outline: 1px solid rgb(var(--color-background-rgb));
+  }
+
+  .variant-option--images {
+    position: relative;
+  }
+
+  .variant-option--images {
+    --image-facet-border-width: var(--variant-picker-button-border-width);
+    --image-facet-border-opacity: var(--facets-low-opacity);
+    --image-facet-border-radius: var(--style-border-radius-xs);
+
+    border-radius: var(--image-facet-border-radius);
+    box-shadow: inset 0 0 0 var(--image-facet-border-width)
+      rgb(var(--color-foreground-rgb) / var(--image-facet-border-opacity));
+
+    &:hover:not(:has(input:disabled)),
+    &:has(input:checked) {
+      --image-facet-border-opacity: 100%;
+    }
+
+    &:has(input:checked) {
+      font-weight: 500;
+      transition: font-weight 0.2s ease;
+    }
+
+    &:has(input:checked):hover {
+      --image-facet-border-width: calc(var(--variant-picker-button-border-width) + 0.5px);
+    }
+
+    &:has(input:focus-visible) {
+      outline: var(--focus-outline-width) solid currentcolor;
+      outline-offset: var(--focus-outline-offset);
+    }
+
+    &:has(input:disabled),
+    &:has(input:disabled):hover {
+      --image-facet-border-opacity: 0;
+
+      opacity: var(--disabled-opacity);
+      cursor: not-allowed;
+
+      img {
+        opacity: var(--disabled-opacity);
+      }
+
+      input,
+      label,
+      .facets__image-label {
+        cursor: not-allowed;
+      }
+
+      .facets__image-wrapper {
+        border: var(--style-border-width) solid rgb(var(--color-foreground-rgb) / var(--opacity-30));
+        border-radius: var(--image-facet-border-radius);
+      }
+    }
   }
 
   .facets__inputs-wrapper .facets__inputs-list--images {
@@ -664,215 +740,6 @@
     border-radius: calc(var(--border-radius) / 2);
   }
 
-  .facets__image-label {
-    width: 100%;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding-block-end: var(--padding-xs);
-    cursor: pointer;
-  }
-
-  .facets__inputs-list-item--disabled .facets__image-label {
-    cursor: not-allowed;
-  }
-
-  .facets__inputs-list-item:not(.facets__inputs-list-item--disabled) .facets__image-label:hover {
-    font-weight: 500;
-  }
-
-  /* Filter-specific variant-option styles */
-  .facets__inputs-list--swatches-grid .variant-option__button-label--has-swatch:hover .swatch {
-    --focus-outline: var(--focus-outline-width) solid rgb(var(--color-foreground-rgb) / var(--opacity-35-55));
-
-    outline: var(--focus-outline);
-    outline-offset: var(--focus-outline-offset);
-  }
-
-  .facets__inputs-list--swatches-grid .variant-option__button-label:has(:focus-visible) .swatch {
-    --focus-outline: var(--focus-outline-width) solid currentcolor;
-
-    outline: var(--focus-outline);
-    outline-offset: var(--focus-outline-offset);
-  }
-
-  .facets__inputs-list--swatches-grid .variant-option__button-label:has(:focus-visible) {
-    outline: none;
-  }
-
-  .facets__inputs-list--swatches-grid .variant-option__button-label--has-swatch:hover {
-    outline: none;
-  }
-
-  .facets__inputs-list--swatches-grid .variant-option__button-label--has-swatch:has(:checked) {
-    --focus-outline: none;
-  }
-
-  .facets__inputs-list--swatches-grid .variant-option__button-label--has-swatch:has(:checked) .swatch {
-    outline: var(--focus-outline);
-    outline-offset: var(--focus-outline-offset);
-  }
-
-  .facets__inputs-list--swatches .variant-option__button-label {
-    --color-variant-text: var(--color-foreground);
-  }
-
-  .facets__inputs-list--swatches {
-    --variant-picker-swatch-width: 32px;
-    --variant-picker-swatch-height: 32px;
-
-    @media screen and (min-width: 750px) {
-      --variant-picker-swatch-width: 26px;
-      --variant-picker-swatch-height: 26px;
-    }
-  }
-
-  .facets--vertical .facets__inputs-wrapper .facets__inputs-list--swatches-grid {
-    gap: var(--gap-sm);
-  }
-
-  .facets--vertical .facets__inputs-list--swatches .facets__inputs-list-item {
-    display: flex;
-  }
-
-  .facets__inputs-wrapper .facets__inputs-list--swatches-grid {
-    --columns: 2;
-
-    display: grid;
-    grid-template-columns: repeat(var(--columns), 1fr);
-  }
-
-  .facets__inputs-wrapper .facets__inputs-list--swatches-grid .variant-option--swatches {
-    cursor: pointer;
-    overflow: visible;
-  }
-
-  .facets__inputs-list-item--disabled .variant-option--swatches {
-    cursor: not-allowed;
-  }
-
-  .facets__inputs-wrapper .facets__inputs-list--swatches-grid label {
-    cursor: pointer;
-    word-break: break-word;
-    white-space: normal;
-  }
-
-  .facets__inputs-list--swatches-grid .facets__inputs-list-item--disabled label {
-    cursor: not-allowed;
-  }
-
-  .facets__inputs-list-item--disabled .variant-option__button-label {
-    cursor: not-allowed;
-  }
-
-  .facets__inputs-wrapper
-    .facets__inputs-list--swatches-grid
-    .variant-option__button-label--has-swatch:has(input[type='checkbox']) {
-    align-items: center;
-    overflow: visible;
-    justify-content: flex-start;
-    display: flex;
-    width: 100%;
-    flex-basis: unset;
-    gap: var(--gap-sm);
-  }
-
-  .facets__inputs-wrapper .facets__inputs-list--swatches-grid .variant-option__button-label:has(:checked) {
-    color: rgb(var(--color-foreground-rgb));
-    background-color: rgb(var(--color-background-rgb));
-    font-weight: 500;
-    transition: font-weight 0.2s ease;
-  }
-
-  .facets .variant-option--swatches {
-    --options-border-radius: var(--variant-picker-swatch-radius);
-
-    width: auto;
-  }
-
-  .facets__inputs-list-item:not(.facets__inputs-list-item--disabled) .variant-option__button-label:hover {
-    font-weight: 500;
-  }
-
-  /* Variant option images (filters) */
-  .variant-option--images {
-    --image-facet-border-width: var(--variant-picker-button-border-width);
-    --image-facet-border-opacity: var(--facets-low-opacity);
-    --image-facet-border-radius: var(--style-border-radius-xs);
-
-    position: relative;
-    border-radius: var(--image-facet-border-radius);
-    box-shadow: inset 0 0 0 var(--image-facet-border-width)
-      rgb(var(--color-foreground-rgb) / var(--image-facet-border-opacity));
-
-    &:hover {
-      --image-facet-border-opacity: 100%;
-    }
-
-    &:has(input:checked) {
-      font-weight: 500;
-      transition: font-weight 0.2s ease;
-    }
-
-    &:has(input:checked):hover {
-      --image-facet-border-width: calc(var(--variant-picker-button-border-width) + 0.5px);
-    }
-
-    &:has(input:focus-visible) {
-      outline: var(--focus-outline-width) solid currentcolor;
-      outline-offset: var(--focus-outline-offset);
-    }
-  }
-
-  .variant-option--images input {
-    /* remove the checkbox from the page flow */
-    position: absolute;
-
-    /* set the dimensions to match those of the label */
-    inset: 0;
-
-    /* hide it */
-    opacity: 0;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    aspect-ratio: unset;
-    border: none;
-    border-radius: 0;
-    background: transparent;
-    appearance: auto;
-    display: block;
-    cursor: pointer;
-  }
-
-  .facets__inputs-list-item--disabled .variant-option--images {
-    --image-facet-border-opacity: 0;
-
-    opacity: var(--disabled-opacity);
-    cursor: not-allowed;
-
-    &:hover {
-      --image-facet-border-opacity: 0;
-    }
-
-    img {
-      opacity: var(--disabled-opacity);
-    }
-
-    input,
-    label,
-    .facets__image-label {
-      cursor: not-allowed;
-    }
-
-    .facets__image-wrapper {
-      border: var(--style-border-width) solid rgb(var(--color-foreground-rgb) / var(--opacity-30));
-      border-radius: var(--image-facet-border-radius);
-    }
-  }
-
   /* Position disabled-svg */
   .variant-option--images svg {
     position: absolute;
@@ -892,22 +759,25 @@
     min-width: 0;
   }
 
-  /* Safari < 16.4 outline border-radius workaround - filter-specific */
-  @supports not (background-color: rgb(from red 150 g b / alpha)) {
-    .facets__inputs-list--swatches-grid .variant-option__button-label--has-swatch:hover .swatch {
-      outline: none;
-      position: relative;
-      overflow: visible;
-    }
+  .facets__image-label {
+    width: 100%;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-block-end: var(--padding-xs);
+    cursor: pointer;
 
-    .facets__inputs-list--swatches-grid .variant-option__button-label--has-swatch:hover .swatch::after {
-      content: '';
-      position: absolute;
-      inset: calc(-1 * var(--focus-outline-offset));
-      border: var(--focus-outline);
-      border-radius: var(--focus-outline-radius, 50%);
-      background-color: transparent;
-      display: inherit;
+    .variant-option--images:has(input:disabled) & {
+      cursor: not-allowed;
     }
+  }
+
+  .facets__inputs-list--swatches .variant-option__button-label:hover:not(:has(input:disabled)) {
+    font-weight: 500;
+  }
+
+  .variant-option--images:not(:has(input:disabled)) .facets__image-label:hover {
+    font-weight: 500;
   }
 {% endstylesheet %}

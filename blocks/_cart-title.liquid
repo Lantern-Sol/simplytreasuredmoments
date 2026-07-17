@@ -1,28 +1,14 @@
-{% doc %}
-  Cart Title
 
-  Renders the cart title or empty cart state.
 
-  @param {boolean} [force_empty] - Force render empty cart state
-
-  @example
-  {% render 'cart-title', force_empty: true %}
-{% enddoc %}
-
-{% liquid
-  assign block_settings = block.settings
-  if block_settings.text_color != blank
-    render 'contrast-override', background_color: '', text_color: block_settings.text_color, section_id: block.id
-  endif
-%}
+{% assign block_settings = block.settings %}
 
 <div
-  class="cart-title spacing-style text-{{ block_settings.alignment }}{% if block_settings.text_color != blank %} color-custom-{{ block.id }}{% endif %}"
+  class="cart-title spacing-style text-{{ block_settings.alignment }}"
   style="{% render 'spacing-style', settings: block_settings %}"
   {{ block.shopify_attributes }}
 >
   <h1 class="{{ block_settings.type_preset | default: 'h2' }}">
-    {%- if cart.empty? or force_empty -%}
+    {%- if cart.empty? -%}
       {{ 'content.your_cart_is_empty' | t }}
     {%- else -%}
       {{ block_settings.title }}
@@ -44,24 +30,24 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    border-radius: var(--style-border-radius-buttons-primary);
     aspect-ratio: auto;
     padding: var(--cart-padding);
   }
 
   .cart-title .cart-bubble[data-maintain-ratio] {
-    width: min(1lh, 26px);
-    height: min(1lh, 26px);
+    aspect-ratio: 1;
+    min-width: 26px;
   }
 
-  .cart-title .cart-bubble .cart-bubble__background {
+  .cart-title .cart-bubble__background {
     background-color: rgb(var(--color-foreground-rgb) / var(--opacity-10-25));
   }
 
   .cart-title .cart-bubble__text {
     color: var(--color-foreground);
     font-family: var(--font-paragraph--family);
-    font-weight: var(--font-paragraph--weight);
-    font-size: clamp(var(--font-size--3xs), 0.75em, var(--font-size--xs));
+    font-size: clamp(var(--cart-font-size--2xs), 0.7lh, var(--cart-font-size--xs));
   }
 {% endstylesheet %}
 
@@ -74,7 +60,7 @@
       "type": "inline_richtext",
       "id": "title",
       "label": "t:settings.cart_title",
-      "default": "t:text_defaults.cart"
+      "default": "Cart"
     },
     {
       "type": "checkbox",
@@ -132,16 +118,6 @@
       "id": "alignment",
       "label": "t:settings.alignment",
       "default": "left"
-    },
-    {
-      "type": "header",
-      "content": "t:content.appearance"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:settings.text_color",
-      "placeholder": "t:settings.default"
     },
     {
       "type": "header",

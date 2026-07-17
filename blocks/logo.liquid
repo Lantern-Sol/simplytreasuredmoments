@@ -1,3 +1,5 @@
+
+
 {% liquid
   assign block_settings = block.settings
   assign image = settings.logo
@@ -35,7 +37,7 @@
       {% if image %}
         --logo-width: {{ image.width | times: 1.00 | divided_by: image.height | times: block_settings.pixel_height }}px;
       {% else %}
-        --logo-width: {{ shop.name.size | times: 0.65 }}em;
+        --logo-width: {{ shop.name.size }}ch;
         --logo-height: {{ block_settings.pixel_height }}px;
       {% endif %}
     {% endif %}
@@ -48,7 +50,7 @@
         {% if image %}
           --logo-width-mobile: {{ image.width | times: 1.00 | divided_by: image.height | times: block_settings.pixel_height_mobile }}px;
           {% else %}
-            --logo-width-mobile: {{ shop.name.size | times: 0.65 }}em;
+            --logo-width-mobile: {{ shop.name.size }}ch;
             --logo-height-mobile: {{ block_settings.pixel_height_mobile }}px;
         {% endif %}
       {% endif %}
@@ -74,7 +76,7 @@
     font-size: var(--logo-height);
     display: flex;
 
-    @media screen and (max-width: 749px) {
+    @media screen and (max-width: 750px) {
       max-height: calc(
         var(--logo-height-mobile, var(--logo-height, 100%)) + var(--padding-block-start) + var(--padding-block-end)
       );
@@ -133,12 +135,6 @@
         }
       ],
       "default": "heading",
-      "visible_if": "{{ settings.logo == blank and settings.logo_inverse == blank or block.settings.inverse == false }}"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:settings.color",
       "visible_if": "{{ settings.logo == blank and settings.logo_inverse == blank or block.settings.inverse == false }}"
     },
     {

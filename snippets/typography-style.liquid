@@ -1,48 +1,17 @@
-{%- doc -%}
-  Sets inline CSS variables for typography styles, including color, font size, weight, family, line height, and letter spacing.
-  Intended for use on the style attribute of an element.
+{%- comment -%}
+  Intended for blocks and sections that provide values for all the referenced settings.
 
-  @param {object} settings - The block or section settings object containing typography values
-  @param {string} [type] - The type of text element to inherit styles from, options: display, heading, body
-  @param {string} [preset] - The type preset from the global settings.type_preset
+  <div class="spacing-style" style="{%  render 'spacing-style', settings: section.settings %}">
 
-  @example
-  <div style="{% render 'typography-style', settings: section.settings %}">
-    ...
-  </div>
-{%- enddoc -%}
+   Accepts:
+      settings: {settings || section.settings}
+{%- endcomment -%}
 
 {% assign preset = preset | default: settings.type_preset %}
-{% assign mobile_is_custom = false %}
-{% if settings.type_preset_mobile == 'custom' %}
-  {% assign mobile_is_custom = true %}
-{% endif %}
 
 {%- capture variables -%}
   {%- if preset != 'rte' and settings.color != "" -%}
     --color: {{ settings.color }};
-  {%- endif -%}
-  {%- comment -%}
-    Always emit --text-wrap when the block exposes a wrap setting, so
-    presets like rte / paragraph / hN still respect the merchant's
-    pretty / balance / nowrap choice (not only the custom preset).
-  {%- endcomment -%}
-  {%- if settings.wrap != blank -%}
-    --text-wrap: {{ settings.wrap }};
-  {%- endif -%}
-  {%- comment -%}
-    Emit mobile-only typography vars whenever the mobile preset is custom.
-    The mobile_font_size / mobile_custom_line_height settings are gated
-    in the schema by type_preset_mobile == 'custom', so this is the single
-    source of truth — no separate use_mobile_settings checkbox.
-  {%- endcomment -%}
-  {%- if mobile_is_custom -%}
-    {%- if settings.mobile_font_size != blank -%}
-      --font-size-mobile: {{ settings.mobile_font_size }};
-    {%- endif -%}
-    {%- if settings.mobile_custom_line_height != blank -%}
-      --line-height-mobile: {{ settings.mobile_custom_line_height }};
-    {%- endif -%}
   {%- endif -%}
   {%- if preset == 'custom' -%}
     {% liquid
@@ -85,20 +54,20 @@
         --font-size: {{ settings.font_size }};
       {%- endif -%}
     {%- endif -%}
-    {%- if settings.weight != blank and settings.enable_custom_font_weight -%}
+    {%- if settings.weight != blank -%}
       --font-weight: {{ settings.weight }};
     {% else %}
       --font-weight: {{ settings.font | replace: 'family', 'weight' }};
     {%- endif -%}
     --font-family: {{ settings.font }};
     --text-transform: {{ settings.case }};
-    --text-wrap: {{ settings.wrap | default: 'pretty' }};
+    --text-wrap: {{ settings.wrap }};
     {% if settings.type_preset == 'custom' and settings.font_size == blank %}
       --line-height--display: var(--line-height--display-{{ settings.line_height }});
       --line-height--heading: var(--line-height--heading-{{ settings.line_height }});
       --line-height--body: var(--line-height--body-{{ settings.line_height }});
     {% else %}
-      --line-height: {% if settings.line_height == 'custom' %} {{ settings.custom_line_height }} {% else %}var(--line-height--{{ type }}-{{ settings.line_height }}){% endif %};
+      --line-height: var(--line-height--{{ type }}-{{ settings.line_height }});
     {% endif %}
     --letter-spacing: var(--letter-spacing--{{ type }}-{{ settings.letter_spacing }});
   {%- endif -%}

@@ -1,11 +1,8 @@
-import { Component } from '@theme/component';
-
 /**
  * A custom element that formats rte content for easier styling
  */
-class RTEFormatter extends Component {
+class RTEFormatter extends HTMLElement {
   connectedCallback() {
-    super.connectedCallback();
     this.querySelectorAll('table').forEach(this.#formatTable);
   }
 

@@ -1,9 +1,8 @@
+
+
 {% assign block_settings = block.settings %}
-{% if block_settings.background_color != blank %}
-  {% render 'contrast-override', background_color: block_settings.background_color, section_id: block.id %}
-{% endif %}
 <div
-  class="collection-info collection-info--{{ block_settings.placement }}{% if block_settings.background_color != blank %} color-custom-{{ block.id }}{% endif %}"
+  class="collection-info collection-info--{{ block_settings.placement }} color-{{ block_settings.color_scheme }}"
   style="{% render 'spacing-style', settings: block_settings %} {% if block_settings.icons_style contains 'large' %} --slideshow-icon-padding: 0px{% endif %}"
   {{ block.shopify_attributes }}
 >
@@ -45,10 +44,9 @@
       ]
     },
     {
-      "type": "color",
-      "id": "background_color",
-      "label": "t:settings.background_color",
-      "placeholder": "t:settings.default"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme"
     },
     {
       "type": "header",

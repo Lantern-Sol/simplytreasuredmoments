@@ -1,37 +1,34 @@
+
+
 {%- doc -%}
   Renders the blog post image block.
 
-  @param {object} article - The article object
+  @param {object} image - The image object
 {%- enddoc -%}
 
-{%- assign image = article.image -%}
-
 {%- assign block_settings = block.settings -%}
-<div class="blog-post-card__image-container">
-  <a href="{{ article.url }}">
-    <img
-      srcset="
-        {% if image.width >= 350 %}{{ image | image_url: width: 350 }} 350w,{% endif %}
-        {% if image.width >= 750 %}{{ image | image_url: width: 750 }} 750w,{% endif %}
-        {% if image.width >= 1100 %}{{ image | image_url: width: 1100 }} 1100w,{% endif %}
-        {% if image.width >= 1500 %}{{ image | image_url: width: 1500 }} 1500w,{% endif %}
-        {{ image | image_url }} {{ image.width }}w
-      "
-      src="{{ image | image_url: width: 1100 }}"
-      loading="eager"
-      fetchpriority="high"
-      width="{{ image.width }}"
-      height="{{ image.height }}"
-      alt="{{ image.alt | escape }}"
-      class="
-        border-style
-        blog-post-card__image
-        blog-post-card__image--{{ block_settings.height }}
-      "
-      style="{% render 'border-override', settings: block_settings %}"
-    >
-  </a>
-</div>
+
+<img
+  srcset="
+    {% if image.width >= 350 %}{{ image | image_url: width: 350 }} 350w,{% endif %}
+    {% if image.width >= 750 %}{{ image | image_url: width: 750 }} 750w,{% endif %}
+    {% if image.width >= 1100 %}{{ image | image_url: width: 1100 }} 1100w,{% endif %}
+    {% if image.width >= 1500 %}{{ image | image_url: width: 1500 }} 1500w,{% endif %}
+    {{ image | image_url }} {{ image.width }}w
+  "
+  src="{{ image | image_url: width: 1100 }}"
+  loading="eager"
+  fetchpriority="high"
+  width="{{ image.width }}"
+  height="{{ image.height }}"
+  alt="{{ image.alt | escape }}"
+  class="
+    border-style
+    blog-post-card__image
+    blog-post-card__image--{{ block_settings.height }}
+  "
+  style="{% render 'border-override', settings: block_settings %}"
+>
 
 {% stylesheet %}
   .blog-post-card__image {
@@ -39,10 +36,6 @@
     object-fit: cover;
     object-position: center center;
     height: calc(var(--blog-post-card-img-height) * var(--blog-post-card-scale));
-
-    @media screen and (max-width: 749px) {
-      height: calc(var(--blog-post-card-img-height) * (var(--blog-post-card-scale) + 0.3));
-    }
   }
 
   .blog-post-card__image--small {
@@ -122,16 +115,9 @@
       "visible_if": "{{ block.settings.border != 'none' }}"
     },
     {
-      "type": "color",
-      "id": "border_color",
-      "label": "t:settings.color",
-      "placeholder": "t:settings.default",
-      "visible_if": "{{ block.settings.border != 'none' }}"
-    },
-    {
       "type": "range",
       "id": "border_radius",
-      "label": "t:settings.border_radius",
+      "label": "t:settings.corner_radius",
       "min": 0,
       "max": 100,
       "step": 1,

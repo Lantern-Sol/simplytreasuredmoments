@@ -1,12 +1,3 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin language editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "blocks": {
     "load_video": "Cargar video: {{ description }}",
@@ -25,8 +16,7 @@
       "comment": "Comentario",
       "post_success": "Gracias por contactarnos. Te responderemos lo antes posible.",
       "error_heading": "Realiza los ajustes siguientes:"
-    },
-    "slider_label": "Carrusel"
+    }
   },
   "accessibility": {
     "play_model": "Reproducir el modelo 3D",
@@ -52,7 +42,7 @@
       "other": "{{ count }} filtros aplicados",
       "many": "{{ count }} filtros aplicados"
     },
-    "account": "Cuenta",
+    "account": "Abrir menú de cuenta",
     "cart": "Carrito",
     "cart_count": "Total de artículos en el carrito",
     "menu": "Menú",
@@ -61,30 +51,18 @@
     "scroll_to": "Desplázate a {{ title }}",
     "loading_product_recommendations": "Carga de recomendaciones de productos",
     "discount": "Aplicar un código de descuento",
-    "discount_menu": "Códigos de descuento",
     "discount_applied": "Aplicar código de descuento: {{ code }}",
+    "open_cart_drawer": "Abrir carrito",
     "pause_video": "Pausar el video",
     "inventory_status": "Estado del inventario",
     "find_country": "Buscar país",
-    "localization_region_and_language": "Selector de región e idioma",
+    "localization_region_and_language": "Abrir selector de región e idioma",
+    "open_search_modal": "Abrir búsqueda",
     "decrease_quantity": "Disminuir cantidad",
     "increase_quantity": "Aumentar cantidad",
     "quantity": "Cantidad",
     "rating": "La calificación de este producto es {{ rating }} de 5",
-    "nested_product": "{{ product_title }} para {{ parent_title }}",
-    "remove": "Eliminar",
-    "view_pricing_info": "Ver la información de fijación de precios",
-    "slideshow": "Presentación de diapositivas",
-    "header_navigation_label": "Principal",
-    "home_logo_alt": "{{ store_name }} - Inicio",
-    "active_filters": "Filtros activos:",
-    "product_details": "Detalles del producto",
-    "show_product_details": "Mostrar detalles del producto para {{ product_name }}",
-    "featured_product": "Producto destacado",
-    "search_suggestions_available": "Buscar sugerencias disponibles de \"{{ query }}\"",
-    "price_filter_low": "Precio bajo",
-    "price_filter_high": "Precio alto",
-    "view_disclosure_information_for_product": "Ver los avisos sobre el producto de {{ product_title }}"
+    "nested_product": "{{ product_title }} para {{ parent_title }}"
   },
   "actions": {
     "add_to_cart": "Agregar al carrito",
@@ -101,9 +79,9 @@
       "many": "Ver {{ count }} artículos"
     },
     "view_all": "Ver todo",
-    "add": "Agregar",
+    "add": "Añadir",
     "choose": "Elegir",
-    "added": "Agregado",
+    "added": "Agregada",
     "show_less": "Mostrar menos",
     "show_more": "Mostrar más",
     "close": "Cerrar",
@@ -124,10 +102,7 @@
     "sign_in_options": "Otras opciones de inicio de sesión",
     "sign_up": "Registrarse",
     "sort": "Ordenar",
-    "show_all_options": "Mostrar todas las opciones",
-    "open": "Abrir",
-    "back_to": "Volver a {{ title }}",
-    "zoom_media": "Ampliar {{ index }} multimedia"
+    "show_all_options": "Mostrar todas las opciones"
   },
   "content": {
     "reviews": "reseñas",
@@ -227,7 +202,7 @@
     "taxes_included_shipping_at_checkout_with_policy_without_discounts_html": "Impuestos incluidos. Los gastos de envío se calculan en la página de pago.",
     "taxes_included_shipping_at_checkout_without_policy_without_discounts": "Impuestos incluidos. Los gastos de envío se calculan en la página de pago.",
     "wrong_password": "Contraseña incorrecta",
-    "view_more_details": "Ver más detalles",
+    "view_more_details": "Ver más información",
     "page_placeholder_title": "Título de la página",
     "page_placeholder_content": "Selecciona una página para mostrar su contenido.",
     "placeholder_image": "Imagen marcadora de posición",
@@ -247,49 +222,14 @@
     "recipient_form_send_to": "Enviar a",
     "recipient_form_email_label": "Correo electrónico del destinatario",
     "recipient_form_email_label_my_email": "Mi correo electrónico",
+    "recipient_form_email_label_optional_for_no_js_behavior": "Correo electrónico del destinatario (opcional)",
     "recipient_form_email_address": "Dirección de correo electrónico del destinatario",
     "recipient_form_name_label": "Nombre de la persona destinataria (opcional)",
+    "recipient_form_message_label": "Mensaje (opcional)",
     "recipient_form_message": "Mensaje (opcional)",
     "recipient_form_characters_used": "{{ used_chars }} de {{ max_chars }} caracteres utilizados",
     "recipient_form_send_on": "AAAA-MM-DD",
-    "recipient_form_send_on_label": "Fecha de envío (opcional)",
-    "recipient_form_fields_visible": "Los campos de destinatario en el formulario ya son visibles",
-    "recipient_form_fields_hidden": "Los campos de destinatario en el formulario ya no son visibles",
-    "recipient_form_error": "Hubo un error al enviar el formulario",
-    "product_custom_property_character_count": "{{ used_chars }} de {{ max_chars }} caracteres utilizados",
-    "terms_and_policies": "Términos y políticas",
-    "pagination": {
-      "nav_label": "Paginación",
-      "previous": "Anterior",
-      "next": "Siguiente",
-      "page": "Página {{ page }}"
-    },
-    "volume_pricing_available": "Precio basado en el volumen disponible",
-    "volume_pricing": "Precio basado en el volumen",
-    "at_price_each": "a {{ price }} por unidad",
-    "each": "{{ price }} por unidad",
-    "each_abbreviation": "por unidad",
-    "price_at": "a",
-    "price_range": "Rango de precios",
-    "item_count_cutoff": "Más de {{ count }} artículos",
-    "cancel": "Cancelar",
-    "product_subtotal": "Subtotal de productos",
-    "quantity_per_item": "/unidad",
-    "remove_all": "Eliminar todo",
-    "remove_all_items_confirmation": "¿Deseas eliminar los {{ count }} artículos del carrito?",
-    "remove_one_item_confirmation": "¿Deseas eliminar un artículo de tu carrito?",
-    "total_items": "Total de artículos",
-    "variant": "Variante",
-    "variant_total": "Total de variantes",
-    "view_cart": "Ver carrito",
-    "your_cart": "Tu carrito",
-    "items_added_to_cart": {
-      "one": "Se agregó un artículo al carrito",
-      "other": "Se agregaron {{ count }} artículos al carrito",
-      "many": "Se agregaron {{ count }} artículos al carrito"
-    },
-    "quick_order_list": "Lista de pedidos rápidos",
-    "product_disclosures": "Avisos sobre el producto"
+    "recipient_form_send_on_label": "Fecha de envío (opcional)"
   },
   "gift_cards": {
     "issued": {
@@ -309,12 +249,7 @@
     "password": "Contraseña",
     "search": "Buscar",
     "product_title": "Nombre del producto",
-    "collection_title": "Título de la colección",
-    "blog_posts": "Artículos del blog",
-    "blog_post_title": "Nombre",
-    "blog_post_author": "Autor",
-    "blog_post_date": "Fecha",
-    "blog_post_description": "Un extracto del contenido de tus artículos del blog"
+    "collection_title": "Título de la colección"
   },
   "products": {
     "product": {
@@ -323,15 +258,7 @@
       "adding_to_cart": "Agregando...",
       "add_to_cart_error": "Error al agregar al carrito",
       "sold_out": "Agotado",
-      "unavailable": "No disponible",
-      "quantity_error_max": "Este artículo tiene un máximo de {{ maximum }}.",
-      "quantity": "Cantidad",
-      "quantity_increments": "Incrementos de {{ increment }}",
-      "quantity_minimum": "Mínimo de {{ minimum }}",
-      "quantity_maximum": "Máximo de {{ maximum }}",
-      "in_cart": "en el carrito",
-      "default_title": "Título predeterminado",
-      "sticky_add_to_cart": "Barra de agregar rápido al carrito"
+      "unavailable": "No disponible"
     }
   },
   "fields": {

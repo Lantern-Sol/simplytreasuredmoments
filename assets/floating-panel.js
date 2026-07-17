@@ -1,12 +1,11 @@
 import { debounce, requestIdleCallback, viewTransition } from '@theme/utilities';
-import { Component } from '@theme/component';
 
 const OFFSET = 40;
 
 /**
  * A custom element that manages a floating panel.
  */
-export class FloatingPanelComponent extends Component {
+export class FloatingPanelComponent extends HTMLElement {
   #updatePosition = async () => {
     // Wait for any view transitions to finish
     if (viewTransition.current) await viewTransition.current;
@@ -42,7 +41,6 @@ export class FloatingPanelComponent extends Component {
   }, 100);
 
   connectedCallback() {
-    super.connectedCallback();
     window.addEventListener('resize', this.#resizeListener);
 
     requestIdleCallback(() => {
@@ -52,7 +50,6 @@ export class FloatingPanelComponent extends Component {
   }
 
   disconnectedCallback() {
-    super.disconnectedCallback();
     window.removeEventListener('resize', this.#resizeListener);
     this.#mutationObserver.disconnect();
   }

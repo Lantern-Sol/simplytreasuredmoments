@@ -1,63 +1,54 @@
+
+
 {%- doc -%}
   Renders the blog post featured image block.
+
+  @param {object} image - The image object from article.image
 {%- enddoc -%}
 
-{% liquid
-  assign block_settings = block.settings
-  assign image = closest.article.image
-%}
+{%- assign block_settings = block.settings -%}
 
-{%- if image != blank -%}
-  <div
-    class="blog-post-featured-image blog-post-content blog-post-featured-image--{{ block.id }} blog-post-featured-image--height-{{ block_settings.height }} spacing-style size-style"
-    style="
-      --ratio: {% case block_settings.image_ratio %}
-        {% when 'landscape' %}16 / 9
-        {% when 'portrait' %}4 / 5
-        {% when 'adapt' %}{{ image.aspect_ratio | default: 1 }}
-        {% else %}1
-      {% endcase %};
-      {% render 'size-style', settings: block_settings %}
-      {% render 'spacing-style', settings: block_settings %}
-    "
-    {{ block.shopify_attributes }}
-  >
-    {%- capture image_border_style -%}
-      {% render 'border-override', settings: block_settings %}
-    {%- endcapture -%}
+<div
+  class="blog-post-featured-image blog-post-featured-image--{{ block.id }} blog-post-featured-image--height-{{ block_settings.height }} spacing-style size-style"
+  style="
+    --ratio: {% case block_settings.image_ratio %}
+      {% when 'landscape' %}16 / 9
+      {% when 'portrait' %}4 / 5
+      {% when 'adapt' %}{{ image.aspect_ratio | default: 1 }}
+      {% else %}1
+    {% endcase %};
+    {% render 'size-style', settings: block_settings %}
+    {% render 'spacing-style', settings: block_settings %}
+  "
+  {{ block.shopify_attributes }}
+>
+  {%- capture image_border_style -%}
+    {% render 'border-override', settings: block_settings %}
+  {%- endcapture -%}
 
-    {{
-      image
-      | image_url: width: 3840
-      | image_tag:
-        width: image.width,
-        widths: '240, 352, 832, 1200, 1600, 1920, 2560, 3840',
-        height: image.height,
-        class: 'blog-post-featured-image__image border-style',
-        style: image_border_style,
-        sizes: 'auto, (min-width: 750px) 100vw, 100vw',
-        loading: 'eager',
-        fetchpriority: 'high',
-        alt: image.alt
-    }}
-  </div>
-{%- endif -%}
+  {{
+    image
+    | image_url: width: 3840
+    | image_tag:
+      width: image.width,
+      widths: '240, 352, 832, 1200, 1600, 1920, 2560, 3840',
+      height: image.height,
+      class: 'blog-post-featured-image__image border-style',
+      style: image_border_style,
+      sizes: 'auto, (min-width: 750px) 100vw, 100vw',
+      loading: 'eager',
+      fetchpriority: 'high',
+      alt: image.alt
+  }}
+</div>
 
 {% stylesheet %}
   .blog-post-featured-image {
     --width: 100%;
     --custom-width: 100%;
-
-    position: relative;
     display: block;
+    position: relative;
     width: var(--width);
-    margin-inline: auto;
-  }
-
-  .blog-post-featured-image.blog-post-content {
-    --normal-content-width: 800px;
-    max-width: var(--normal-content-width);
-    margin-inline: auto;
   }
 
   .blog-post-featured-image.size-style {
@@ -95,7 +86,6 @@
 {% schema %}
 {
   "name": "t:names.featured_image",
-  "tag": null,
   "blocks": [],
   "settings": [
     {
@@ -105,7 +95,6 @@
     {
       "type": "select",
       "id": "image_ratio",
-      "label": "t:settings.aspect_ratio",
       "options": [
         {
           "value": "adapt",
@@ -124,7 +113,8 @@
           "label": "t:options.landscape"
         }
       ],
-      "default": "adapt"
+      "default": "adapt",
+      "label": "t:settings.aspect_ratio"
     },
     {
       "type": "select",
@@ -248,13 +238,6 @@
       "visible_if": "{{ block.settings.border != 'none' }}"
     },
     {
-      "type": "color",
-      "id": "border_color",
-      "label": "t:settings.color",
-      "placeholder": "t:settings.default",
-      "visible_if": "{{ block.settings.border != 'none' }}"
-    },
-    {
       "type": "range",
       "id": "border_radius",
       "label": "t:settings.border_radius",
@@ -307,28 +290,6 @@
       "step": 1,
       "unit": "px",
       "default": 0
-    }
-  ],
-  "presets": [
-    {
-      "name": "t:names.featured_image",
-      "category": "t:categories.blog_post",
-      "settings": {
-        "image_ratio": "landscape",
-        "width": "fill",
-        "custom_width": 100,
-        "width_mobile": "fill",
-        "custom_width_mobile": 100,
-        "height": "fit",
-        "border": "none",
-        "border_width": 1,
-        "border_opacity": 100,
-        "border_radius": 0,
-        "padding-block-start": 0,
-        "padding-block-end": 0,
-        "padding-inline-start": 0,
-        "padding-inline-end": 0
-      }
     }
   ]
 }
