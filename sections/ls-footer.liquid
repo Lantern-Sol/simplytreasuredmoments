@@ -1,0 +1,467 @@
+<style>
+  .ls-footer {
+    background: #F8F7F7;
+  }
+
+  .ls-footer__inner {
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 45px;
+    padding: 33px 34px 20px;
+  }
+
+  /* ── Top row: logo + menus ── */
+  .ls-footer__top {
+    display: flex;
+    gap: 200px;
+    align-items: flex-start;
+  }
+
+  .ls-footer__brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    width: 330px;
+    flex-shrink: 0;
+  }
+
+  .ls-footer__logo img {
+    display: block;
+    width: 309px;
+    height: auto;
+  }
+
+  .ls-footer__social {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+  }
+
+  .ls-footer__social a {
+    display: flex;
+    align-items: center;
+    color: #192534;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .ls-footer__social a:hover {
+    opacity: 0.6;
+  }
+
+  .ls-footer__social svg {
+    height: 14px;
+    width: auto;
+    fill: currentColor;
+  }
+
+  /* ── Menus ── */
+  .ls-footer__menus {
+    display: flex;
+    gap: 40px;
+    flex: 1 0 0;
+    min-width: 0;
+  }
+
+  .ls-footer__menu-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ls-footer__menu-col:nth-child(1) { width: 250px; }
+  .ls-footer__menu-col:nth-child(2) { width: 299px; }
+  .ls-footer__menu-col:nth-child(3) { width: 181px; }
+
+  .ls-footer__menu-heading {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.5;
+    letter-spacing: -0.16px;
+    color: #192534;
+    margin: 0;
+  }
+
+  .ls-footer__menu-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .ls-footer__menu-list a {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 30.5px;
+    color: #192534;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .ls-footer__menu-list a:hover {
+    opacity: 0.6;
+  }
+
+  /* ── Bottom area ── */
+  .ls-footer__bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .ls-footer__bottom-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 40px;
+    border-bottom: 0.5px solid #B8A898;
+  }
+
+  .ls-footer__payments {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .ls-footer__payments .icon {
+    height: 18px;
+    width: auto;
+  }
+
+  .ls-footer__legal {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 18.2px;
+    color: #192534;
+    white-space: nowrap;
+  }
+
+  .ls-footer__legal a {
+    color: #192534;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .ls-footer__legal a:hover {
+    opacity: 0.6;
+  }
+
+  .ls-footer__legal-separator {
+    margin: 0 1.5em;
+  }
+
+  .ls-footer__copyright {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    line-height: 15.4px;
+    color: #192534;
+    text-align: center;
+    width: 100%;
+    margin: 0;
+  }
+
+  .ls-footer__copyright a {
+    color: #192534;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .ls-footer__copyright a:hover {
+    opacity: 0.6;
+  }
+
+  /* ── Mobile ── */
+  @media (max-width: 749px) {
+    .ls-footer__inner {
+      padding: 20px 24px;
+      gap: 45px;
+      align-items: center;
+    }
+
+    .ls-footer__top {
+      flex-direction: column;
+      gap: 35px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .ls-footer__brand {
+      width: auto;
+      gap: 0;
+    }
+
+    .ls-footer__brand .ls-footer__social {
+      display: none;
+    }
+
+    .ls-footer__logo img {
+      width: 309px;
+      max-width: 100%;
+    }
+
+    .ls-footer__menus {
+      flex-direction: column;
+      gap: 35px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .ls-footer__menu-col {
+      width: 100% !important;
+      align-items: center;
+      text-align: center;
+    }
+
+    .ls-footer__menu-heading {
+      text-align: center;
+    }
+
+    .ls-footer__menu-list {
+      text-align: center;
+    }
+
+    /* Social icons between menus and bottom on mobile */
+    .ls-footer__social--mobile {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 23px;
+    }
+
+    .ls-footer__social--mobile a {
+      display: flex;
+      align-items: center;
+      color: #192534;
+      text-decoration: none;
+    }
+
+    .ls-footer__social--mobile svg {
+      height: 14px;
+      width: auto;
+      fill: currentColor;
+    }
+
+    .ls-footer__bottom {
+      gap: 15px;
+      width: 100%;
+    }
+
+    .ls-footer__bottom-row {
+      flex-direction: column-reverse;
+      height: auto;
+      border-bottom: none;
+      gap: 30px;
+    }
+
+    .ls-footer__legal {
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 22px;
+    }
+
+    .ls-footer__payments {
+      gap: 4px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .ls-footer__payments .icon {
+      height: 21px;
+    }
+
+    .ls-footer__copyright {
+      font-weight: 700;
+      font-size: 11px;
+    }
+  }
+
+  /* Desktop: hide mobile social */
+  @media (min-width: 750px) {
+    .ls-footer__social--mobile {
+      display: none;
+    }
+  }
+</style>
+
+<footer class="section section--full-width ls-footer">
+  <div class="ls-footer__inner">
+    {%- comment -%} Top row: logo + social + menus {%- endcomment -%}
+    <div class="ls-footer__top">
+      <div class="ls-footer__brand">
+        {%- if section.settings.logo != blank -%}
+          <a href="{{ routes.root_url }}" class="ls-footer__logo">
+            {{ section.settings.logo | image_url: width: 618 | image_tag: loading: 'lazy', alt: shop.name }}
+          </a>
+        {%- endif -%}
+
+        <div class="ls-footer__social">
+          {%- if section.settings.facebook_url != blank -%}
+            <a href="{{ section.settings.facebook_url }}" target="_blank" rel="noopener" aria-label="Facebook">
+              <svg viewBox="0 0 8 15" xmlns="http://www.w3.org/2000/svg"><path d="M5.193 14.003V7.623h2.142l.321-2.488H5.193V3.553c0-.72.2-1.211 1.233-1.211h1.317V.098C7.462.068 6.685 0 5.78 0 3.89 0 2.6 1.148 2.6 3.258v1.877H.45v2.488H2.6v6.38h2.593z"/></svg>
+            </a>
+          {%- endif -%}
+          {%- if section.settings.instagram_url != blank -%}
+            <a href="{{ section.settings.instagram_url }}" target="_blank" rel="noopener" aria-label="Instagram">
+              <svg viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><path d="M7 1.26c1.87 0 2.09.007 2.828.04.683.032 1.054.146 1.301.242.327.127.56.28.806.525.245.245.398.479.525.806.096.247.21.618.241 1.301.034.738.041.96.041 2.828s-.007 2.09-.04 2.828c-.032.683-.146 1.054-.242 1.301a2.17 2.17 0 0 1-.525.806 2.17 2.17 0 0 1-.806.525c-.247.096-.618.21-1.301.241-.738.034-.96.041-2.828.041s-2.09-.007-2.828-.04c-.683-.032-1.054-.146-1.301-.242a2.17 2.17 0 0 1-.806-.525 2.17 2.17 0 0 1-.525-.806c-.096-.247-.21-.618-.241-1.301C1.265 9.091 1.258 8.869 1.258 7s.007-2.09.04-2.828c.032-.683.146-1.054.242-1.301.127-.327.28-.56.525-.806.245-.245.479-.398.806-.525.247-.096.618-.21 1.301-.241C4.91 1.265 5.131 1.258 7 1.258M7 0C5.097 0 4.86.008 4.11.044c-.748.034-1.26.153-1.707.327a3.45 3.45 0 0 0-1.247.812A3.45 3.45 0 0 0 .344 2.43C.17 2.877.05 3.389.017 4.137.001 4.861 0 5.098 0 7.001s.008 2.14.044 2.89c.034.748.153 1.26.327 1.707.18.463.42.855.812 1.247s.784.633 1.247.812c.447.174.959.293 1.707.327.75.034.987.044 2.89.044s2.14-.008 2.89-.044c.748-.034 1.26-.153 1.707-.327a3.45 3.45 0 0 0 1.247-.812 3.45 3.45 0 0 0 .812-1.247c.174-.447.293-.959.327-1.707.034-.75.044-.987.044-2.89s-.008-2.14-.044-2.89c-.034-.748-.153-1.26-.327-1.707a3.45 3.45 0 0 0-.812-1.247A3.45 3.45 0 0 0 11.597.344C11.15.17 10.638.05 9.89.017 9.14-.001 8.903 0 7 0zm0 3.405a3.595 3.595 0 1 0 0 7.19 3.595 3.595 0 0 0 0-7.19zm0 5.93a2.334 2.334 0 1 1 0-4.669 2.334 2.334 0 0 1 0 4.669zm4.577-6.073a.84.84 0 1 0-1.681 0 .84.84 0 0 0 1.681 0z"/></svg>
+            </a>
+          {%- endif -%}
+          {%- if section.settings.pinterest_url != blank -%}
+            <a href="{{ section.settings.pinterest_url }}" target="_blank" rel="noopener" aria-label="Pinterest">
+              <svg viewBox="0 0 11 14" xmlns="http://www.w3.org/2000/svg"><path d="M5.65 0C2.253 0 0 2.09 0 5.236c0 1.27.678 2.855 1.764 3.356.164.077.253.043.291-.116.03-.121.178-.722.245-.999a.264.264 0 0 0-.06-.253c-.372-.451-.67-1.283-.67-2.058C1.57 3.04 3.215 1.35 5.437 1.35c1.924 0 3.28 1.312 3.28 3.193 0 2.125-.939 3.917-2.333 3.917-.77 0-1.346-.636-1.161-1.417.221-.931.649-1.936.649-2.607 0-.601-.323-1.103-.99-1.103-.785 0-1.415.812-1.415 1.9 0 .692.234 1.16.234 1.16s-.777 3.29-.918 3.892c-.165.706-.098 1.673-.039 2.322.028.133.19.175.273.073.137-.168 1.119-1.56 1.378-2.495.1-.362.512-1.858.512-1.858.27.513.933.94 1.673.94C8.828 10.267 11 7.81 11 4.79 11 2.187 8.788 0 5.65 0z"/></svg>
+            </a>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <div class="ls-footer__menus">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'menu' -%}
+            <nav class="ls-footer__menu-col" {{ block.shopify_attributes }}>
+              {%- if block.settings.heading != blank -%}
+                <p class="ls-footer__menu-heading">{{ block.settings.heading }}</p>
+              {%- endif -%}
+              {%- if block.settings.menu != blank -%}
+                <ul class="ls-footer__menu-list">
+                  {%- for link in linklists[block.settings.menu].links -%}
+                    <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+            </nav>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+
+    {%- comment -%} Mobile social icons (between menus and bottom) {%- endcomment -%}
+    <div class="ls-footer__social--mobile">
+      {%- if section.settings.facebook_url != blank -%}
+        <a href="{{ section.settings.facebook_url }}" target="_blank" rel="noopener" aria-label="Facebook">
+          <svg viewBox="0 0 8 15" xmlns="http://www.w3.org/2000/svg"><path d="M5.193 14.003V7.623h2.142l.321-2.488H5.193V3.553c0-.72.2-1.211 1.233-1.211h1.317V.098C7.462.068 6.685 0 5.78 0 3.89 0 2.6 1.148 2.6 3.258v1.877H.45v2.488H2.6v6.38h2.593z"/></svg>
+        </a>
+      {%- endif -%}
+      {%- if section.settings.instagram_url != blank -%}
+        <a href="{{ section.settings.instagram_url }}" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><path d="M7 1.26c1.87 0 2.09.007 2.828.04.683.032 1.054.146 1.301.242.327.127.56.28.806.525.245.245.398.479.525.806.096.247.21.618.241 1.301.034.738.041.96.041 2.828s-.007 2.09-.04 2.828c-.032.683-.146 1.054-.242 1.301a2.17 2.17 0 0 1-.525.806 2.17 2.17 0 0 1-.806.525c-.247.096-.618.21-1.301.241-.738.034-.96.041-2.828.041s-2.09-.007-2.828-.04c-.683-.032-1.054-.146-1.301-.242a2.17 2.17 0 0 1-.806-.525 2.17 2.17 0 0 1-.525-.806c-.096-.247-.21-.618-.241-1.301C1.265 9.091 1.258 8.869 1.258 7s.007-2.09.04-2.828c.032-.683.146-1.054.242-1.301.127-.327.28-.56.525-.806.245-.245.479-.398.806-.525.247-.096.618-.21 1.301-.241C4.91 1.265 5.131 1.258 7 1.258M7 0C5.097 0 4.86.008 4.11.044c-.748.034-1.26.153-1.707.327a3.45 3.45 0 0 0-1.247.812A3.45 3.45 0 0 0 .344 2.43C.17 2.877.05 3.389.017 4.137.001 4.861 0 5.098 0 7.001s.008 2.14.044 2.89c.034.748.153 1.26.327 1.707.18.463.42.855.812 1.247s.784.633 1.247.812c.447.174.959.293 1.707.327.75.034.987.044 2.89.044s2.14-.008 2.89-.044c.748-.034 1.26-.153 1.707-.327a3.45 3.45 0 0 0 1.247-.812 3.45 3.45 0 0 0 .812-1.247c.174-.447.293-.959.327-1.707.034-.75.044-.987.044-2.89s-.008-2.14-.044-2.89c-.034-.748-.153-1.26-.327-1.707a3.45 3.45 0 0 0-.812-1.247A3.45 3.45 0 0 0 11.597.344C11.15.17 10.638.05 9.89.017 9.14-.001 8.903 0 7 0zm0 3.405a3.595 3.595 0 1 0 0 7.19 3.595 3.595 0 0 0 0-7.19zm0 5.93a2.334 2.334 0 1 1 0-4.669 2.334 2.334 0 0 1 0 4.669zm4.577-6.073a.84.84 0 1 0-1.681 0 .84.84 0 0 0 1.681 0z"/></svg>
+        </a>
+      {%- endif -%}
+      {%- if section.settings.pinterest_url != blank -%}
+        <a href="{{ section.settings.pinterest_url }}" target="_blank" rel="noopener" aria-label="Pinterest">
+          <svg viewBox="0 0 11 14" xmlns="http://www.w3.org/2000/svg"><path d="M5.65 0C2.253 0 0 2.09 0 5.236c0 1.27.678 2.855 1.764 3.356.164.077.253.043.291-.116.03-.121.178-.722.245-.999a.264.264 0 0 0-.06-.253c-.372-.451-.67-1.283-.67-2.058C1.57 3.04 3.215 1.35 5.437 1.35c1.924 0 3.28 1.312 3.28 3.193 0 2.125-.939 3.917-2.333 3.917-.77 0-1.346-.636-1.161-1.417.221-.931.649-1.936.649-2.607 0-.601-.323-1.103-.99-1.103-.785 0-1.415.812-1.415 1.9 0 .692.234 1.16.234 1.16s-.777 3.29-.918 3.892c-.165.706-.098 1.673-.039 2.322.028.133.19.175.273.073.137-.168 1.119-1.56 1.378-2.495.1-.362.512-1.858.512-1.858.27.513.933.94 1.673.94C8.828 10.267 11 7.81 11 4.79 11 2.187 8.788 0 5.65 0z"/></svg>
+        </a>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Bottom: payments, legal, copyright {%- endcomment -%}
+    <div class="ls-footer__bottom">
+      <div class="ls-footer__bottom-row">
+        <div class="ls-footer__payments">
+          {%- for type in shop.enabled_payment_types -%}
+            {{ type | payment_type_svg_tag: class: 'icon' }}
+          {%- endfor -%}
+        </div>
+        <div class="ls-footer__legal">
+          {%- if section.settings.privacy_url != blank -%}
+            <a href="{{ section.settings.privacy_url }}">Privacy Policy</a>
+          {%- else -%}
+            <a href="{{ policies.privacy_policy.url }}">Privacy Policy</a>
+          {%- endif -%}
+          <span class="ls-footer__legal-separator">&middot;</span>
+          {%- if section.settings.terms_url != blank -%}
+            <a href="{{ section.settings.terms_url }}">Terms of Service</a>
+          {%- else -%}
+            <a href="{{ policies.terms_of_service.url }}">Terms of Service</a>
+          {%- endif -%}
+        </div>
+      </div>
+      <p class="ls-footer__copyright">{{ section.settings.copyright_text }} | Designed by <a href="https://www.lanternsol.com/" target="_blank" rel="noopener">Lantern Sol</a></p>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "class": "ls-footer-section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "header",
+      "content": "Social media"
+    },
+    {
+      "type": "url",
+      "id": "facebook_url",
+      "label": "Facebook URL"
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "url",
+      "id": "pinterest_url",
+      "label": "Pinterest URL"
+    },
+    {
+      "type": "header",
+      "content": "Legal"
+    },
+    {
+      "type": "url",
+      "id": "privacy_url",
+      "label": "Privacy Policy URL",
+      "info": "Leave blank to use store policy"
+    },
+    {
+      "type": "url",
+      "id": "terms_url",
+      "label": "Terms of Service URL",
+      "info": "Leave blank to use store policy"
+    },
+    {
+      "type": "text",
+      "id": "copyright_text",
+      "label": "Copyright text",
+      "default": "© 2026 Treasured Moments Photos"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "Menu column",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Menu"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menu",
+          "default": "footer"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 4
+}
+{% endschema %}

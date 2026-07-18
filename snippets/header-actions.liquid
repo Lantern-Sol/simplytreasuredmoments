@@ -4,6 +4,19 @@
   fetchpriority="low"
 ></script>
 
+<style>
+  /* Override icon size and spacing for header actions */
+  .header__column--right header-actions {
+    margin-inline-start: 0;
+    gap: 6px;
+  }
+  .header-actions__action svg {
+    width: 25px !important;
+    height: 25px !important;
+  }
+
+</style>
+
 <header-actions
   {{- block.shopify_attributes -}}
 >

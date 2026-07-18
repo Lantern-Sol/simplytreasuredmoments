@@ -1,11 +1,11 @@
 [
   {
     "name": "theme_info",
-    "theme_name": "Horizon",
-    "theme_version": "2.1.1",
-    "theme_author": "Shopify",
+    "theme_name": "Horizon: LS Mod",
+    "theme_version": "4.1.0",
+    "theme_author": "Lantern Sol",
     "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
-    "theme_support_url": "https://support.shopify.com/"
+    "theme_support_url": "https://github.com/Lantern-Sol/simplytreasuredmoments"
   },
   {
     "name": "t:names.logo_and_favicon",

@@ -1,0 +1,380 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Nunito+Sans:wght@400;600;700&display=swap');
+
+  .ls-so__inner {
+    grid-column: 2;
+  }
+
+  .ls-so__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .ls-so__heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 1.5rem;
+    line-height: 1.15;
+    color: #192534;
+    text-transform: capitalize;
+    margin: 0;
+  }
+
+  .ls-so__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: #192534;
+    text-decoration: none;
+    border: 0.5px solid #192534;
+    background: transparent;
+    width: 196px;
+    height: 40px;
+    border-radius: 3px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .ls-so__button:hover {
+    background-color: #192534;
+    color: #fff;
+  }
+
+  .ls-so__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .ls-so__card {
+    display: block;
+    text-decoration: none;
+    background: #FAFAFA;
+    border-radius: 1rem;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+  }
+
+  .ls-so__card-media {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+  }
+
+  .ls-so__card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+  }
+
+  .ls-so__card:hover .ls-so__card-img {
+    transform: scale(1.04);
+  }
+
+  .ls-so__card-gradient {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: linear-gradient(to bottom, transparent, #fffefd);
+    pointer-events: none;
+  }
+
+  .ls-so__card-content {
+    padding: 0 1rem 1rem;
+    text-align: center;
+  }
+
+  .ls-so__card-title {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 1.125rem;
+    line-height: 1.3;
+    color: #192534;
+    margin: 0;
+  }
+
+  .ls-so__card-subtitle {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 0.875rem;
+    line-height: 1.375;
+    color: #6A5D4D;
+    margin: 0.25rem 0 0;
+  }
+
+  @media (max-width: 749px) {
+    .ls-so {
+      padding-top: var(--mobile-pt) !important;
+      padding-bottom: var(--mobile-pb) !important;
+    }
+  }
+
+  /* Mobile carousel */
+  @media (max-width: 749px) {
+    .ls-so__grid {
+      display: flex;
+      gap: 0.75rem;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      margin-right: calc(-1 * var(--page-margin, 15px));
+      padding-right: var(--page-margin, 15px);
+    }
+
+    .ls-so__grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    .ls-so__card {
+      flex: 0 0 300px;
+      scroll-snap-align: start;
+    }
+
+    .ls-so__button {
+      width: auto;
+      padding: 0 1.25rem;
+    }
+  }
+
+  /* Desktop */
+  @media (min-width: 60em) {
+    .ls-so__header {
+      margin-bottom: 1.5rem;
+    }
+
+    .ls-so__heading {
+      font-size: 2rem;
+      line-height: 2.3rem;
+    }
+
+    .ls-so__grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+
+    .ls-so__card-title {
+      font-size: 1.375rem;
+      line-height: 1.786rem;
+    }
+
+    .ls-so__card-subtitle {
+      font-size: 1rem;
+      line-height: 1.375rem;
+    }
+  }
+</style>
+
+<section
+  class="section section--full-width ls-so"
+  style="
+    --desktop-pt: {{ section.settings.padding_top }}px;
+    --desktop-pb: {{ section.settings.padding_bottom }}px;
+    --mobile-pt: {{ section.settings.mobile_padding_top }}px;
+    --mobile-pb: {{ section.settings.mobile_padding_bottom }}px;
+    padding-top: var(--desktop-pt);
+    padding-bottom: var(--desktop-pb);
+  "
+>
+  <div class="ls-so__inner">
+    <div class="ls-so__header">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="ls-so__heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+
+      {%- if section.settings.button_label != blank -%}
+        <a
+          class="ls-so__button"
+          href="{{ section.settings.button_link }}"
+          {% if section.settings.button_link == blank %}role="link" aria-disabled="true"{% endif %}
+        >
+          {{ section.settings.button_label }}
+        </a>
+      {%- endif -%}
+    </div>
+
+    <div class="ls-so__grid">
+      {%- for block in section.blocks -%}
+        <a
+          class="ls-so__card"
+          href="{{ block.settings.link }}"
+          {{ block.shopify_attributes }}
+          {% if block.settings.link == blank %}role="link" aria-disabled="true"{% endif %}
+        >
+          <div class="ls-so__card-media">
+            {%- if block.settings.image != blank -%}
+              {{
+                block.settings.image
+                | image_url: width: 960
+                | image_tag:
+                  class: 'ls-so__card-img',
+                  widths: '360, 540, 720, 960',
+                  sizes: '(min-width: 60em) 25vw, 50vw',
+                  loading: 'lazy',
+                  alt: block.settings.title
+              }}
+            {%- else -%}
+              <div class="ls-so__card-img" style="background: #E5E3E0;"></div>
+            {%- endif -%}
+
+            <div class="ls-so__card-gradient"></div>
+          </div>
+
+          <div class="ls-so__card-content">
+            {%- if block.settings.title != blank -%}
+              <p class="ls-so__card-title">{{ block.settings.title }}</p>
+            {%- endif -%}
+
+            {%- if block.settings.subtitle != blank -%}
+              <p class="ls-so__card-subtitle">{{ block.settings.subtitle }}</p>
+            {%- endif -%}
+          </div>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "LS Shop by Occasion",
+  "tag": "section",
+  "class": "ls-so-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Shop by Occasion"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "View All"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "label": "Padding top (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "label": "Padding bottom (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    }
+  ],
+  "max_blocks": 8,
+  "blocks": [
+    {
+      "type": "occasion_card",
+      "name": "Occasion Card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtitle (optional)"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "LS Shop by Occasion",
+      "blocks": [
+        {
+          "type": "occasion_card",
+          "settings": {
+            "title": "Faith & Mission",
+            "subtitle": "Temples, missions & devotion"
+          }
+        },
+        {
+          "type": "occasion_card",
+          "settings": {
+            "title": "Family & Milestones",
+            "subtitle": "Birthdays, weddings & more"
+          }
+        },
+        {
+          "type": "occasion_card",
+          "settings": {
+            "title": "Sports & School",
+            "subtitle": "Teams, trophies & pride"
+          }
+        },
+        {
+          "type": "occasion_card",
+          "settings": {
+            "title": "Travel & Adventure",
+            "subtitle": "Places, trips & memories"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
