@@ -1,12 +1,10 @@
 {%- doc -%}
   @param {string} children - The children of the overflow list.
   @param {string} [class] - The class that is applied on the overflow-list element.
-  @param {string} [attributes] - The attributes that are applied on the overflow-list element.
+  @param {boolean} [defer] - Whether to defer the loading of the overflow list.
   @param {number} [minimum-items] - The minimum number of items to show in the overflow list.
+  @param {string} [more-attributes] - The attributes that are applied on the more button.
   @param {string} [ref] - The ref that is set on the overflow-list element.
-  @param {string} [data-testid] - The data-testid attribute that is set on the overflow-list element.
-  @param {string} [more-attributes] - The attributes that are applied on the more button slot.
-  @param {string} [more-button-attributes] - The attributes that are applied directly on the more button element.
 {%- enddoc -%}
 
 <overflow-list
@@ -19,11 +17,8 @@
   {% if minimum-items %}
     minimum-items="{{ minimum-items }}"
   {% endif %}
-  {% if data-testid %}
-    data-testid="{{ data-testid }}"
-  {% endif %}
-  {% if attributes %}
-    {{ attributes }}
+  {% if defer %}
+    defer
   {% endif %}
 >
   <template shadowrootmode="open">
@@ -46,9 +41,6 @@
             class="button"
             type="button"
             tabindex="0"
-            {% if more-button-attributes %}
-              {{ more-button-attributes }}
-            {% endif %}
           >
             {{ 'actions.more' | t }}
           </button>

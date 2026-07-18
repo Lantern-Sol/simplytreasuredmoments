@@ -1,11 +1,10 @@
 import { QRCode } from '@theme/qr-code-generator';
-import { Component } from '@theme/component';
 /**
  * A custom element that displays a QR code image.
  *
- * @extends {Component}
+ * @extends {HTMLElement}
  */
-class QRCodeImage extends Component {
+class QRCodeImage extends HTMLElement {
   /** @type {number} */
   #width = 72;
   /** @type {number} */
@@ -14,7 +13,6 @@ class QRCodeImage extends Component {
   #alt = '';
 
   connectedCallback() {
-    super.connectedCallback();
     const widthAttribute = this.getAttribute('width') ?? '';
     this.#width = isNaN(parseInt(widthAttribute)) ? this.#width : parseInt(widthAttribute);
     const heightAttribute = this.getAttribute('height') ?? '';

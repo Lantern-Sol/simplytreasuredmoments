@@ -10,8 +10,6 @@
 {% liquid
   assign block_settings = block.settings
   assign plain_text = block_settings.text | strip_newlines | strip_html | strip
-  assign plain_text_mobile = block_settings.mobile_text | strip_newlines | strip_html | strip
-  assign visible_text = plain_text
   assign text_width = width | default: block_settings.width
 
   if block_settings.font_size contains 'heading-lg' or block_settings.font_size contains 'heading-xl'
@@ -51,19 +49,13 @@
 %}
 
 {% capture attributes %}
-  class="{{ class }} spacing-style text-block text-block--{{ block.id }} {{ block_settings.type_preset }}{% if block_settings.type_preset_mobile != blank %} mobile-preset-{{ block_settings.type_preset_mobile }}{% endif %}
+  class="{{ class }} spacing-style text-block text-block--{{ block.id }} {{ block_settings.type_preset }}
     {{ text_block_classes }}
   "
 
   style="
     {% render 'spacing-padding', settings: block_settings %}
-    {% render 'spacing-marging', settings: block_settings %}
     {% render 'typography-style', settings: block_settings %}
-    {% if block_settings.text_color != blank %}
-      --color: {{ block_settings.text_color }};
-      --color-rgb: {{ block_settings.text_color.rgb }};
-    {% endif %}
-
     --width: {{ text_width }};
     --max-width: var(--max-width--{{ type }}-{{ block_settings.max_width }});
     {% if text_width == "100%" %}
@@ -74,12 +66,10 @@
       --text-corner-radius: {{ block_settings.corner_radius }}px;
       --text-padding: max(var(--padding-2xs), calc((var(--text-corner-radius) + var(--padding-xs)) * (1 - cos(45deg))));
     {% endif %}
-
   "
 
   {{ block.shopify_attributes }}
 {% endcapture %}
-
 {% liquid
   # {{ attributes }} must be on the immediate HTML parent of the text to preserve
   # the click-to-edit connection in the theme editor. Any break between the text,
@@ -91,38 +81,17 @@
   endif
 %}
 
-{% if fallback_text != blank and visible_text == blank %}
-  <div {{ attributes | strip_newlines | strip }}>
-    {{ fallback_text | replace: '®', '<sup>®</sup>' }}
+{% if fallback_text != blank and plain_text == blank %}
+  <div {{ attributes }}>
+    {{ fallback_text }}
   </div>
 {% elsif plain_text != blank %}
-  <{{ element }} {{ attributes | strip_newlines | strip }}>
-    {% if plain_text_mobile != blank %}
-      {{ block.settings.text | replace_first: '>',' class="hidden--mobile">' | replace: '®', '<sup>®</sup>' }}
-      {{ block.settings.mobile_text | replace_first: '>',' class="hidden--desktop">' | replace: '®', '<sup>®</sup>' }}
-    {% else %}
-      {{ block.settings.text | replace: '®', '<sup>®</sup>' }}
-    {% endif %}
+  <{{ element }} {{ attributes }}>
+    {% comment %}
+      Not using block_settings.text here because live replacement in editor doesn't work as well.
+    {% endcomment %}
+    {{ block.settings.text }}
   </{{ element }}>
-{% endif %}
-
-{% if block_settings.height_mode == 'custom' %}
-  <style>
-    {% if block_settings.desktop_height != blank %}
-      @media screen and (min-width: 750px) {
-        .text-block--{{ block.id }} > * {
-          --block-height: {{ block_settings.desktop_height | times: 1.0 | divided_by: 16 }}rem;
-        }
-      }
-    {% endif %}
-    {% if block_settings.mobile_height != blank %}
-      @media screen and (max-width: 749px) {
-        .text-block--{{ block.id }} > * {
-          --block-height: {{ block_settings.mobile_height | times: 1.0 | divided_by: 16 }}rem;
-        }
-      }
-    {% endif %}
-  </style>
 {% endif %}
 
 {% stylesheet %}
@@ -150,65 +119,35 @@
     --text-align-default: right;
   }
 
-  @media screen and (max-width: 749px) {
-    [style*='--horizontal-alignment-mobile: center'] .text-block {
-      --text-align-default: center;
-    }
-
-    [style*='--horizontal-alignment-mobile: flex-end'] .text-block {
-      --text-align-default: right;
-    }
-
-    [style*='--horizontal-alignment-mobile: flex-start'] > .text-block {
-      --text-align-default: left;
-    }
-
-    [style*='--horizontal-alignment-mobile: center'] > .text-block {
-      --text-align-default: center;
-    }
-
-    [style*='--horizontal-alignment-mobile: flex-end'] > .text-block {
-      --text-align-default: right;
-    }
-  }
-
   .text-block {
     width: var(--width);
     max-width: 100%;
     display: flex;
     flex-direction: column;
     align-items: var(--horizontal-alignment);
-    color: var(--color, var(--color-foreground));
   }
 
   .text-block > * {
     width: var(--width);
-    max-inline-size: min(100%, var(--max-width, 100%));
+    max-width: var(--max-width, 100%);
     text-align: var(--text-align, var(--text-align-default));
     text-wrap: var(--text-wrap);
-    height: var(--block-height);
   }
 
   .text-block:not(.text-block--full-width).rte,
   .text-block:not(.text-block--full-width).paragraph {
     /* Safari doesn't support pretty, so fallback to balance */
     text-wrap: balance;
-    text-wrap: var(--text-wrap, pretty);
+    text-wrap: pretty;
   }
 
   .text-block:not(.text-block--full-width):is(.h1, .h2, .h3, .h4, .h5, .h6) {
-    text-wrap: var(--text-wrap, balance);
+    text-wrap: balance;
   }
 
   /* Hide underline unless text is using paragraph styles. */
-  .text-block.text-block:is(.h1, .h2, .h3, .h4, .h5, .h6) a {
-    text-decoration-line: none;
-    color: currentColor;
-
-    &:hover {
-      text-decoration-line: none;
-      color: currentColor;
-    }
+  .text-block:is(.h1, .h2, .h3, .h4, .h5, .h6) a {
+    text-decoration-color: transparent;
   }
 
   .text-block h1,
@@ -273,154 +212,10 @@
     padding-block-end: max(var(--text-padding), var(--padding-block-end, 0));
     padding-inline-start: max(var(--text-padding), var(--padding-inline-start, 0));
     padding-inline-end: max(var(--text-padding), var(--padding-inline-end, 0));
-
-    margin-block-start: var(--margin-block-start-mobile, var(--margin-block-start));
-    margin-block-end: var(--margin-block-end-mobile, var(--margin-block-end));
-    margin-inline-start: var(--margin-inline-start-mobile, var(--margin-inline-start));
-    margin-inline-end: var(--margin-inline-end-mobile, var(--margin-inline-end));
-
-    width: calc(var(--width) - var(--margin-inline-start-mobile, var(--margin-inline-start)) - var(--margin-inline-end-mobile, var(--margin-inline-end)));
-  }
-
-  @media screen and (min-width: 750px) {
-    .text-block--background {
-      margin-block-start: var(--margin-block-start);
-      margin-block-end: var(--margin-block-end);
-      margin-inline-start: var(--margin-inline-start);
-      margin-inline-end: var(--margin-inline-end);
-
-      width: calc(var(--width) - var(--margin-inline-start) - var(--margin-inline-end));
-    }
   }
 
   .custom-color,
   .custom-color > :is(h1, h2, h3, h4, h5, h6, p, *) {
     color: var(--color);
-  }
-
-  /*
-    Mobile preset override. The desktop preset class (h1, h2, …, paragraph) stays
-    on the element; on mobile, .mobile-preset-{value} wins via the chained
-    .text-block.text-block selector (higher specificity than base.css's
-    .text-block.h1 desktop rule).
-  */
-  @media screen and (max-width: 749px) {
-    .text-block.text-block.mobile-preset-paragraph,
-    .text-block.text-block.mobile-preset-paragraph > *,
-    .text-block.text-block.mobile-preset-paragraph :is(h1, h2, h3, h4, h5, h6) {
-      font-family: var(--font-paragraph--family);
-      font-style: var(--font-paragraph--style);
-      font-weight: var(--font-paragraph--weight);
-      font-size: var(--font-paragraph--size);
-      line-height: var(--font-paragraph--line-height);
-      letter-spacing: 0;
-      text-transform: var(--font-paragraph--case);
-      color: var(--color, var(--color-foreground));
-    }
-
-    .text-block.text-block.mobile-preset-h1,
-    .text-block.text-block.mobile-preset-h1 > *,
-    .text-block.text-block.mobile-preset-h1 :is(h1, h2, h3, h4, h5, h6) {
-      font-family: var(--font-h1--family);
-      font-style: var(--font-h1--style);
-      font-weight: var(--font-h1--weight);
-      font-size: var(--font-h1--size);
-      line-height: var(--font-h1--line-height);
-      letter-spacing: var(--font-h1--letter-spacing);
-      text-transform: var(--font-h1--case);
-      color: var(--color, var(--font-h1-color));
-    }
-
-    .text-block.text-block.mobile-preset-h2,
-    .text-block.text-block.mobile-preset-h2 > *,
-    .text-block.text-block.mobile-preset-h2 :is(h1, h2, h3, h4, h5, h6) {
-      font-family: var(--font-h2--family);
-      font-style: var(--font-h2--style);
-      font-weight: var(--font-h2--weight);
-      font-size: var(--font-h2--size);
-      line-height: var(--font-h2--line-height);
-      letter-spacing: var(--font-h2--letter-spacing);
-      text-transform: var(--font-h2--case);
-      color: var(--color, var(--font-h2-color));
-    }
-
-    .text-block.text-block.mobile-preset-h3,
-    .text-block.text-block.mobile-preset-h3 > *,
-    .text-block.text-block.mobile-preset-h3 :is(h1, h2, h3, h4, h5, h6) {
-      font-family: var(--font-h3--family);
-      font-style: var(--font-h3--style);
-      font-weight: var(--font-h3--weight);
-      font-size: var(--font-h3--size);
-      line-height: var(--font-h3--line-height);
-      letter-spacing: var(--font-h3--letter-spacing);
-      text-transform: var(--font-h3--case);
-      color: var(--color, var(--font-h3-color));
-    }
-
-    .text-block.text-block.mobile-preset-h4,
-    .text-block.text-block.mobile-preset-h4 > *,
-    .text-block.text-block.mobile-preset-h4 :is(h1, h2, h3, h4, h5, h6) {
-      font-family: var(--font-h4--family);
-      font-style: var(--font-h4--style);
-      font-weight: var(--font-h4--weight);
-      font-size: var(--font-h4--size);
-      line-height: var(--font-h4--line-height);
-      letter-spacing: var(--font-h4--letter-spacing);
-      text-transform: var(--font-h4--case);
-      color: var(--color, var(--font-h4-color));
-    }
-
-    .text-block.text-block.mobile-preset-h5,
-    .text-block.text-block.mobile-preset-h5 > *,
-    .text-block.text-block.mobile-preset-h5 :is(h1, h2, h3, h4, h5, h6) {
-      font-family: var(--font-h5--family);
-      font-style: var(--font-h5--style);
-      font-weight: var(--font-h5--weight);
-      font-size: var(--font-h5--size);
-      line-height: var(--font-h5--line-height);
-      letter-spacing: var(--font-h5--letter-spacing);
-      text-transform: var(--font-h5--case);
-      color: var(--color, var(--font-h5-color));
-    }
-
-    .text-block.text-block.mobile-preset-h6,
-    .text-block.text-block.mobile-preset-h6 > *,
-    .text-block.text-block.mobile-preset-h6 :is(h1, h2, h3, h4, h5, h6) {
-      font-family: var(--font-h6--family);
-      font-style: var(--font-h6--style);
-      font-weight: var(--font-h6--weight);
-      font-size: var(--font-h6--size);
-      line-height: var(--font-h6--line-height);
-      letter-spacing: var(--font-h6--letter-spacing);
-      text-transform: var(--font-h6--case);
-      color: var(--color, var(--font-h6-color));
-    }
-
-    .text-block.text-block.mobile-preset-h7,
-    .text-block.text-block.mobile-preset-h7 > *,
-    .text-block.text-block.mobile-preset-h7 :is(h1, h2, h3, h4, h5, h6) {
-      font-family: var(--font-h7--family);
-      font-style: var(--font-h7--style);
-      font-weight: var(--font-h7--weight);
-      font-size: var(--font-h7--size);
-      line-height: var(--font-h7--line-height);
-      letter-spacing: var(--font-h7--letter-spacing);
-      text-transform: var(--font-h7--case);
-      color: var(--color, var(--font-h7-color));
-    }
-
-    /*
-      mobile-preset = custom: keep the desktop preset's family / weight / etc.
-      and only override font-size + line-height with the user's mobile values
-      (use_mobile_settings + mobile_font_size + mobile_custom_line_height).
-      Triple-chained class selector keeps us ahead of any deeper-context
-      selectors (e.g. .product-card .text-block.h6 …).
-    */
-    .text-block.text-block.text-block.mobile-preset-custom,
-    .text-block.text-block.text-block.mobile-preset-custom > *,
-    .text-block.text-block.text-block.mobile-preset-custom :is(h1, h2, h3, h4, h5, h6, p) {
-      font-size: var(--font-size-mobile, var(--font-size, inherit));
-      line-height: var(--line-height-mobile, var(--line-height, inherit));
-    }
   }
 {% endstylesheet %}

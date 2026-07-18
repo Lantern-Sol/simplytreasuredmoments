@@ -21,12 +21,6 @@
   @param {string} [arrows_position] - The position of the arrows, defaults to 'bottom'
   @param {string} [attributes] - Additional attributes to add to the slideshow component
   @param {boolean} [header] - The title of the slideshow
-  @param {image} [custom_icon] - The custom icon image
-  @param {number} [custom_icon_width] - The width of the custom icon
-  @param {number} [slides_to_show=1] - Number of slides to show on desktop
-  @param {number} [mobile_slides_to_show=1] - Number of slides to show on mobile
-  @param {number} [slides_to_scroll=1] - Number of slides to scroll on desktop
-  @param {number} [mobile_slides_to_scroll=1] - Number of slides to scroll on mobile
 
   @example
   {% render 'slideshow', slides: slides, slide_count: collection.products.size, ref: 'mobileSlideshow' %}
@@ -35,25 +29,16 @@
 {% assign class = class | strip %}
 {% assign style = style | strip %}
 
-  {%- liquid
-    assign slides_to_show = slides_to_show | default: 1
-    assign mobile_slides_to_show = mobile_slides_to_show | default: 1
-    assign slides_to_scroll = slides_to_scroll | default: 1
-    assign mobile_slides_to_scroll = mobile_slides_to_scroll | default: 1
-  -%}
-
 <slideshow-component
   {% if ref != blank %}
     ref="{{ ref }}"
   {% endif %}
-  class="slideshow {{ class }}"
-  style="--slideshow-timeline: {% render 'timeline-scope', count: slide_count, prefix: 'slide' %}; --slides-per-view-desktop: {{ slides_to_show }}; --slides-per-view-mobile: {{ mobile_slides_to_show }}; {{ style }}"
+  {% if class != blank %}
+    class="{{ class }}"
+  {% endif %}
+  style="--slideshow-timeline: {% render 'timeline-scope', count: slide_count, prefix: 'slide' %};{{ style }}"
   {% if autoplay == true %}
     autoplay="{{ autoplay_speed }}" aria-live="polite"
-  {% endif %}
-  {% if slides_to_scroll > 1 or mobile_slides_to_scroll > 1 %}
-    slides-to-scroll="{{ slides_to_scroll }}"
-    mobile-slides-to-scroll="{{ mobile_slides_to_scroll }}"
   {% endif %}
   initial-slide="{{ initial_slide | default: 0 }}"
   {% if auto_hide_controls %}
@@ -70,15 +55,7 @@
   {% endif %}
   <slideshow-container ref="slideshowContainer">
     {% if show_arrows and disabled != true %}
-      {% render 'slideshow-arrows',
-        icon_style: icon_style,
-        arrows_position: arrows_position,
-        custom_icon: custom_icon,
-        custom_icon_width: custom_icon_width,
-        show_arrows_desktop: show_arrows_desktop,
-        show_arrows_mobile: show_arrows_mobile,
-        mobile_arrows_position: mobile_arrows_position
-      %}
+      {% render 'slideshow-arrows', icon_style: icon_style, arrows_position: arrows_position %}
     {% endif %}
     {% if slideshow_arrows and disabled != true %}
       {{ slideshow_arrows }}
@@ -98,5 +75,3 @@
   </slideshow-container>
   {{ controls }}
 </slideshow-component>
-
-{% render 'slideshow-styles' %}

@@ -1,0 +1,757 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Nunito+Sans:wght@400;600;700&display=swap');
+
+  .ls-rev {
+    background-color: #f6f4f5;
+  }
+
+  .ls-rev__inner {
+    grid-column: 2;
+  }
+
+  /* ── Layout container ── */
+  .ls-rev__layout {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Mobile image slider ── */
+  .ls-rev__img-slider {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-right: var(--page-margin, 15px);
+  }
+
+  .ls-rev__img-slider::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ls-rev__img-slide {
+    min-width: 318px;
+    height: 398px;
+    border-radius: 24px;
+    overflow: hidden;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+  }
+
+  .ls-rev__img-slide:first-child {
+    min-width: 318px;
+  }
+
+  .ls-rev__img-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ── Desktop image column (hidden on mobile) ── */
+  .ls-rev__image-col {
+    display: none;
+  }
+
+  /* ── Review content ── */
+  .ls-rev__content-col {
+    position: relative;
+    margin-top: 24px;
+  }
+
+  .ls-rev__quote-bg {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 180px;
+    height: 150px;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+  }
+
+  .ls-rev__quote-bg svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .ls-rev__slide {
+    position: relative;
+    z-index: 1;
+  }
+
+  .ls-rev__reviewer {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 1.3;
+    letter-spacing: 0.44px;
+    color: #141517;
+    margin: 0 0 6px;
+  }
+
+  .ls-rev__verified {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin: 0 0 16px;
+  }
+
+  .ls-rev__verified-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ls-rev__verified-text {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 18.2px;
+    color: #080706;
+  }
+
+  .ls-rev__review-text {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    color: #36393f;
+    padding-left: 24px;
+    margin: 0;
+  }
+
+  /* ── Nav arrows ── */
+  .ls-rev__nav {
+    display: flex;
+    gap: 12px;
+    margin-top: 32px;
+  }
+
+  .ls-rev__nav-btn {
+    width: 48px;
+    height: 48px;
+    border: 0.5px solid #080706;
+    border-radius: 12px;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+    padding: 0;
+  }
+
+  .ls-rev__nav-btn:hover {
+    background-color: #f0edeb;
+  }
+
+  .ls-rev__nav-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke: #080706;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* ── Mobile CTA ── */
+  .ls-rev__mobile-cta-wrap {
+    margin-top: 24px;
+    text-align: center;
+  }
+
+  .ls-rev__mobile-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 202px;
+    height: 44px;
+    background: #c8a45d;
+    color: #fff;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+
+  .ls-rev__mobile-cta:hover {
+    background: #b5932f;
+    color: #fff;
+  }
+
+  @media (max-width: 749px) {
+    .ls-rev {
+      padding-top: var(--mobile-pt) !important;
+      padding-bottom: var(--mobile-pb) !important;
+    }
+  }
+
+  /* ── Mobile full-bleed ── */
+  @media (max-width: 749px) {
+    .ls-rev__inner {
+      grid-column: 1 / -1;
+      padding-left: var(--page-margin, 15px);
+    }
+
+    .ls-rev__content-col,
+    .ls-rev__mobile-cta-wrap {
+      padding-right: var(--page-margin, 15px);
+    }
+  }
+
+  /* ── Desktop ── */
+  @media (min-width: 60em) {
+    /* Hide mobile slider, show desktop image col */
+    .ls-rev__img-slider {
+      display: none;
+    }
+
+    .ls-rev__mobile-cta-wrap {
+      display: none;
+    }
+
+    .ls-rev__layout {
+      flex-direction: row;
+      gap: 2rem;
+      align-items: flex-start;
+      justify-content: center;
+      min-height: 42.1875rem;
+    }
+
+    .ls-rev__image-col {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-end;
+    }
+
+    .ls-rev__main-image {
+      width: 26.4375rem;
+      height: 42.1875rem;
+      border-radius: 1.5rem;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .ls-rev__main-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: opacity 0.4s ease;
+    }
+
+    .ls-rev__thumbnails {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .ls-rev__thumb {
+      width: 4.5rem;
+      height: 7.1875rem;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      cursor: pointer;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .ls-rev__thumb.is-active {
+      opacity: 1;
+    }
+
+    .ls-rev__thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Desktop content col */
+    .ls-rev__content-col {
+      flex: 1;
+      max-width: 29.0625rem;
+      height: 42.1875rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-top: 0;
+    }
+
+    .ls-rev__quote-bg {
+      width: 264px;
+      height: 221px;
+    }
+
+    .ls-rev__reviewer {
+      font-size: 1.375rem;
+      color: #192534;
+    }
+
+    .ls-rev__review-text {
+      padding-left: 2rem;
+    }
+
+    .ls-rev__nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      margin-top: 0;
+    }
+  }
+</style>
+
+<section
+  class="section section--full-width ls-rev"
+  style="
+    --desktop-pt: {{ section.settings.padding_top }}px;
+    --desktop-pb: {{ section.settings.padding_bottom }}px;
+    --mobile-pt: {{ section.settings.mobile_padding_top }}px;
+    --mobile-pb: {{ section.settings.mobile_padding_bottom }}px;
+    padding-top: var(--desktop-pt);
+    padding-bottom: var(--desktop-pb);
+  "
+>
+  <div class="ls-rev__inner">
+    {%- assign blocks_size = section.blocks.size -%}
+
+    <div class="ls-rev__layout" data-reviews-slider>
+      {%- comment -%} ── Mobile image slider ── {%- endcomment -%}
+      <div class="ls-rev__img-slider" data-rev-img-slider>
+        {%- for block in section.blocks -%}
+          <div class="ls-rev__img-slide" data-img-slide-index="{{ forloop.index0 }}">
+            {%- if block.settings.image != blank -%}
+              {{
+                block.settings.image
+                | image_url: width: 700
+                | image_tag:
+                  widths: '350, 700',
+                  sizes: '318px',
+                  loading: 'lazy',
+                  alt: block.settings.reviewer_name
+              }}
+            {%- else -%}
+              {%- case forloop.index -%}
+                {%- when 1 -%}{%- assign slider_placeholder = 'ls-review-placeholder-main.webp' -%}
+                {%- when 2 -%}{%- assign slider_placeholder = 'ls-review-placeholder-2.webp' -%}
+                {%- when 3 -%}{%- assign slider_placeholder = 'ls-review-placeholder-3.webp' -%}
+                {%- else -%}{%- assign slider_placeholder = 'ls-review-placeholder-4.webp' -%}
+              {%- endcase -%}
+              <img
+                src="{{ slider_placeholder | asset_url }}"
+                alt="Review image"
+                width="318"
+                height="398"
+                loading="lazy"
+              >
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+
+      {%- comment -%} ── Desktop image column (thumbnails + main) ── {%- endcomment -%}
+      <div class="ls-rev__image-col">
+        <div class="ls-rev__thumbnails">
+          {%- for block in section.blocks -%}
+            <button
+              class="ls-rev__thumb{% if forloop.first %} is-active{% endif %}"
+              data-thumb-index="{{ forloop.index0 }}"
+              aria-label="Go to review {{ forloop.index }}"
+              type="button"
+            >
+              {%- if block.settings.image != blank -%}
+                {{
+                  block.settings.image
+                  | image_url: width: 144
+                  | image_tag:
+                    widths: '72, 144',
+                    sizes: '72px',
+                    loading: 'lazy',
+                    alt: block.settings.reviewer_name
+                }}
+              {%- else -%}
+                {%- case forloop.index -%}
+                  {%- when 1 -%}{%- assign thumb_placeholder = 'ls-review-placeholder-main.webp' -%}
+                  {%- when 2 -%}{%- assign thumb_placeholder = 'ls-review-placeholder-2.webp' -%}
+                  {%- when 3 -%}{%- assign thumb_placeholder = 'ls-review-placeholder-3.webp' -%}
+                  {%- else -%}{%- assign thumb_placeholder = 'ls-review-placeholder-4.webp' -%}
+                {%- endcase -%}
+                <img
+                  src="{{ thumb_placeholder | asset_url }}"
+                  alt="Review thumbnail"
+                  width="72"
+                  height="115"
+                  loading="lazy"
+                >
+              {%- endif -%}
+            </button>
+          {%- endfor -%}
+        </div>
+
+        <div class="ls-rev__main-image">
+          {%- for block in section.blocks -%}
+            {%- if block.settings.image != blank -%}
+              {{
+                block.settings.image
+                | image_url: width: 846
+                | image_tag:
+                  widths: '423, 846',
+                  sizes: '423px',
+                  loading: 'lazy',
+                  alt: block.settings.reviewer_name,
+                  class: 'ls-rev__main-img',
+                  data-slide-index: forloop.index0
+              }}
+            {%- else -%}
+              {%- case forloop.index -%}
+                {%- when 1 -%}{%- assign main_placeholder = 'ls-review-placeholder-main.webp' -%}
+                {%- when 2 -%}{%- assign main_placeholder = 'ls-review-placeholder-2.webp' -%}
+                {%- when 3 -%}{%- assign main_placeholder = 'ls-review-placeholder-3.webp' -%}
+                {%- else -%}{%- assign main_placeholder = 'ls-review-placeholder-4.webp' -%}
+              {%- endcase -%}
+              <img
+                class="ls-rev__main-img"
+                data-slide-index="{{ forloop.index0 }}"
+                src="{{ main_placeholder | asset_url }}"
+                alt="Review placeholder"
+                width="423"
+                height="675"
+                loading="lazy"
+              >
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+
+      {%- comment -%} ── Shared review content ── {%- endcomment -%}
+      <div class="ls-rev__content-col">
+        <span class="ls-rev__quote-bg" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="264" height="221" viewBox="0 0 264 221" fill="none">
+            <path d="M23.7229 220.922C23.2757 220.969 22.8443 220.71 22.6822 220.29L2.02748 166.844C1.78232 166.209 2.23326 165.52 2.91221 165.481C31.3088 163.84 52.8 158.162 52.8 129.366V120.355C52.8 119.803 52.3523 119.355 51.8 119.355H0.999999C0.447714 119.355 0 118.908 0 118.355V0.999998C0 0.447714 0.447715 0 1 0H115.313C115.865 0 116.313 0.447715 116.313 1V122.436C116.313 182.25 85.1978 214.572 23.7229 220.922ZM171.41 220.922C170.963 220.969 170.531 220.71 170.369 220.29L149.714 166.844C149.469 166.209 149.92 165.52 150.599 165.481C178.996 163.84 200.487 158.162 200.487 129.366V120.355C200.487 119.803 200.039 119.355 199.487 119.355H148.687C148.135 119.355 147.687 118.908 147.687 118.355V0.999998C147.687 0.447714 148.135 0 148.687 0H263C263.552 0 264 0.447715 264 1V122.436C264 182.25 232.885 214.572 171.41 220.922Z" fill="#EDE8EB"/>
+          </svg>
+        </span>
+
+        {%- for block in section.blocks -%}
+          <div
+            class="ls-rev__slide"
+            data-slide-index="{{ forloop.index0 }}"
+            {% unless forloop.first %}style="display:none;"{% endunless %}
+            {{ block.shopify_attributes }}
+          >
+            {%- if block.settings.reviewer_name != blank -%}
+              <p class="ls-rev__reviewer">{{ block.settings.reviewer_name }}</p>
+            {%- endif -%}
+
+            <div class="ls-rev__verified">
+              <span class="ls-rev__verified-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M11.1716 6.42926C11.3753 6.17962 11.3336 5.81643 11.0797 5.61689C10.8259 5.41734 10.4544 5.45825 10.2515 5.70706L7.48794 9.09681L6.01014 7.96133C5.88943 7.86308 5.73511 7.81586 5.58008 7.82974C5.42506 7.84362 5.28158 7.9175 5.18024 8.03563C5.13073 8.09357 5.09333 8.16084 5.07026 8.23348C5.04719 8.30611 5.03891 8.38263 5.04592 8.45852C5.05292 8.53441 5.07507 8.60812 5.11105 8.67531C5.14702 8.74249 5.1961 8.80178 5.25538 8.84968L7.19238 10.3609C7.3147 10.4604 7.47141 10.5074 7.62831 10.4918C7.7852 10.4761 7.92954 10.3991 8.0298 10.2774L11.1691 6.42008L11.1716 6.42926Z" fill="#1E1A15"/>
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M6.75489 1.91573C7.20073 1.58844 7.42365 1.4248 7.66494 1.36134C7.88055 1.30664 8.10641 1.30664 8.32202 1.36134C8.56582 1.4248 8.78957 1.58844 9.23208 1.91573L9.79731 2.33068C9.95177 2.44423 10.0294 2.501 10.1129 2.54525C10.1875 2.58421 10.2651 2.6165 10.3459 2.6421C10.4369 2.66965 10.5312 2.68385 10.7207 2.71307L11.4137 2.8191C11.9606 2.90259 12.2336 2.94517 12.449 3.07292C12.641 3.18563 12.8013 3.34593 12.914 3.53796C13.0418 3.75504 13.0835 4.02889 13.1679 4.57326L13.2739 5.26624C13.3031 5.45576 13.3173 5.55094 13.3449 5.64195C13.3699 5.72266 13.4022 5.80002 13.4417 5.87405C13.4868 5.95754 13.5427 6.03519 13.6563 6.18965L14.0712 6.75489C14.3985 7.20073 14.5622 7.42365 14.6256 7.66494C14.6803 7.88055 14.6803 8.10641 14.6256 8.32202C14.563 8.56582 14.3985 8.78957 14.0712 9.23208L13.6563 9.79731C13.5768 9.8969 13.5051 10.0024 13.4417 10.1129C13.4021 10.1876 13.3697 10.2659 13.3449 10.3467C13.3173 10.4369 13.3031 10.5312 13.2739 10.7207L13.1679 11.4137C13.0844 11.9606 13.0418 12.2336 12.914 12.449C12.8013 12.641 12.641 12.8013 12.449 12.914C12.2319 13.0418 11.9581 13.0835 11.4137 13.1679L10.7207 13.2739C10.5941 13.2883 10.4688 13.3123 10.3459 13.3457C10.2651 13.3702 10.1875 13.4025 10.1129 13.4425C10.0294 13.4868 9.95177 13.5427 9.79731 13.6571L9.23208 14.0721C8.78623 14.3994 8.56331 14.563 8.32202 14.6265C8.10641 14.6812 7.88055 14.6812 7.66494 14.6265C7.42115 14.563 7.19739 14.3994 6.75489 14.0721L6.18965 13.6571C6.09006 13.5777 5.98456 13.5059 5.87405 13.4425C5.79964 13.403 5.72164 13.3706 5.64111 13.3457C5.51816 13.3123 5.39284 13.2883 5.26624 13.2739L4.57326 13.1679C4.02639 13.0844 3.75254 13.0426 3.53796 12.914C3.34662 12.8002 3.18675 12.6403 3.07292 12.449C2.94517 12.2319 2.90343 11.9581 2.8191 11.4137L2.71307 10.7207C2.68385 10.5312 2.66965 10.4369 2.6421 10.3459C2.61774 10.2651 2.58529 10.1871 2.54525 10.1129C2.48186 10.0024 2.41012 9.8969 2.33068 9.79731L1.91573 9.23208C1.58844 8.78623 1.4248 8.56415 1.36134 8.32202C1.30664 8.10641 1.30664 7.88055 1.36134 7.66494C1.42396 7.42115 1.58844 7.19739 1.91573 6.75489L2.33068 6.18965C2.44423 6.03519 2.501 5.95754 2.54525 5.87405C2.58421 5.80002 2.6165 5.72238 2.6421 5.64111C2.66965 5.55011 2.68385 5.45576 2.71307 5.26624L2.8191 4.57326C2.90259 4.02639 2.94517 3.75254 3.07292 3.53796C3.18563 3.34593 3.34593 3.1873 3.53796 3.07292C3.75504 2.94517 4.02889 2.90343 4.57326 2.8191L5.26624 2.71307C5.45576 2.68468 5.55094 2.66965 5.64111 2.6421C5.72182 2.61705 5.79947 2.58477 5.87405 2.54525C5.95754 2.501 6.03519 2.44423 6.18965 2.33068L6.75489 1.91573ZM8.74198 2.58867L9.33561 3.02449C9.46168 3.11717 9.58608 3.20901 9.72468 3.28248C9.84713 3.3476 9.97404 3.4002 10.1054 3.44028C10.2556 3.4818 10.4084 3.51277 10.5629 3.53295L11.291 3.64483C11.9096 3.74001 11.9865 3.76589 12.0315 3.79261C12.1022 3.83491 12.1585 3.89113 12.2002 3.96126C12.2269 4.00635 12.2536 4.08316 12.348 4.70183L12.4599 5.42988C12.48 5.58436 12.511 5.73725 12.5525 5.88741C12.5932 6.01988 12.6458 6.14679 12.7103 6.26813C12.7838 6.40673 12.8756 6.53113 12.9683 6.6572L13.4041 7.25083C13.7748 7.75511 13.8099 7.82775 13.8233 7.87952C13.8425 7.95795 13.8425 8.03987 13.8233 8.1183C13.8099 8.16923 13.7748 8.24187 13.4041 8.74699L12.9683 9.34062C12.8756 9.46669 12.7838 9.59109 12.7103 9.72969C12.6458 9.8513 12.5929 9.97878 12.5525 10.1104C12.511 10.2606 12.48 10.4135 12.4599 10.5679L12.348 11.296C12.2528 11.9147 12.2269 11.9915 12.2002 12.0366C12.1584 12.1055 12.1005 12.1634 12.0315 12.2052C11.9865 12.2319 11.9096 12.2586 11.291 12.353L10.5629 12.4649C10.4084 12.485 10.2556 12.516 10.1054 12.5575C9.97377 12.5979 9.84629 12.6508 9.72468 12.7153C9.58608 12.7888 9.46168 12.8807 9.33561 12.9733L8.74198 13.4092C8.2377 13.7799 8.16506 13.8149 8.11329 13.8283C8.03486 13.8475 7.95294 13.8475 7.87451 13.8283C7.82358 13.8149 7.75094 13.7799 7.24582 13.4092L6.65219 12.9733C6.52868 12.8784 6.39867 12.7922 6.26312 12.7153C6.14151 12.6508 6.01403 12.5979 5.8824 12.5575C5.73224 12.516 5.57936 12.485 5.42487 12.4649L4.69682 12.353C4.07815 12.2578 4.00134 12.2319 3.95626 12.2052C3.88728 12.1634 3.82942 12.1055 3.7876 12.0366C3.76089 11.9915 3.73417 11.9147 3.63982 11.296L3.52794 10.5679C3.50776 10.4135 3.4768 10.2606 3.43527 10.1104C3.39486 9.97878 3.34203 9.8513 3.27747 9.72969C3.204 9.59109 3.11216 9.46669 3.01948 9.34062L2.58366 8.74699C2.21295 8.2427 2.17789 8.17007 2.16453 8.1183C2.14528 8.03987 2.14528 7.95795 2.16453 7.87952C2.17789 7.82859 2.21295 7.75595 2.58366 7.25083L3.01948 6.6572C3.11216 6.53113 3.204 6.40673 3.27747 6.26813C3.34204 6.14568 3.39464 6.01877 3.43527 5.88741C3.4768 5.73725 3.50776 5.58436 3.52794 5.42988L3.63982 4.70183C3.735 4.08316 3.76089 4.00635 3.7876 3.96126C3.82942 3.89229 3.88728 3.83443 3.95626 3.79261C4.00134 3.76589 4.07815 3.73918 4.69682 3.64483L5.42487 3.53295C5.57936 3.51277 5.73224 3.4818 5.8824 3.44028C6.01488 3.39965 6.14178 3.34705 6.26312 3.28248C6.40172 3.20901 6.52612 3.11717 6.65219 3.02449L7.24582 2.58867C7.75011 2.21796 7.82274 2.1829 7.87451 2.16954C7.95294 2.15029 8.03486 2.15029 8.11329 2.16954C8.16422 2.1829 8.23686 2.21796 8.74198 2.58867Z" fill="#1E1A15"/>
+                </svg>
+              </span>
+              <span class="ls-rev__verified-text">Verified purchase</span>
+            </div>
+
+            {%- if block.settings.review_text != blank -%}
+              <p class="ls-rev__review-text">"{{ block.settings.review_text }}"</p>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+
+        {%- if blocks_size > 1 -%}
+          <div class="ls-rev__nav">
+            <button class="ls-rev__nav-btn" data-rev-prev type="button" aria-label="Previous review">
+              <svg viewBox="0 0 16 16"><path d="M10 4l-4 4 4 4"/></svg>
+            </button>
+            <button class="ls-rev__nav-btn" data-rev-next type="button" aria-label="Next review">
+              <svg viewBox="0 0 16 16"><path d="M6 4l4 4-4 4"/></svg>
+            </button>
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.button_label != blank -%}
+        <div class="ls-rev__mobile-cta-wrap">
+          <a
+            class="ls-rev__mobile-cta"
+            href="{{ section.settings.button_link }}"
+            {% if section.settings.button_link == blank %}role="link" aria-disabled="true"{% endif %}
+          >
+            {{ section.settings.button_label }}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var container = document.querySelector('[data-reviews-slider]');
+    if (!container) return;
+
+    var slides = container.querySelectorAll('.ls-rev__slide');
+    var images = container.querySelectorAll('.ls-rev__main-img');
+    var thumbs = container.querySelectorAll('.ls-rev__thumb');
+    var prevBtn = container.querySelector('[data-rev-prev]');
+    var nextBtn = container.querySelector('[data-rev-next]');
+    var imgSlider = container.querySelector('[data-rev-img-slider]');
+    var imgSlides = imgSlider ? imgSlider.querySelectorAll('.ls-rev__img-slide') : [];
+    var total = slides.length;
+    if (total < 1) return;
+
+    var current = 0;
+
+    function goTo(index) {
+      if (index < 0) index = total - 1;
+      if (index >= total) index = 0;
+      current = index;
+
+      /* Update review text slides */
+      slides.forEach(function (s, i) {
+        s.style.display = i === current ? '' : 'none';
+      });
+
+      /* Update desktop main images */
+      images.forEach(function (img, i) {
+        img.style.opacity = i === current ? '1' : '0';
+        img.style.position = i === current ? 'relative' : 'absolute';
+        img.style.top = i === current ? '' : '0';
+        img.style.left = i === current ? '' : '0';
+      });
+
+      /* Update desktop thumbnails */
+      thumbs.forEach(function (t, i) {
+        t.classList.toggle('is-active', i === current);
+      });
+
+      /* Scroll mobile image slider to the active slide */
+      if (imgSlider && imgSlides.length > 0 && imgSlides[current]) {
+        imgSlides[current].scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'start'
+        });
+      }
+    }
+
+    /* Stack desktop main images absolutely for transitions */
+    if (images.length > 1) {
+      var imgParent = images[0].parentElement;
+      imgParent.style.position = 'relative';
+      images.forEach(function (img, i) {
+        if (i !== 0) {
+          img.style.opacity = '0';
+          img.style.position = 'absolute';
+          img.style.top = '0';
+          img.style.left = '0';
+          img.style.width = '100%';
+          img.style.height = '100%';
+        }
+      });
+    }
+
+    /* Nav button clicks */
+    if (prevBtn) prevBtn.addEventListener('click', function () { goTo(current - 1); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { goTo(current + 1); });
+
+    /* Desktop thumbnail clicks */
+    thumbs.forEach(function (thumb) {
+      thumb.addEventListener('click', function () {
+        goTo(parseInt(this.getAttribute('data-thumb-index'), 10));
+      });
+    });
+
+    /* Mobile image slider: sync review content on scroll */
+    if (imgSlider && imgSlides.length > 1) {
+      var scrollTimer = null;
+      imgSlider.addEventListener('scroll', function () {
+        clearTimeout(scrollTimer);
+        scrollTimer = setTimeout(function () {
+          var sliderLeft = imgSlider.scrollLeft;
+          var closestIdx = 0;
+          var closestDist = Infinity;
+          imgSlides.forEach(function (slide, i) {
+            var dist = Math.abs(slide.offsetLeft - imgSlider.offsetLeft - sliderLeft);
+            if (dist < closestDist) {
+              closestDist = dist;
+              closestIdx = i;
+            }
+          });
+          if (closestIdx !== current) {
+            current = closestIdx;
+            slides.forEach(function (s, i) {
+              s.style.display = i === current ? '' : 'none';
+            });
+          }
+        }, 80);
+      });
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "LS Reviews",
+  "tag": "section",
+  "class": "ls-rev-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "What families are saying"
+    },
+    {
+      "type": "text",
+      "id": "subtext",
+      "label": "Subtext (mobile)",
+      "default": "Handcrafted in the USA. Loved by families worldwide."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Shop Trending Gifts"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "label": "Padding top (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "label": "Padding bottom (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    }
+  ],
+  "max_blocks": 10,
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Product image"
+        },
+        {
+          "type": "text",
+          "id": "reviewer_name",
+          "label": "Reviewer name",
+          "default": "Reviewer Name, Google Reviews"
+        },
+        {
+          "type": "textarea",
+          "id": "review_text",
+          "label": "Review text"
+        },
+        {
+          "type": "range",
+          "id": "stars",
+          "label": "Star rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "text",
+          "id": "author_short",
+          "label": "Author short (mobile)",
+          "default": "Sarah M."
+        },
+        {
+          "type": "text",
+          "id": "occasion",
+          "label": "Occasion tag (mobile)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "LS Reviews",
+      "blocks": [
+        {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Judy Saphiro, Google Reviews",
+            "review_text": "I ordered a commemorative coin for my son's mission and it arrived beautifully packaged. The detail is incredible — you can tell it was made by hand. He was so moved when he opened it.",
+            "stars": 5,
+            "author_short": "Judy S.",
+            "occasion": "Missionary Gift"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Maria Thompson, Google Reviews",
+            "review_text": "We gave this as a wedding gift and the couple couldn't stop talking about it. The quality is outstanding and it arrived faster than expected.",
+            "stars": 5,
+            "author_short": "Maria T.",
+            "occasion": "Wedding Gift"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "David Chen, Google Reviews",
+            "review_text": "Perfect keepsake for our family reunion. The photo quality on the coin is remarkable — every detail came through perfectly. Will definitely order again.",
+            "stars": 5,
+            "author_short": "David C.",
+            "occasion": "Family Reunion"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

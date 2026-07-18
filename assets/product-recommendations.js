@@ -1,7 +1,4 @@
-import { Component } from '@theme/component';
-import { morphSection } from '@theme/section-renderer';
-
-class ProductRecommendations extends Component {
+class ProductRecommendations extends HTMLElement {
   /**
    * The observer for the product recommendations
    * @type {IntersectionObserver}
@@ -24,12 +21,6 @@ class ProductRecommendations extends Component {
     for (const mutation of mutations) {
       // Only attribute changes are interesting
       if (mutation.target !== this || mutation.type !== 'attributes') continue;
-
-      // Ignore error attribute changes
-      if (mutation.attributeName === 'data-error') continue;
-
-      // Ignore addition of hidden class because it means there's an error with the display
-      if (mutation.attributeName === 'class' && this.classList.contains('hidden')) continue;
 
       // Ignore when the data-recommendations-performed attribute has been set to 'true'
       if (
@@ -57,15 +48,8 @@ class ProductRecommendations extends Component {
   #activeFetch = null;
 
   connectedCallback() {
-    super.connectedCallback();
     this.#intersectionObserver.observe(this);
     this.#mutationObserver.observe(this, { attributes: true });
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    this.#intersectionObserver.disconnect();
-    this.#mutationObserver.disconnect();
   }
 
   /**
@@ -73,9 +57,10 @@ class ProductRecommendations extends Component {
    */
   #loadRecommendations() {
     const { productId, recommendationsPerformed, sectionId, intent } = this.dataset;
+    const id = this.id;
 
-    if (!productId || !sectionId) {
-      throw new Error('Product ID and a section ID are required');
+    if (!productId || !id) {
+      throw new Error('Product ID and an ID attribute are required');
     }
 
     // If the recommendations have already been loaded, accounts for the case where the Theme Editor
@@ -95,9 +80,13 @@ class ProductRecommendations extends Component {
           return;
         }
 
-        if (result.data?.trim().length) {
+        const html = document.createElement('div');
+        html.innerHTML = result.data || '';
+        const recommendations = html.querySelector(`product-recommendations[id="${id}"]`);
+
+        if (recommendations?.innerHTML && recommendations.innerHTML.trim().length) {
           this.dataset.recommendationsPerformed = 'true';
-          morphSection(sectionId, result.data, { mode: 'hydration', injectStylesheet: true });
+          this.innerHTML = recommendations.innerHTML;
         } else {
           this.#handleError(new Error('No recommendations available'));
         }
@@ -144,7 +133,7 @@ class ProductRecommendations extends Component {
    * @param {Error} error
    */
   #handleError(error) {
-    console.error('Product recommendations error:', error.message);
+    console.error('Product recommendations error:', error);
     this.classList.add('hidden');
     this.dataset.error = 'Error loading product recommendations';
   }

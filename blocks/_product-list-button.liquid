@@ -1,7 +1,9 @@
+
+
 {% assign button_collection = closest.collection %}
 {% assign button_url = button_collection.url %}
 
-{% if button_collection.products_count > section.settings.max_products %}
+{% if button_collection.products.size > section.settings.max_products %}
   {% render 'button', link: button_url %}
 {% endif %}
 
@@ -40,52 +42,11 @@
           "label": "t:options.secondary"
         },
         {
-          "value": "button-unstyled",
+          "value": "link",
           "label": "t:options.link"
-        },
-        {
-          "value": "button-custom",
-          "label": "t:options.custom"
         }
       ],
-      "default": "button",
-      "info": "t:info.edit_button_style_in_theme_settings"
-    },
-    {
-      "type": "header",
-      "content": "t:content.button_colors",
-      "visible_if": "{{ block.settings.style_class == \"button-custom\" }}"
-    },
-    {
-      "type": "color",
-      "id": "custom_button_background",
-      "label": "t:settings.background",
-      "default": "{{ settings.color_palette.foreground }}",
-      "alpha": true,
-      "visible_if": "{{ block.settings.style_class == 'button-custom' }}"
-    },
-    {
-      "type": "color",
-      "id": "custom_button_text",
-      "label": "t:settings.text",
-      "default": "{{ settings.color_palette.background }}",
-      "alpha": true,
-      "visible_if": "{{ block.settings.style_class == 'button-custom' }}"
-    },
-    {
-      "type": "color",
-      "id": "custom_button_border",
-      "label": "t:settings.borders",
-      "default": "{{ settings.color_palette.background }}",
-      "alpha": true,
-      "visible_if": "{{ block.settings.style_class == 'button-custom' }}"
-    },
-    {
-      "type": "color",
-      "id": "link_text_color",
-      "label": "t:settings.link_text_color",
-      "placeholder": "t:settings.default",
-      "visible_if": "{{ block.settings.style_class == 'button-unstyled' }}"
+      "default": "button"
     },
     {
       "type": "header",
@@ -151,7 +112,7 @@
       "name": "t:names.product_list_button",
       "category": "t:categories.collection",
       "settings": {
-        "label": "t:text_defaults.view_all_button_label",
+        "label": "View all",
         "style_class": "button-secondary"
       }
     }

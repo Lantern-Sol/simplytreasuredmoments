@@ -1,23 +1,12 @@
-{% assign block_settings = block.settings %}
 
-{%- liquid
-  # Resolve the desktop aspect-ratio. A user override (anything other than
-  # 'auto') wins over the source-derived default.
-  if block_settings.aspect_ratio != blank and block_settings.aspect_ratio != 'auto'
-    assign resolved_aspect_ratio = block_settings.aspect_ratio
-  elsif block_settings.source == 'uploaded'
-    assign resolved_aspect_ratio = block_settings.video.aspect_ratio | default: 'auto'
-  else
-    assign resolved_aspect_ratio = 'auto'
-  endif
--%}
+
+{% assign block_settings = block.settings %}
 
 {% capture video_style %}
   {%  render 'spacing-style', settings: block_settings %}
   {% render 'border-override', settings: block_settings %}
-   --size-style-width: {{ block_settings.custom_width }}%; --size-style-width-mobile: {{ block_settings.custom_width_mobile }}%; --size-style-height: 100%;
-   --size-style-aspect-ratio: {{ resolved_aspect_ratio }};
-   {% if block_settings.aspect_ratio_mobile != blank %}--size-style-aspect-ratio-mobile: {{ block_settings.aspect_ratio_mobile }};{% endif %}
+   --size-style-width: {{ block_settings.custom_width }}%; --size-style-width-mobile: {{ block_settings.custom_width_mobile }}%;
+   --size-style-aspect-ratio: {% if block_settings.source == 'uploaded' %}{{ block_settings.video.aspect_ratio | default: 'auto' }}{% elsif block_settings.cover_image == blank %}{{ block_settings.aspect_ratio }}{% else %}auto{% endif %};
 {% endcapture %}
 
 {% if block_settings.source == 'uploaded' %}
@@ -27,7 +16,8 @@
     video_loop: block_settings.video_loop,
     video_style: video_style,
     video_preview_image: block_settings.video.preview_image,
-    additional_attributes: block.shopify_attributes
+    additional_attributes: block.shopify_attributes,
+    section_id: section.id
   %}
 {% else %}
   {% render 'video',
@@ -38,43 +28,14 @@
     video_style: video_style,
     video_alt: block_settings.alt,
     video_preview_image: block_settings.cover_image,
-    additional_attributes: block.shopify_attributes
+    additional_attributes: block.shopify_attributes,
+    section_id: section.id
   %}
 {% endif %}
 
 {% stylesheet %}
   .placeholder-video {
     aspect-ratio: 5 / 3;
-  }
-
-  /*
-    Apply the aspect ratio to the <deferred-media> container itself, not
-    only the inner img/video. base.css's .size-style sets height: 100%,
-    which would otherwise win over aspect-ratio — height: auto lets the
-    ratio drive the container height.
-  */
-  deferred-media[style*='--size-style-aspect-ratio'] {
-    aspect-ratio: var(--size-style-aspect-ratio, auto);
-    height: auto;
-  }
-
-  /* Cover-fit any video/image content inside the block so a forced
-     aspect ratio fills the box without letterboxing. */
-  deferred-media video,
-  deferred-media img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  /* Mobile aspect-ratio override. Inline style on <deferred-media> sets
-     --size-style-aspect-ratio, so we need !important to rebind it for
-     mobile — every existing rule reading the var then picks up the
-     mobile value automatically. */
-  @media screen and (max-width: 749px) {
-    deferred-media[style*='--size-style-aspect-ratio-mobile'] {
-      --size-style-aspect-ratio: var(--size-style-aspect-ratio-mobile) !important;
-    }
   }
 {% endstylesheet %}
 
@@ -167,35 +128,26 @@
       "type": "select",
       "id": "aspect_ratio",
       "label": "t:settings.aspect_ratio",
-      "info": "Overrides the source's native aspect ratio.",
+      "visible_if": "{{ block.settings.source == 'url' and block.settings.cover_image == blank }}",
       "options": [
-        { "value": "auto", "label": "t:options.auto" },
-        { "value": "9/16", "label": "Portrait 9:16" },
-        { "value": "3/4", "label": "Portrait 3:4" },
-        { "value": "4/5", "label": "Portrait 4:5" },
-        { "value": "1/1", "label": "Square" },
-        { "value": "6.9/5", "label": "Landscape 6.9:5" },
-        { "value": "16/9", "label": "Landscape 16:9" }
+        {
+          "value": "auto",
+          "label": "t:options.auto"
+        },
+        {
+          "value": "9/16",
+          "label": "t:options.portrait"
+        },
+        {
+          "value": "1/1",
+          "label": "t:options.square"
+        },
+        {
+          "value": "16/9",
+          "label": "t:options.landscape"
+        }
       ],
       "default": "auto"
-    },
-    {
-      "type": "select",
-      "id": "aspect_ratio_mobile",
-      "label": "Mobile aspect ratio",
-      "info": "Overrides the aspect ratio on screens under 750px.",
-      "options": [
-        { "value": "", "label": "Same as desktop" },
-        { "value": "auto", "label": "Auto" },
-        { "value": "3.6/3", "label": "Portrait 3.6:3" },
-        { "value": "3/4", "label": "Portrait 3:4" },
-        { "value": "4/5", "label": "Portrait 4:5" },
-        { "value": "9/16", "label": "Portrait 9:16" },
-        { "value": "1/1", "label": "Square" },
-        { "value": "6.9/5", "label": "Landscape 6.9:5" },
-        { "value": "16/9", "label": "Landscape 16:9" }
-      ],
-      "default": ""
     },
     {
       "type": "header",
@@ -237,13 +189,6 @@
       "unit": "%",
       "label": "t:settings.opacity",
       "default": 100,
-      "visible_if": "{{ block.settings.border != 'none' }}"
-    },
-    {
-      "type": "color",
-      "id": "border_color",
-      "label": "t:settings.color",
-      "placeholder": "t:settings.default",
       "visible_if": "{{ block.settings.border != 'none' }}"
     },
     {

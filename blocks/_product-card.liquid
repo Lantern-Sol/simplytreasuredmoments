@@ -1,30 +1,14 @@
-{%- doc -%}
-  @param {string} [product_view_context] - Context value passed through to the card snippet.
-{%- enddoc -%}
+
 
 {% liquid
   assign product = closest.product
-  assign block_settings = block.settings
 -%}
 
 {% capture children %}
   {% content_for 'blocks', closest.product: product %}
 {% endcapture %}
 
-{% render 'product-card',
-  children: children,
-  product: product,
-  block: block,
-  layout: block_settings.layout,
-  horizontal_image_width: block_settings.horizontal_image_width,
-  product_view_context: product_view_context
-%}
-{% render 'buy-buttons-styles' %}
-{% render 'gift-card-recipient-form-styles' %}
-{% render 'quick-add-styles' %}
-{% render 'quick-add-modal-styles' %}
-{% render 'variant-picker-styles' %}
-{% render 'product-badges-styles' %}
+{% render 'product-card', children: children, product: product %}
 
 {% schema %}
 {
@@ -49,9 +33,6 @@
       "type": "review"
     },
     {
-      "type": "sku"
-    },
-    {
       "type": "swatches"
     },
     {
@@ -59,9 +40,6 @@
     },
     {
       "type": "product-title"
-    },
-    {
-      "type": "product-quick-add"
     },
     {
       "type": "custom-liquid"
@@ -77,28 +55,6 @@
       "content": "t:content.resource_reference_product_card"
     },
     {
-      "type": "select",
-      "id": "layout",
-      "label": "Layout",
-      "options": [
-        { "value": "vertical", "label": "Vertical (default)" },
-        { "value": "horizontal", "label": "Horizontal" }
-      ],
-      "default": "vertical",
-      "info": "Horizontal places the gallery on the left, content in the middle, and any quick-add button on the right."
-    },
-    {
-      "type": "range",
-      "id": "horizontal_image_width",
-      "label": "Image width (horizontal)",
-      "min": 60,
-      "max": 200,
-      "step": 4,
-      "unit": "px",
-      "default": 96,
-      "visible_if": "{{ block.settings.layout == 'horizontal' }}"
-    },
-    {
       "type": "range",
       "id": "product_card_gap",
       "label": "t:settings.vertical_gap",
@@ -110,30 +66,16 @@
     },
     {
       "type": "checkbox",
-      "id": "use_mobile_gap",
-      "label": "Use mobile gap",
-      "default": false
+      "id": "inherit_color_scheme",
+      "label": "t:settings.inherit_color_scheme",
+      "default": true
     },
     {
-      "type": "range",
-      "id": "mobile_product_card_gap",
-      "label": "Mobile vertical gap",
-      "min": 0,
-      "max": 50,
-      "step": 1,
-      "unit": "px",
-      "default": 16,
-      "visible_if": "{{ block.settings.use_mobile_gap }}"
-    },
-    {
-      "type": "header",
-      "content": "t:content.appearance"
-    },
-    {
-      "type": "color",
-      "id": "background_color",
-      "label": "t:settings.background_color",
-      "placeholder": "t:settings.default"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1",
+      "visible_if": "{{ block.settings.inherit_color_scheme == false }}"
     },
     {
       "type": "header",
@@ -178,20 +120,12 @@
       "visible_if": "{{ block.settings.border != 'none' }}"
     },
     {
-      "type": "color",
-      "id": "border_color",
-      "label": "t:settings.color",
-      "placeholder": "t:settings.default",
-      "visible_if": "{{ block.settings.border != 'none' }}"
-    },
-    {
       "type": "range",
       "id": "border_radius",
       "label": "t:settings.border_radius",
       "min": 0,
       "max": 32,
       "step": 1,
-      "unit": "px",
       "default": 0
     },
     {
@@ -237,60 +171,6 @@
       "step": 1,
       "unit": "px",
       "default": 0
-    },
-    {
-      "type": "header",
-      "content": "Mobile padding"
-    },
-    {
-      "type": "checkbox",
-      "id": "use_mobile_padding",
-      "label": "Use mobile padding",
-      "default": false
-    },
-    {
-      "type": "range",
-      "id": "padding-block-start-mobile",
-      "label": "t:settings.top",
-      "min": 0,
-      "max": 50,
-      "step": 1,
-      "unit": "px",
-      "default": 0,
-      "visible_if": "{{ block.settings.use_mobile_padding }}"
-    },
-    {
-      "type": "range",
-      "id": "padding-block-end-mobile",
-      "label": "t:settings.bottom",
-      "min": 0,
-      "max": 50,
-      "step": 1,
-      "unit": "px",
-      "default": 0,
-      "visible_if": "{{ block.settings.use_mobile_padding }}"
-    },
-    {
-      "type": "range",
-      "id": "padding-inline-start-mobile",
-      "label": "t:settings.left",
-      "min": 0,
-      "max": 50,
-      "step": 1,
-      "unit": "px",
-      "default": 0,
-      "visible_if": "{{ block.settings.use_mobile_padding }}"
-    },
-    {
-      "type": "range",
-      "id": "padding-inline-end-mobile",
-      "label": "t:settings.right",
-      "min": 0,
-      "max": 50,
-      "step": 1,
-      "unit": "px",
-      "default": 0,
-      "visible_if": "{{ block.settings.use_mobile_padding }}"
     }
   ]
 }

@@ -26,9 +26,7 @@ class LocalizationFormComponent extends Component {
     this.refs.countryList && this.refs.countryList.addEventListener('keydown', this.#onContainerKeyDown);
     this.refs.countryList && this.refs.countryList.addEventListener('scroll', this.#onCountryListScroll);
 
-    // Resizing the language input can be expensive for browsers that don't support field-sizing: content.
-    // Spliting it into separate tasks at least helps when there are multiple localization forms on the page.
-    setTimeout(() => this.resizeLanguageInput(), 0);
+    this.resizeLanguageInput();
   }
 
   disconnectedCallback() {
@@ -57,7 +55,7 @@ class LocalizationFormComponent extends Component {
         event.stopPropagation();
         this.#changeCountryFocus('DOWN');
         break;
-      case 'Enter': {
+      case 'Enter':
         event.preventDefault();
         event.stopPropagation();
         const focusedItem = countryListItems.find((item) => item.getAttribute('aria-selected') === 'true');
@@ -67,7 +65,6 @@ class LocalizationFormComponent extends Component {
           form.submit();
         }
         break;
-      }
     }
 
     if (!this.refs.search) return;
@@ -118,7 +115,7 @@ class LocalizationFormComponent extends Component {
   resizeLanguageInput() {
     const { languageInput } = this.refs;
 
-    if (!languageInput || CSS.supports('field-sizing', 'content')) return;
+    if (!languageInput) return;
 
     // Hide all options except the selected option
     for (const option of languageInput.options) {
@@ -278,7 +275,6 @@ class LocalizationFormComponent extends Component {
         countryEl.removeAttribute('hidden');
         const countrySpan = countryEl.querySelector('.country');
         if (countrySpan) {
-          // eslint-disable-next-line no-self-assign
           countrySpan.textContent = countrySpan.textContent;
         }
         countVisibleCountries++;

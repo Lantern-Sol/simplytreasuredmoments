@@ -1,275 +1,44 @@
+
+
 <script
   src="{{ 'blog-posts-list.js' | asset_url }}"
   type="module"
   fetchpriority="low"
 ></script>
 
-{% liquid
-  assign layout_type = section.settings.layout_type | default: 'smart-mix'
-  assign columns = section.settings.columns | default: 3
-  assign posts_per_page = section.settings.posts_per_page | default: 7
-  assign show_category_tabs = section.settings.show_category_tabs
-  assign tabs_alignment = section.settings.tabs_alignment | default: 'center'
-  assign show_pagination = section.settings.show_pagination
-  assign featured_bg_image = section.settings.featured_card_background_image
-  assign featured_bg_position = section.settings.featured_card_background_position | default: 'cover'
-  assign featured_bg_overlay_opacity = section.settings.featured_card_background_overlay_opacity | default: 0
-
-  assign featured_inline_style = ''
-  if featured_bg_image != blank
-    assign featured_bg_url = featured_bg_image | image_url: width: 2400
-    assign featured_bg_overlay_alpha = featured_bg_overlay_opacity | divided_by: 100.0
-    assign featured_inline_style = '--featured-bg-image:url(' | append: featured_bg_url | append: ');--featured-bg-size:' | append: featured_bg_position | append: ';--featured-bg-overlay:rgb(0 0 0 / ' | append: featured_bg_overlay_alpha | append: ');'
-  endif
-
-  assign all_label = section.settings.all_tab_label | default: 'All'
-
-  assign current_tag = ''
-  if current_tags != blank
-    assign current_tag = current_tags | first
-  endif
-
-  if section.settings.background_color != blank
-    render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
-  endif
-%}
-
 <blog-posts-list section-id="{{ section.id }}">
-  <div
-    class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
-  ></div>
+  <div class="section-background color-{{ section.settings.color_scheme }}"></div>
   <div
     class="
       section
-      {% if section.settings.background_color != blank %}color-custom-{{ section.id }}{% endif %}
+      color-{{ section.settings.color_scheme }}
       blog-posts
-      blog-posts--{{ layout_type }}
       spacing-style
       size-style
     "
-    data-testid="blog-posts"
-    style="
-      {% render 'spacing-style', settings: section.settings %}
-      --blog-posts-columns: {{ columns }};
-    "
+    style="{% render 'spacing-style', settings: section.settings %}"
   >
     {% content_for 'blocks' %}
 
-    {%- if show_category_tabs -%}
-      <nav
-        class="blog-category-tabs blog-category-tabs--{{ tabs_alignment }}"
-        aria-label="Article categories"
+    {%- paginate blog.articles by 12 -%}
+      <span ref="viewMorePrevious"></span>
+      <div
+        ref="grid"
+        class="blog-posts-container"
+        data-last-page="{{ paginate.pages }}"
       >
-        <ul class="blog-category-tabs__list" role="list">
-          <li class="blog-category-tabs__item">
-            <a
-              href="{{ blog.url }}"
-              class="blog-category-tabs__link{% if current_tag == blank %} is-active{% endif %} h6"
-              {% if current_tag == blank %}aria-current="page"{% endif %}
-            >{{ all_label }}</a>
-          </li>
-          {%- for tag in blog.all_tags -%}
-            <li class="blog-category-tabs__item">
-              <a
-                href="{{ blog.url }}/tagged/{{ tag | handleize }}"
-                class="blog-category-tabs__link{% if tag == current_tag %} is-active{% endif %} h6"
-                {% if tag == current_tag %}aria-current="page"{% endif %}
-              >{{ tag }}</a>
-            </li>
-          {%- endfor -%}
-        </ul>
-      </nav>
-    {%- endif -%}
-
-    {%- if show_pagination -%}
-      {% paginate blog.articles by posts_per_page %}
-        {%- assign paginated_articles = blog.articles -%}
-        <div ref="grid" class="blog-posts-container">
-          {% for article in paginated_articles %}
-            {% liquid
-              assign col_span = 2
-              assign scale = 0.6
-              assign is_horizontal = false
-              assign is_featured = false
-              assign items_on_page = paginated_articles.size
-
-              if layout_type == 'featured-grid'
-                if forloop.first
-                  assign col_span = columns
-                  assign scale = 1
-                  assign is_horizontal = true
-                  assign is_featured = true
-                else
-                  assign col_span = 1
-                  assign scale = 0.8
-                endif
-              else
-                case items_on_page
-                  when 1
-                    assign col_span = 6
-                    assign scale = 1
-                    assign is_horizontal = true
-                  when 2
-                    assign col_span = 3
-                    assign scale = 0.8
-                  when 3
-                    if forloop.index == 1
-                      assign col_span = 6
-                      assign scale = 1
-                      assign is_horizontal = true
-                    else
-                      assign col_span = 3
-                      assign scale = 0.8
-                    endif
-                  when 4
-                    assign col_span = 3
-                    assign scale = 0.8
-                  when 5
-                    if forloop.index == 1
-                      assign col_span = 6
-                      assign scale = 1
-                      assign is_horizontal = true
-                    else
-                      assign col_span = 3
-                      assign scale = 0.8
-                    endif
-                  else
-                    if forloop.index == 1
-                      assign col_span = 6
-                      assign scale = 1
-                      assign is_horizontal = true
-                    elsif forloop.index <= 3
-                      assign col_span = 3
-                      assign scale = 0.8
-                    else
-                      assign col_span = 2
-                      assign scale = 0.6
-                    endif
-                endcase
-              endif
-            %}
-            {% style %}
-              [data-blog-index="{{ section.id }}-{{ forloop.index }}"] {
-                --col-span: {{ col_span }};
-                --blog-post-card-scale: {{ scale }};
-              }
-
-              @media screen and (max-width: 749px) {
-                [data-blog-index="{{ section.id }}-{{ forloop.index }}"] {
-                  --col-span: {% if layout_type == 'featured-grid' %}1{% else %}6{% endif %};
-                  --blog-post-card-scale: 0.5;
-                }
-              }
-            {% endstyle %}
-            <div
-              class="
-                blog-post-item
-                {% if is_horizontal %}blog-post-item--horizontal{% endif %}
-                {% if is_featured %}blog-post-item--featured{% endif %}
-              "
-              data-testid="blog-post-item"
-              data-blog-index="{{ section.id }}-{{ forloop.index }}"
-              {% if is_featured and featured_inline_style != blank %}style="{{ featured_inline_style }}"{% endif %}
-            >
-              {% content_for 'block', id: 'static-blog-post-card', type: '_blog-post-card', article: article %}
-            </div>
-          {% endfor %}
-        </div>
-        {%- render 'pagination-controls', paginate: paginate -%}
-      {% endpaginate %}
-    {%- else -%}
-      <div ref="grid" class="blog-posts-container">
         {% for article in blog.articles %}
-          {% liquid
-            assign col_span = 2
-            assign scale = 0.6
-            assign is_horizontal = false
-            assign is_featured = false
-            assign items_on_page = blog.articles.size
-
-            if layout_type == 'featured-grid'
-              if forloop.first
-                assign col_span = columns
-                assign scale = 1
-                assign is_horizontal = true
-                assign is_featured = true
-              else
-                assign col_span = 1
-                assign scale = 0.8
-              endif
-            else
-              case items_on_page
-                when 1
-                  assign col_span = 6
-                  assign scale = 1
-                  assign is_horizontal = true
-                when 2
-                  assign col_span = 3
-                  assign scale = 0.8
-                when 3
-                  if forloop.index == 1
-                    assign col_span = 6
-                    assign scale = 1
-                    assign is_horizontal = true
-                  else
-                    assign col_span = 3
-                    assign scale = 0.8
-                  endif
-                when 4
-                  assign col_span = 3
-                  assign scale = 0.8
-                when 5
-                  if forloop.index == 1
-                    assign col_span = 6
-                    assign scale = 1
-                    assign is_horizontal = true
-                  else
-                    assign col_span = 3
-                    assign scale = 0.8
-                  endif
-                else
-                  if forloop.index == 1
-                    assign col_span = 6
-                    assign scale = 1
-                    assign is_horizontal = true
-                  elsif forloop.index <= 3
-                    assign col_span = 3
-                    assign scale = 0.8
-                  else
-                    assign col_span = 2
-                    assign scale = 0.6
-                  endif
-              endcase
-            endif
-          %}
-          {% style %}
-            [data-blog-index="{{ section.id }}-{{ forloop.index }}"] {
-              --col-span: {{ col_span }};
-              --blog-post-card-scale: {{ scale }};
-            }
-
-            @media screen and (max-width: 749px) {
-              [data-blog-index="{{ section.id }}-{{ forloop.index }}"] {
-                --col-span: {% if layout_type == 'featured-grid' %}1{% elsif is_horizontal %}6{% else %}3{% endif %};
-                --blog-post-card-scale: 0.5;
-              }
-            }
-          {% endstyle %}
           <div
-            class="
-              blog-post-item
-              {% if is_horizontal %}blog-post-item--horizontal{% endif %}
-              {% if is_featured %}blog-post-item--featured{% endif %}
-            "
-            data-testid="blog-post-item"
-            data-blog-index="{{ section.id }}-{{ forloop.index }}"
-            {% if is_featured and featured_inline_style != blank %}style="{{ featured_inline_style }}"{% endif %}
+            class="blog-post-item"
+            ref="cards[]"
+            data-page="{{ paginate.current_page }}"
           >
             {% content_for 'block', id: 'static-blog-post-card', type: '_blog-post-card', article: article %}
           </div>
         {% endfor %}
       </div>
-    {%- endif -%}
+      <span ref="viewMoreNext"></span>
+    {%- endpaginate -%}
   </div>
 </blog-posts-list>
 
@@ -280,26 +49,73 @@
   .blog-posts {
     --page-content-width: var(--narrow-page-width);
     --page-width: calc(var(--page-content-width) + (var(--page-margin) * 2));
-    --columns-gap: 1rem;
-    --rows-gap: 1.5rem;
+    --columns-gap: 36px;
+    --rows-gap: 36px;
   }
 
   .blog-posts-container {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
+    gap: 1rem;
     width: 100%;
     column-gap: var(--columns-gap);
     row-gap: var(--rows-gap);
   }
 
   /**
-   * Blog post item grid positioning and scaling.
-   * Layout is calculated in Liquid based on total article count.
-   * Mobile overrides are applied per-item in inline styles for proper specificity.
+   * Apart from the first and second rows in the grid, all remaining blog posts
+   * are arranged in a three-column layout:
+   * +------------+------------+-------------+
+   * |            |            |             |
+   * |  (span 2)  |  (span 2)  |  (span 2)   |
+   * |            |            |             |
+   * +------------+------------+-------------+
    */
   .blog-post-item {
-    grid-column: span var(--col-span);
-    background-color: var(--color-background);
+    --blog-post-card-scale: 0.6;
+
+    grid-column: span 2;
+
+    @media screen and (max-width: 749px) {
+      --blog-post-card-scale: 0.5;
+
+      grid-column: span 6;
+    }
+  }
+
+  /**
+   * The second row of blog posts has two columns:
+   * +-------------------+-------------------+
+   * |                   |                   |
+   * |  (column span 3)  |  (column span 3)  |
+   * |                   |                   |
+   * +-------------------+-------------------+
+   */
+  .blog-post-item:nth-child(2),
+  .blog-post-item:nth-child(3) {
+    --blog-post-card-scale: 0.8;
+
+    grid-column: span 3;
+
+    @media screen and (max-width: 749px) {
+      --blog-post-card-scale: 0.5;
+
+      grid-column: span 6;
+    }
+  }
+
+  /**
+   * The first row of blog posts has only one column:
+   * +---------------------------------------+
+   * |                                       |
+   * |           (1 column span 6)           |
+   * |                                       |
+   * +---------------------------------------+
+   */
+  .blog-post-item:first-child {
+    --blog-post-card-scale: 1;
+
+    grid-column: span 6;
   }
 
   /**
@@ -313,180 +129,6 @@
   .blog-post-item:has(.blog-post-card__image-container) {
     border: none;
     padding: 0;
-  }
-
-  /**
-   * Featured-grid layout: first article spans full width as a horizontal hero,
-   * remaining articles fill a uniform N-column grid below.
-   */
-  .blog-posts--featured-grid .blog-posts-container {
-    grid-template-columns: repeat(var(--blog-posts-columns, 3), 1fr);
-  }
-
-  .blog-posts--featured-grid .blog-post-item--featured {
-    grid-column: 1 / -1;
-  }
-
-  .blog-posts--featured-grid .blog-post-item--featured {
-    position: relative;
-    isolation: isolate;
-    margin-bottom: 1rem;
-  }
-
-  /**
-   * Full-viewport background break-out.
-   * The pseudo-element extends edge-to-edge across the viewport while the
-   * card content stays inside the section's narrow page width.
-   */
-  .blog-posts--featured-grid .blog-post-item--featured::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 50%;
-    width: 100vw;
-    transform: translateX(-50%);
-    z-index: -2;
-    background-image: var(--featured-bg-image, none);
-    background-size: var(--featured-bg-size, cover);
-    background-position: center;
-    background-repeat: no-repeat;
-    pointer-events: none;
-  }
-
-  .blog-posts--featured-grid .blog-post-item--featured::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 50%;
-    width: 100vw;
-    transform: translateX(-50%);
-    z-index: -1;
-    background: var(--featured-bg-overlay, transparent);
-    pointer-events: none;
-  }
-
-  .blog-posts--featured-grid .blog-post-item--featured .blog-post-card {
-    background: transparent;
-    color: rgb(var(--featured-card-fg-rgb, var(--color-foreground-rgb)));
-    padding: var(--gap-2xl, 32px);
-    border-radius: 0;
-
-    @media screen and (max-width: 749px) {
-      padding: 2.5rem 0;
-    }
-  }
-
-  /**
-   * Featured article heading uses the h5 type preset; the grid cards stay
-   * at the static block's h6 setting from the template. Scope to the
-   * heading text-block (.h6) so the excerpt/rte block isn't affected.
-   */
-  .blog-posts--featured-grid .blog-post-item--featured .blog-post-card__content .text-block.h6,
-  .blog-posts--featured-grid .blog-post-item--featured .blog-post-card__content .text-block.h6 :is(h1, h2, h3, h4, h5, h6) {
-    font-family: var(--font-h5--family);
-    font-size: var(--font-h5--size);
-    line-height: var(--font-h5--line-height);
-  }
-
-  /**
-   * Allow the featured background pseudo to extend to the viewport edges.
-   * Ancestors must NOT have overflow:hidden/clip or the ::before will be
-   * cropped to the narrow content width.
-   */
-  .blog-posts--featured-grid,
-  .blog-posts--featured-grid .blog-posts-container,
-  .blog-posts--featured-grid .blog-post-item--featured {
-    overflow: visible;
-  }
-
-  @media screen and (max-width: 749px) {
-    .blog-posts--featured-grid .blog-posts-container {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .blog-post-item:not(.blog-post-item--horizontal):not(.blog-post-item--featured) .blog-post-card__image {
-      aspect-ratio: 1 / 1;
-      height: auto;
-    }
-  }
-
-  /**
-   * Category tabs strip
-   */
-  .blog-category-tabs {
-    width: 100%;
-    margin-block: var(--gap-md, 16px) 2.5rem;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-
-  .blog-category-tabs::-webkit-scrollbar {
-    display: none;
-  }
-
-  .blog-category-tabs__list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: nowrap;
-    gap: clamp(1rem, 2.5vw, 2.5rem);
-    width: max-content;
-    min-width: 100%;
-  }
-
-  .blog-category-tabs--center .blog-category-tabs__list {
-    justify-content: center;
-    margin-inline: auto;
-  }
-
-  .blog-category-tabs--right .blog-category-tabs__list {
-    justify-content: flex-end;
-    margin-inline-start: auto;
-  }
-
-  .blog-category-tabs__item {
-    flex: 0 0 auto;
-  }
-
-  .blog-category-tabs__link {
-    display: inline-block;
-    padding: 0.5rem 0;
-    color: inherit;
-    text-decoration: none;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-size: var(--font-size--sm, 0.875rem);
-    border-block-end: 2px solid transparent;
-    transition: border-color 120ms ease, opacity 120ms ease;
-    opacity: 0.7;
-    white-space: nowrap;
-  }
-
-  .blog-category-tabs__link:hover,
-  .blog-category-tabs__link:focus-visible {
-    opacity: 1;
-  }
-
-  .blog-category-tabs__link.is-active {
-    opacity: 1;
-    border-block-end-color: currentColor;
-  }
-
-  @media screen and (max-width: 749px) {
-    .blog-category-tabs__link.h6 {
-      font-family: var(--font-h7--family);
-      font-style: var(--font-h7--style);
-      font-weight: var(--font-h7--weight);
-      font-size: var(--font-h7--size);
-      line-height: var(--font-h7--line-height);
-      letter-spacing: var(--font-h7--letter-spacing);
-      text-transform: var(--font-h7--case);
-    }
   }
 {% endstylesheet %}
 
@@ -530,118 +172,10 @@
   },
   "settings": [
     {
-      "type": "header",
-      "content": "Layout"
-    },
-    {
-      "type": "select",
-      "id": "layout_type",
-      "label": "Layout",
-      "options": [
-        { "value": "smart-mix", "label": "Smart mix (hero + standard + compact)" },
-        { "value": "featured-grid", "label": "Featured + uniform grid" }
-      ],
-      "default": "featured-grid"
-    },
-    {
-      "type": "range",
-      "id": "columns",
-      "label": "Grid columns",
-      "min": 2,
-      "max": 4,
-      "step": 1,
-      "default": 3,
-      "visible_if": "{{ section.settings.layout_type == 'featured-grid' }}"
-    },
-    {
-      "type": "image_picker",
-      "id": "featured_card_background_image",
-      "label": "Featured card background image",
-      "info": "Sits behind the first article. Use a darker image or pair with the overlay below for legibility.",
-      "visible_if": "{{ section.settings.layout_type == 'featured-grid' }}"
-    },
-    {
-      "type": "select",
-      "id": "featured_card_background_position",
-      "label": "Background fit",
-      "options": [
-        { "value": "cover", "label": "Cover" },
-        { "value": "contain", "label": "Contain" },
-        { "value": "auto", "label": "Original size" }
-      ],
-      "default": "cover",
-      "visible_if": "{{ section.settings.layout_type == 'featured-grid' and section.settings.featured_card_background_image != blank }}"
-    },
-    {
-      "type": "range",
-      "id": "featured_card_background_overlay_opacity",
-      "label": "Background overlay opacity",
-      "min": 0,
-      "max": 100,
-      "step": 5,
-      "unit": "%",
-      "default": 0,
-      "visible_if": "{{ section.settings.layout_type == 'featured-grid' and section.settings.featured_card_background_image != blank }}"
-    },
-    {
-      "type": "header",
-      "content": "Pagination"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_pagination",
-      "label": "Show pagination",
-      "default": true
-    },
-    {
-      "type": "range",
-      "id": "posts_per_page",
-      "label": "Posts per page",
-      "min": 3,
-      "max": 30,
-      "step": 1,
-      "default": 7,
-      "visible_if": "{{ section.settings.show_pagination }}"
-    },
-    {
-      "type": "header",
-      "content": "Category tabs"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_category_tabs",
-      "label": "Show category tabs",
-      "info": "Builds tabs from blog tags. Each tab links to /blogs/{handle}/tagged/{tag}.",
-      "default": true
-    },
-    {
-      "type": "text",
-      "id": "all_tab_label",
-      "label": "\"All\" tab label",
-      "default": "All",
-      "visible_if": "{{ section.settings.show_category_tabs }}"
-    },
-    {
-      "type": "select",
-      "id": "tabs_alignment",
-      "label": "Tabs alignment",
-      "options": [
-        { "value": "left", "label": "t:options.left" },
-        { "value": "center", "label": "t:options.center" },
-        { "value": "right", "label": "t:options.right" }
-      ],
-      "default": "center",
-      "visible_if": "{{ section.settings.show_category_tabs }}"
-    },
-    {
-      "type": "header",
-      "content": "t:content.appearance"
-    },
-    {
-      "type": "color",
-      "id": "background_color",
-      "label": "t:settings.background_color",
-      "placeholder": "t:settings.default"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
     },
     {
       "type": "header",
@@ -665,35 +199,7 @@
       "max": 100,
       "step": 1,
       "unit": "px",
-      "default": 48
-    },
-    {
-      "type": "checkbox",
-      "id": "use_mobile_padding",
-      "label": "Use mobile padding",
-      "default": false
-    },
-    {
-      "type": "range",
-      "id": "padding-block-start-mobile",
-      "label": "t:settings.top",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 0,
-      "visible_if": "{{ section.settings.use_mobile_padding }}"
-    },
-    {
-      "type": "range",
-      "id": "padding-block-end-mobile",
-      "label": "t:settings.bottom",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 48,
-      "visible_if": "{{ section.settings.use_mobile_padding }}"
+      "default": 0
     }
   ]
 }

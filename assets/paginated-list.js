@@ -1,9 +1,8 @@
 import { Component } from '@theme/component';
 import { sectionRenderer } from '@theme/section-renderer';
-import { requestIdleCallback, viewTransition, yieldToMainThread } from '@theme/utilities';
+import { requestIdleCallback, viewTransition } from '@theme/utilities';
+import { ThemeEvents } from '@theme/events';
 import { PaginatedListAspectRatioHelper } from '@theme/paginated-list-aspect-ratio';
-import { StandardEvents } from '@shopify/events';
-import { getScrollTop, scrollTo } from '@theme/scroll-container';
 
 /**
  * A custom element that renders a paginated list of items.
@@ -50,8 +49,7 @@ export default class PaginatedList extends Component {
     this.#observeViewMore();
 
     // Listen for filter updates to clear cached pages
-    document.addEventListener(StandardEvents.searchUpdate, this.#handleFilterUpdate);
-    document.addEventListener(StandardEvents.collectionUpdate, this.#handleFilterUpdate);
+    document.addEventListener(ThemeEvents.FilterUpdate, this.#handleFilterUpdate);
   }
 
   disconnectedCallback() {
@@ -59,9 +57,8 @@ export default class PaginatedList extends Component {
     if (this.infinityScrollObserver) {
       this.infinityScrollObserver.disconnect();
     }
-    // Remove the filter update listeners
-    document.removeEventListener(StandardEvents.searchUpdate, this.#handleFilterUpdate);
-    document.removeEventListener(StandardEvents.collectionUpdate, this.#handleFilterUpdate);
+    // Remove the filter update listener
+    document.removeEventListener(ThemeEvents.FilterUpdate, this.#handleFilterUpdate);
   }
 
   #observeViewMore() {
@@ -194,8 +191,6 @@ export default class PaginatedList extends Component {
 
     this.#aspectRatioHelper.processNewElements();
 
-    await yieldToMainThread();
-
     history.pushState('', '', nextPage.url.toString());
 
     requestIdleCallback(() => {
@@ -226,28 +221,26 @@ export default class PaginatedList extends Component {
     }
 
     // Store the current scroll position and height of the first element
-    const currentScrollTop = getScrollTop();
+    const scrollTop = window.scrollY;
     const firstElement = grid.firstElementChild;
-    const oldHeight = firstElement ? firstElement.getBoundingClientRect().top + currentScrollTop : 0;
+    const oldHeight = firstElement ? firstElement.getBoundingClientRect().top + window.scrollY : 0;
 
     // Prepend the new elements
     grid.prepend(...previousPageItemElements);
 
     this.#aspectRatioHelper.processNewElements();
 
+    history.pushState('', '', previousPage.url.toString());
+
     // Calculate and adjust scroll position to maintain the same view
     if (firstElement) {
-      const newHeight = firstElement.getBoundingClientRect().top + getScrollTop();
+      const newHeight = firstElement.getBoundingClientRect().top + window.scrollY;
       const heightDiff = newHeight - oldHeight;
-      scrollTo({
-        top: currentScrollTop + heightDiff,
+      window.scrollTo({
+        top: scrollTop + heightDiff,
         behavior: 'instant',
       });
     }
-
-    await yieldToMainThread();
-
-    history.pushState('', '', previousPage.url.toString());
 
     requestIdleCallback(() => {
       this.#fetchPage('previous');
@@ -305,13 +298,9 @@ export default class PaginatedList extends Component {
   }
 
   /**
-   * Handle filter updates by clearing cached pages.
-   * Only reacts to events from the same section (ignores e.g. predictive search in the header).
-   * @param {Event} event
+   * Handle filter updates by clearing cached pages
    */
-  #handleFilterUpdate = (event) => {
-    const eventSection = /** @type {Element | null} */ (event.target)?.closest('[id^="shopify-section-"]');
-    if (eventSection && eventSection.id !== `shopify-section-${this.sectionId}`) return;
+  #handleFilterUpdate = () => {
     this.pages.clear();
 
     // Resolve any pending promises to unblock waiting renders

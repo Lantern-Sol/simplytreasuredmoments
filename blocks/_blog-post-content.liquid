@@ -1,12 +1,6 @@
-<div
-  class="blog-post-content rte"
-  style="
-    {% if block.settings.text_color != blank %}
-      --color: {{ block.settings.text_color }};
-      --color-rgb: {{ block.settings.text_color.rgb }};
-    {% endif %}
-  "
->
+
+
+<div class="blog-post-content rte">
   <rte-formatter>
     {{ article.content }}
   </rte-formatter>
@@ -14,41 +8,18 @@
 
 {% stylesheet %}
   .blog-post-content {
-    --normal-content-width: 800px;
     max-width: var(--normal-content-width);
     margin: 0 auto;
-    color: var(--color, inherit);
-    li {
-      line-height: 2.3;
-    }
-    h5 {
-      font-size: 1.125rem;
-      font-family: var(--font-body--family);
-      text-transform: none;
-      margin-block: 1.5rem 1rem;
-    }
-  }
-
-  .blog-post-content a {
-    color: currentcolor;
   }
 {% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:names.content",
-  "settings": [
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:settings.text_color",
-      "placeholder": "t:settings.default"
-    }
-  ],
+  "settings": [],
   "presets": [
     {
-      "name": "t:names.content",
-      "category": "t:categories.blog_post"
+      "name": "t:names.content"
     }
   ]
 }

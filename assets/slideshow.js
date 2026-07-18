@@ -3,6 +3,7 @@ import {
   center,
   closest,
   clamp,
+  getVisibleElements,
   mediaQueryLarge,
   prefersReducedMotion,
   preventDefault,
@@ -14,68 +15,6 @@ import { SlideshowSelectEvent } from '@theme/events';
 
 // The threshold for determining visibility of slides.
 const SLIDE_VISIBLITY_THRESHOLD = 0.7;
-
-/**
- * Shared viewport observer manager for lazy scroll enablement.
- *
- * Limit the number of compositor layers created by slideshows by only enabling scrolling when the slideshow is in the viewport.
- * Resolves known issues with iOS Safari where too many composition layers will crash the page.
- * When a slideshow is NOT in the viewport, it has overflow: hidden (no compositor layer).
- * When a slideshow enters the viewport, the [in-viewport] attribute is added, enabling scrolling.
- */
-class SlideshowViewportObserver {
-  /** @type {SlideshowViewportObserver | null} */
-  static #instance = null;
-
-  /** @type {IntersectionObserver | null} */
-  #observer = null;
-
-  /**
-   * Gets the singleton instance
-   * @returns {SlideshowViewportObserver}
-   */
-  static getInstance() {
-    if (!this.#instance) {
-      this.#instance = new SlideshowViewportObserver();
-    }
-    return this.#instance;
-  }
-
-  /**
-   * Registers a slideshow to be observed for viewport visibility
-   * @param {Slideshow} slideshow - The slideshow to observe
-   */
-  observe(slideshow) {
-    if (!this.#observer) {
-      this.#observer = new IntersectionObserver(
-        (entries) => {
-          for (const entry of entries) {
-            const slideshowElement = /** @type {Slideshow} */ (entry.target);
-            if (entry.isIntersecting) {
-              slideshowElement.setAttribute('in-viewport', '');
-            } else {
-              slideshowElement.removeAttribute('in-viewport');
-            }
-          }
-        },
-        {
-          rootMargin: '100px',
-        }
-      );
-    }
-
-    this.#observer.observe(slideshow);
-  }
-
-  /**
-   * Unregisters a slideshow from viewport observation
-   * @param {Slideshow} slideshow - The slideshow to unobserve
-   */
-  unobserve(slideshow) {
-    this.#observer?.unobserve(slideshow);
-    slideshow.removeAttribute('in-viewport');
-  }
-}
 
 /**
  * Slideshow custom element that allows sliding between content.
@@ -125,10 +64,6 @@ export class Slideshow extends Component {
   async connectedCallback() {
     super.connectedCallback();
 
-    // Register with shared viewport observer for lazy scroll enablement.
-    // This prevents iOS Safari crashes caused by too many compositor layers.
-    SlideshowViewportObserver.getInstance().observe(this);
-
     // Wait for any in-progress view transitions to finish
     if (viewTransition.current) {
       await viewTransition.current;
@@ -136,37 +71,72 @@ export class Slideshow extends Component {
       if (!this.isConnected) return;
     }
 
-    const slideCount = this.slides?.length || 0;
-    slideCount <= 1 ? this.#setupSlideshowWithoutControls() : this.#setupSlideshow();
+    const { scroller } = this.refs;
+    this.#scroll = new Scroller(scroller, {
+      onScroll: this.#handleScroll,
+      onScrollStart: this.#onTransitionInit,
+      onScrollEnd: this.#onTransitionEnd,
+    });
+
+    scroller.addEventListener('mousedown', this.#handleMouseDown);
+
+    this.addEventListener('mouseenter', this.suspend);
+    this.addEventListener('mouseleave', this.resume);
+    this.addEventListener('pointerenter', this.#handlePointerEnter);
+    document.addEventListener('visibilitychange', this.#handleVisibilityChange);
+
+    this.#updateControlsVisibility();
+
+    this.disabled = this.isNested || this.disabled;
+
+    this.resume();
+
+    this.current = this.initialSlideIndex;
+
+    // Batch reads and writes to the DOM
+    scheduler.schedule(() => {
+      let visibleSlidesAmount = 0;
+      const initialSlideId = this.initialSlide?.getAttribute('slide-id');
+      if (this.initialSlideIndex !== 0 && initialSlideId) {
+        this.select({ id: initialSlideId }, undefined, { animate: false });
+        visibleSlidesAmount = 1;
+      } else {
+        visibleSlidesAmount = this.#updateVisibleSlides();
+        if (visibleSlidesAmount === 0) {
+          this.select(0, undefined, { animate: false });
+          visibleSlidesAmount = 1;
+        }
+      }
+
+      this.#resizeObserver = new ResizeObserver(async () => {
+        if (viewTransition.current) await viewTransition.current;
+
+        if (visibleSlidesAmount > 1) {
+          this.#updateVisibleSlides();
+        }
+
+        if (this.hasAttribute('auto-hide-controls')) {
+          this.#updateControlsVisibility();
+        }
+      });
+
+      this.#resizeObserver.observe(this.refs.slideshowContainer);
+    });
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
+    const { scroller } = this.refs;
 
-    // Unregister from shared viewport observer
-    SlideshowViewportObserver.getInstance().unobserve(this);
-
-    if (this.#scroll) {
-      const { scroller } = this.refs;
-      scroller.removeEventListener('mousedown', this.#handleMouseDown);
-      this.#scroll.destroy();
-    }
-
-    const slideCount = this.slides?.length || 0;
-    if (slideCount > 1) {
-      this.removeEventListener('mouseenter', this.suspend);
-      this.removeEventListener('mouseleave', this.resume);
-      this.removeEventListener('pointerenter', this.#handlePointerEnter);
-      document.removeEventListener('visibilitychange', this.#handleVisibilityChange);
-    }
+    scroller.removeEventListener('mousedown', this.#handleMouseDown);
+    this.removeEventListener('mouseenter', this.suspend);
+    this.removeEventListener('mouseleave', this.resume);
+    this.removeEventListener('pointerenter', this.#handlePointerEnter);
+    document.removeEventListener('visibilitychange', this.#handleVisibilityChange);
+    this.#scroll?.destroy();
 
     if (this.#resizeObserver) {
       this.#resizeObserver.disconnect();
-    }
-
-    if (this.#intersectionObserver) {
-      this.#intersectionObserver.disconnect();
-      this.#intersectionObserver = null;
     }
   }
 
@@ -188,10 +158,6 @@ export class Slideshow extends Component {
    */
   async select(input, event, options = {}) {
     if (this.#disabled || !this.refs.slides?.length) return;
-    if (!this.#scroll) return;
-
-    // Store the actual current slide before any mutations
-    const currentSlide = this.slides?.[this.current];
 
     for (const slide of this.refs.slides) {
       if (slide.hasAttribute('reveal')) {
@@ -220,14 +186,13 @@ export class Slideshow extends Component {
     })();
 
     const { current } = this;
+
+    // Guard if invalid
+    if (requestedIndex === undefined || isNaN(requestedIndex) || requestedIndex === current) return;
+
     const { slides } = this;
 
-    // Guard checks: no slides, invalid index, or selecting the same slide
-    if (!slides?.length || requestedIndex === undefined || isNaN(requestedIndex)) return;
-
-    const requestedSlideElement = slides?.[requestedIndex];
-    if (currentSlide === requestedSlideElement) return;
-
+    if (!slides?.length) return;
     if (!this.infinite) requestedIndex = clamp(requestedIndex, 0, slides.length - 1);
 
     event?.preventDefault();
@@ -250,6 +215,7 @@ export class Slideshow extends Component {
       await this.#scroll.finished; // ensure we're not mid-scroll
 
       const targetSlide = slides[index];
+      const currentSlide = slides[current];
       if (!targetSlide || !currentSlide) return;
 
       // Create a placeholder in the original DOM position of targetSlide
@@ -276,14 +242,6 @@ export class Slideshow extends Component {
 
         // Instantly scroll to the target slide as its position will have changed
         this.#scroll.to(targetSlide, { instant: true });
-
-        // Force Safari to recalculate the timeline state on timeline refresh (after loop)
-        requestAnimationFrame(() => {
-          this.setAttribute('refreshing-timeline', '');
-          requestAnimationFrame(() => {
-            this.removeAttribute('refreshing-timeline');
-          });
-        });
       });
     }
 
@@ -293,11 +251,7 @@ export class Slideshow extends Component {
     const previousIndex = this.current;
 
     slide.setAttribute('aria-hidden', 'false');
-
-    if (this.#scroll) {
-      this.#scroll.to(slide, { instant });
-    }
-
+    this.#scroll.to(slide, { instant });
     this.current = this.slides?.indexOf(slide) || 0;
 
     this.#centerSelectedThumbnail(index, instant ? 'instant' : 'smooth');
@@ -436,37 +390,20 @@ export class Slideshow extends Component {
     return this.getAttribute('infinite') != null;
   }
 
-  get slidesToScroll() {
-    const mobileValues = this.getAttribute('mobile-slides-to-scroll');
-    const desktopValues = this.getAttribute('slides-to-scroll');
-
-    if (!mediaQueryLarge.matches && mobileValues) {
-      return parseInt(mobileValues, 10);
-    }
-
-    if (desktopValues) {
-      return parseInt(desktopValues, 10);
-    }
-    
-    return 0; // Default behavior
-  }
-
   get visibleSlides() {
-    return this.#visibleSlides;
+    return getVisibleElements(this.refs.scroller, this.slides, SLIDE_VISIBLITY_THRESHOLD, 'x');
   }
 
   get previousIndex() {
     const { current, visibleSlides } = this;
-    const slidesToScroll = this.slidesToScroll;
-    const modifier = slidesToScroll > 0 ? slidesToScroll : (visibleSlides.length > 1 ? visibleSlides.length : 1);
+    const modifier = visibleSlides.length > 1 ? visibleSlides.length : 1;
 
     return current - modifier;
   }
 
   get nextIndex() {
     const { current, visibleSlides } = this;
-    const slidesToScroll = this.slidesToScroll;
-    const modifier = slidesToScroll > 0 ? slidesToScroll : (visibleSlides.length > 1 ? visibleSlides.length : 1);
+    const modifier = visibleSlides.length > 1 ? visibleSlides.length : 1;
 
     return current + modifier;
   }
@@ -496,9 +433,7 @@ export class Slideshow extends Component {
    */
   get disabled() {
     return (
-      this.getAttribute('disabled') === 'true' ||
-      (this.hasAttribute('mobile-disabled') && !mediaQueryLarge.matches) ||
-      (this.hasAttribute('desktop-disabled') && mediaQueryLarge.matches)
+      this.getAttribute('disabled') === 'true' || (this.hasAttribute('mobile-disabled') && !mediaQueryLarge.matches)
     );
   }
 
@@ -525,101 +460,6 @@ export class Slideshow extends Component {
    * @type {ResizeObserver}
    */
   #resizeObserver;
-
-  /**
-   * IntersectionObserver for efficient visibility tracking of slides
-   * @type {IntersectionObserver | null}
-   */
-  #intersectionObserver = null;
-
-  /**
-   * Cached visible slides result from IntersectionObserver
-   * @type {HTMLElement[]}
-   */
-  #visibleSlides = [];
-
-  /**
-   * Setup the slideshow without controls for zero or one slides
-   */
-  #setupSlideshowWithoutControls() {
-    this.current = 0;
-    if (this.hasAttribute('auto-hide-controls')) {
-      const { slideshowControls } = this.refs;
-      if (slideshowControls instanceof HTMLElement) {
-        slideshowControls.hidden = true;
-      }
-    }
-
-    if (this.refs.slides?.[0]) {
-      this.refs.slides[0].setAttribute('aria-hidden', 'false');
-    }
-  }
-
-  /**
-   * Setup the slideshow with controls for when there are multiple slides
-   */
-  #setupSlideshow() {
-    // Setup IntersectionObserver first for efficient visibility tracking
-    this.#setupIntersectionObserver();
-
-    // Setup the scroll instance
-    const { scroller } = this.refs;
-    this.#scroll = new Scroller(scroller, {
-      onScroll: this.#handleScroll,
-      onScrollStart: this.#onTransitionInit,
-      onScrollEnd: this.#onTransitionEnd,
-    });
-
-    scroller.addEventListener('mousedown', this.#handleMouseDown);
-
-    this.addEventListener('mouseenter', this.suspend);
-    this.addEventListener('mouseleave', this.resume);
-    this.addEventListener('pointerenter', this.#handlePointerEnter);
-    document.addEventListener('visibilitychange', this.#handleVisibilityChange);
-
-    this.#updateControlsVisibility();
-
-    this.disabled = this.isNested || this.disabled;
-
-    this.resume();
-
-    this.current = this.initialSlideIndex;
-
-    // Batch reads and writes to the DOM
-    scheduler.schedule(() => {
-      let visibleSlidesAmount = 0;
-      const initialSlideId = this.initialSlide?.getAttribute('slide-id');
-
-      // Wait for next frame to ensure layout is fully calculated before setting initial scroll position
-      // This prevents race conditions on Safari mobile when section_width is 'full-width'
-      requestAnimationFrame(() => {
-        if (this.initialSlideIndex !== 0 && initialSlideId) {
-          this.select({ id: initialSlideId }, undefined, { animate: false });
-          visibleSlidesAmount = 1;
-        } else {
-          visibleSlidesAmount = this.#updateVisibleSlides();
-          if (visibleSlidesAmount === 0) {
-            this.select(0, undefined, { animate: false });
-            visibleSlidesAmount = 1;
-          }
-        }
-      });
-
-      this.#resizeObserver = new ResizeObserver(async () => {
-        if (viewTransition.current) await viewTransition.current;
-
-        if (visibleSlidesAmount > 1) {
-          this.#updateVisibleSlides();
-        }
-
-        if (this.hasAttribute('auto-hide-controls')) {
-          this.#updateControlsVisibility();
-        }
-      });
-
-      this.#resizeObserver.observe(this.refs.slideshowContainer);
-    });
-  }
 
   /**
    * Callback invoked on user initiated scroll to sync the current slide index
@@ -662,8 +502,6 @@ export class Slideshow extends Component {
   #sync = () => {
     const { slides } = this;
     if (!slides) return (this.current = 0);
-
-    if (!this.#scroll) return (this.current = 0);
 
     const visibleSlides = this.visibleSlides;
 
@@ -853,7 +691,7 @@ export class Slideshow extends Component {
   /**
    * Pause the slideshow when the page is hidden.
    */
-  #handleVisibilityChange = () => (document.hidden ? this.suspend() : this.resume());
+  #handleVisibilityChange = () => (document.hidden ? this.pause() : this.resume());
 
   #updateControlsVisibility() {
     if (!this.hasAttribute('auto-hide-controls')) return;
@@ -863,56 +701,6 @@ export class Slideshow extends Component {
     if (!(slideshowControls instanceof HTMLElement)) return;
 
     slideshowControls.hidden = scroller.scrollWidth <= scroller.offsetWidth;
-  }
-
-  /**
-   * Setup IntersectionObserver for efficient visibility tracking of slides
-   */
-  #setupIntersectionObserver() {
-    const { slides, scroller } = this.refs;
-    if (!slides?.length) return;
-
-    if (this.#intersectionObserver) {
-      this.#intersectionObserver.disconnect();
-    }
-
-    this.#intersectionObserver = new IntersectionObserver(
-      (entries) => {
-        const allEntries = [
-          ...entries,
-          ...(this.#intersectionObserver ? this.#intersectionObserver.takeRecords() : []),
-        ];
-
-        for (const entry of allEntries) {
-          const slide = /** @type {HTMLElement} */ (entry.target);
-          const isCurrentlyVisible = this.#visibleSlides.includes(slide);
-          const shouldBeVisible = entry.intersectionRatio >= SLIDE_VISIBLITY_THRESHOLD;
-
-          if (shouldBeVisible && !isCurrentlyVisible) {
-            this.#visibleSlides.push(slide);
-          } else if (!shouldBeVisible && isCurrentlyVisible) {
-            const index = this.#visibleSlides.indexOf(slide);
-            if (index > -1) {
-              this.#visibleSlides.splice(index, 1);
-            }
-          }
-        }
-
-        this.#visibleSlides.sort((a, b) => slides.indexOf(a) - slides.indexOf(b));
-        this.#updateVisibleSlides();
-      },
-      {
-        root: scroller,
-        threshold: SLIDE_VISIBLITY_THRESHOLD,
-        // Add small margin to account for sub-pixel rendering
-        rootMargin: '1px',
-      }
-    );
-
-    // Observe all slides - observer will fire initial callback asynchronously
-    slides.forEach((slide) => {
-      this.#intersectionObserver?.observe(slide);
-    });
   }
 
   /**
@@ -943,11 +731,6 @@ export class Slideshow extends Component {
     if (!slides || !slides.length) return 0;
 
     const visibleSlides = this.visibleSlides;
-
-    // If the IntersectionObserver reports zero visible slides, then the slideshow has intersected, but no slides meet the visibility threshold.
-    // Probably that the slideshow's host is mid-animation or zero-layout, like in an animating modal.
-    // Don't stamp aria-hidden="true" on every slide. Set the current slide to the first visible slide.
-    if (visibleSlides.length === 0) return 0;
 
     // Batch writes to the DOM
     scheduler.schedule(() => {

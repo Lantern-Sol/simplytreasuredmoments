@@ -1,0 +1,283 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Nunito+Sans:wght@400;600;700&display=swap');
+
+  .ls-faq__inner {
+    grid-column: 2;
+    background-color: #F2F0EE;
+    border-radius: 0.625rem;
+    padding: 2.1875rem 0.625rem 1.5625rem;
+  }
+
+  .ls-faq__heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 2rem;
+    line-height: 2.3rem;
+    color: #192534;
+    text-align: center;
+    text-transform: capitalize;
+    margin: 0 0 1.5625rem;
+  }
+
+  .ls-faq__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .ls-faq__item {
+    background-color: #FAFAFA;
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+
+  .ls-faq__item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    cursor: pointer;
+    list-style: none;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    letter-spacing: -0.0125rem;
+    color: #192534;
+    gap: 3rem;
+  }
+
+  .ls-faq__item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .ls-faq__item summary::marker {
+    display: none;
+    content: '';
+  }
+
+  .ls-faq__chevron {
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    transition: transform 0.3s ease;
+  }
+
+  .ls-faq__item[open] .ls-faq__chevron {
+    transform: rotate(180deg);
+  }
+
+  .ls-faq__answer {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    letter-spacing: -0.009375rem;
+    color: #192534;
+    padding: 0 1rem 1rem 1.5rem;
+    margin: 0;
+  }
+
+  .ls-faq__cta {
+    display: block;
+    text-align: center;
+    margin-top: 1.5625rem;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: #C8A45D;
+    text-decoration: none;
+  }
+
+  .ls-faq__cta:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 749px) {
+    .ls-faq {
+      padding-top: var(--mobile-pt) !important;
+      padding-bottom: var(--mobile-pb) !important;
+    }
+  }
+
+  /* Desktop */
+  @media (min-width: 60em) {
+    .ls-faq__inner {
+      width: 100%;
+      padding: 2.1875rem 0.625rem 1.5625rem;
+      max-width: 67.25rem;
+      margin: 0 auto;
+    }
+
+    .ls-faq__heading {
+      margin-bottom: 1.5625rem;
+    }
+  }
+</style>
+
+<section
+  class="section section--full-width ls-faq"
+  style="
+    --desktop-pt: {{ section.settings.padding_top }}px;
+    --desktop-pb: {{ section.settings.padding_bottom }}px;
+    --mobile-pt: {{ section.settings.mobile_padding_top }}px;
+    --mobile-pb: {{ section.settings.mobile_padding_bottom }}px;
+    padding-top: var(--desktop-pt);
+    padding-bottom: var(--desktop-pb);
+  "
+>
+  <div class="ls-faq__inner">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="ls-faq__heading">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+
+    <div class="ls-faq__list">
+      {%- for block in section.blocks -%}
+        {%- if block.settings.question != blank -%}
+          <details class="ls-faq__item" {{ block.shopify_attributes }}>
+            <summary>
+              {{ block.settings.question }}
+              <svg class="ls-faq__chevron" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 7.5L10 12.5L15 7.5" stroke="#192534" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </summary>
+            {%- if block.settings.answer != blank -%}
+              <p class="ls-faq__answer">{{ block.settings.answer }}</p>
+            {%- endif -%}
+          </details>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.link_label != blank -%}
+      <a
+        href="{{ section.settings.link_url }}"
+        class="ls-faq__cta"
+        {% if section.settings.link_url == blank %}role="link" aria-disabled="true"{% endif %}
+      >
+        {{ section.settings.link_label }}
+      </a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "LS FAQ",
+  "tag": "section",
+  "class": "ls-faq-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Common Questions"
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Link label",
+      "default": "See all FAQs →"
+    },
+    {
+      "type": "url",
+      "id": "link_url",
+      "label": "Link URL"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "label": "Padding top (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "label": "Padding bottom (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    }
+  ],
+  "max_blocks": 10,
+  "blocks": [
+    {
+      "type": "faq",
+      "name": "FAQ",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question"
+        },
+        {
+          "type": "textarea",
+          "id": "answer",
+          "label": "Answer"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "LS FAQ",
+      "blocks": [
+        {
+          "type": "faq",
+          "settings": {
+            "question": "How long does shipping take?",
+            "answer": "Most orders ship within 3–5 business days. Custom and personalized items may take a bit longer as they are handcrafted to order."
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "What type of photo should I upload?",
+            "answer": "For the best results, use a high-resolution photo with good lighting. Close-up portraits and well-lit images produce the sharpest details on our keepsakes."
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "What if I'm unhappy with my order?",
+            "answer": "We want you to love your keepsake. If something isn't right, reach out within 60 days and we'll make it right with a replacement or full refund."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

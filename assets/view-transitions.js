@@ -1,37 +1,25 @@
 (function () {
-  const viewTransitionRenderBlocker = document.getElementById('view-transition-render-blocker');
-  // Remove the view transition render blocker if the user has reduced motion enabled or is on a low power device.
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || isLowPowerDevice()) {
-    viewTransitionRenderBlocker?.remove();
-  } else {
-    // If the browser didn't manage to parse the main content quickly, at least let the user see something.
-    // We're aiming for the FCP to be under 1.8 seconds since the navigation started.
-    const RENDER_BLOCKER_TIMEOUT_MS = Math.max(0, 1800 - performance.now());
-
-    setTimeout(() => {
-      viewTransitionRenderBlocker?.remove();
-    }, RENDER_BLOCKER_TIMEOUT_MS);
+  //Remove the view transition render blocker if the user has reduced motion enabled
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const viewTransitionRenderBlocker = document.getElementById('view-transition-render-blocker');
+    if (viewTransitionRenderBlocker) viewTransitionRenderBlocker.remove();
   }
 
   const idleCallback = typeof requestIdleCallback === 'function' ? requestIdleCallback : setTimeout;
 
+  /**
+   * @param {PageSwapEvent} event
+   */
   window.addEventListener('pageswap', async (event) => {
-    const { viewTransition } = /** @type {PageSwapEvent} */ (event);
+    if (!hasViewTransition(event)) return;
 
-    if (shouldSkipViewTransition(viewTransition)) {
-      /** @type {ViewTransition | null} */ (viewTransition)?.skipTransition();
-      return;
-    }
+    const { viewTransition } = event;
 
     // Cancel view transition on user interaction to improve INP (Interaction to Next Paint)
-    ['pointerdown', 'keydown'].forEach((eventName) => {
-      document.addEventListener(
-        eventName,
-        () => {
-          viewTransition.skipTransition();
-        },
-        { once: true }
-      );
+    ['pointerdown', 'keydown'].forEach(eventName => {
+      document.addEventListener(eventName, () => {
+        viewTransition.skipTransition();
+      }, { once: true });
     });
 
     // Clean in case you landed on the pdp first. We want to remove the default transition type on the PDP media gallery so there is no duplicate transition name
@@ -55,14 +43,13 @@
     }
   });
 
+  /**
+   * @param {PageRevealEvent} event
+   */
   window.addEventListener('pagereveal', async (event) => {
-    const { viewTransition } = /** @type {PageRevealEvent} */ (event);
+    if (!hasViewTransition(event)) return;
 
-    if (shouldSkipViewTransition(viewTransition)) {
-      /** @type {ViewTransition | null} */ (viewTransition)?.skipTransition();
-      return;
-    }
-
+    const { viewTransition } = event;
     const customTransitionType = sessionStorage.getItem('custom-transition-type');
 
     if (customTransitionType) {
@@ -87,26 +74,14 @@
   });
 
   /**
-   * @param {ViewTransition | null} viewTransition
-   * @returns {viewTransition is null}
+   * Checks whether an Event object is carrying a `viewTransition` property
+   * (as used by the View Transition API) and narrows the type accordingly.
+   *
+   * @template {Event} T
+   * @param {T} event
+   * @returns {event is T & { viewTransition: ViewTransition }}
    */
-  function shouldSkipViewTransition(viewTransition) {
-    return !(viewTransition instanceof ViewTransition) || isLowPowerDevice() || prefersReducedMotion();
-  }
-
-  /*
-   * We can't import this logic from utilities.js here, but we should keep them in sync.
-   */
-  function prefersReducedMotion() {
-    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  }
-
-  /*
-   * We can't import this logic from utilities.js here, but we should keep them in sync.
-   */
-  function isLowPowerDevice() {
-    /* Skip ESLint compatibility check. Number(undefined) <= 2 is always false anyway. */
-    /* eslint-disable-next-line compat/compat */
-    return Number(navigator.hardwareConcurrency) <= 2 || Number(navigator.deviceMemory) <= 2;
+  function hasViewTransition(event) {
+    return 'viewTransition' in event && event.viewTransition instanceof ViewTransition;
   }
 })();

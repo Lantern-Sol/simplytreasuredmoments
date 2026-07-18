@@ -1,3 +1,5 @@
+
+
 {% render 'divider', id: block.id, settings: block.settings, attributes: true %}
 
 {% schema %}
@@ -31,12 +33,6 @@
       ],
       "default": "square",
       "visible_if": "{{ block.settings.thickness > 1 }}"
-    },
-    {
-      "type": "color",
-      "id": "divider_color",
-      "label": "t:settings.color",
-      "placeholder": "t:settings.default"
     },
     {
       "type": "range",

@@ -1,27 +1,22 @@
+
+
 <script
   src="{{ 'marquee.js' | asset_url }}"
   type="module"
   fetchpriority="low"
 ></script>
 
-{% liquid
-  assign gap_between_elements = section.settings.gap_between_elements
-  if section.settings.background_color != blank
-    render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
-  endif
-%}
+{% assign gap_between_elements = section.settings.gap_between_elements %}
 
-<div
-  class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
-></div>
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
 <marquee-component
-  class="section spacing-style gap-style{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+  class="section spacing-style gap-style color-{{ section.settings.color_scheme }}"
   style="
     {%- render 'spacing-style', settings: section.settings %};
     {% render 'gap-style', value: gap_between_elements, name: 'marquee-gap' %}
     --marquee-direction: {{ section.settings.movement_direction }};
   "
-  data-speed-factor="25"
+  data-speed-factor="20"
   data-movement-direction="{{ section.settings.movement_direction }}"
 >
   <div
@@ -32,10 +27,7 @@
       class="marquee__content"
       ref="content"
     >
-      <div
-        class="marquee__repeated-items"
-        ref="marqueeItems[]"
-      >
+      <div class="marquee__repeated-items">
         {% content_for 'blocks' %}
       </div>
     </div>
@@ -133,10 +125,10 @@
       "default": "normal"
     },
     {
-      "type": "color",
-      "id": "background_color",
-      "label": "t:settings.background_color",
-      "placeholder": "t:settings.default"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
     },
     {
       "type": "header",
@@ -176,12 +168,12 @@
   "presets": [
     {
       "name": "t:names.marquee_section",
-      "category": "t:categories.text",
+      "category": "t:categories.banners",
       "blocks": {
         "text": {
           "type": "text",
           "settings": {
-            "text": "t:html_defaults.make_things_better",
+            "text": "<p>We make things that work better and last longer.</p>",
             "type_preset": "custom",
             "font": "var(--font-body--family)",
             "font_size": "var(--font-size--h2)",

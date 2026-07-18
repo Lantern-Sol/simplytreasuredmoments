@@ -7,7 +7,6 @@
   endcomment
 
   assign horizontal_alignment = settings.horizontal_alignment
-  assign horizontal_alignment_mobile = settings.horizontal_alignment
 
   assign vertical_alignment = settings.vertical_alignment
   if settings.align_baseline and vertical_alignment == 'flex-end'
@@ -17,7 +16,6 @@
   unless settings.content_direction == 'row'
     assign horizontal_alignment = settings.horizontal_alignment_flex_direction_column
     assign vertical_alignment = settings.vertical_alignment_flex_direction_column
-    assign horizontal_alignment_mobile = settings.horizontal_alignment_flex_direction_column
   endunless
 
   assign vertical_alignment_mobile = vertical_alignment
@@ -25,26 +23,11 @@
   if settings.vertical_on_mobile and vertical_alignment == 'last baseline'
     assign vertical_alignment_mobile = 'flex-end'
   endif
-
-  if settings.use_mobile_alignment
-    if settings.content_direction != 'row' or settings.vertical_on_mobile
-      assign horizontal_alignment_mobile = settings.mobile_horizontal_alignment_flex_direction_column | default: horizontal_alignment_mobile
-      assign vertical_alignment_mobile = settings.mobile_vertical_alignment_flex_direction_column | default: vertical_alignment_mobile
-    else
-      assign horizontal_alignment_mobile = settings.mobile_horizontal_alignment | default: horizontal_alignment_mobile
-      assign vertical_alignment_mobile = settings.mobile_vertical_alignment | default: vertical_alignment_mobile
-    endif
-  endif
 -%}
 
---flex-direction: {{ settings.content_direction | default: 'column' }}; --flex-wrap: nowrap; --flex-wrap-mobile: wrap;
+--flex-direction: {{ settings.content_direction | default: 'column' }}; --flex-wrap: nowrap;
 
 {% render 'gap-style', value: settings.gap %}
-{% if settings.use_mobile_gap %}
-{% render 'gap-style', name: 'mobile-gap', value: settings.mobile_gap, disable_scaling: true %}
-{% else %}
-{% render 'gap-style', name: 'mobile-gap', value: settings.gap %}
-{% endif %}
 
---horizontal-alignment: {{ horizontal_alignment }}; --horizontal-alignment-mobile: {{ horizontal_alignment_mobile }}; --vertical-alignment: {{ vertical_alignment }};
+--horizontal-alignment: {{ horizontal_alignment }}; --vertical-alignment: {{ vertical_alignment }};
 --vertical-alignment-mobile: {{ vertical_alignment_mobile }};

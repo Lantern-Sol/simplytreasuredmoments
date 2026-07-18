@@ -6,10 +6,9 @@
     "noImplicitAny": true,
     "noUncheckedIndexedAccess": true,
     "strictNullChecks": true,
-    "types": ["./global.d.ts", "./standard-events.d.ts"],
+    "types": ["./global.d.ts"],
     "paths": {
-      "@theme/*": ["./*"],
-      "@shopify/events": ["./standard-events"]
+      "@theme/*": ["./*"]
     }
   }
 }

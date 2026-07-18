@@ -4,25 +4,25 @@
   .ls-hiw__inner {
     grid-column: 2;
     background-color: #F2F0EE;
-    border-radius: 0.5rem;
-    padding: 1.875rem 1.5rem;
+    border-radius: 0.9375rem;
+    padding: 1.5625rem;
   }
 
   .ls-hiw__heading {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 500;
-    font-size: 1.75rem;
-    line-height: 1.15;
+    font-size: 2rem;
+    line-height: 2.3rem;
     color: #192534;
     text-align: center;
     text-transform: capitalize;
-    margin: 0 0 1.5rem;
+    margin: 0 0 0.9375rem;
   }
 
   .ls-hiw__steps {
     display: flex;
     flex-direction: column;
-    gap: 1.75rem;
+    gap: 1.25rem;
     align-items: center;
   }
 
@@ -37,7 +37,7 @@
   .ls-hiw__step-image {
     width: 7rem;
     height: 7rem;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
     flex-shrink: 0;
   }
 
@@ -51,9 +51,10 @@
     font-family: 'Nunito Sans', sans-serif;
     font-weight: 700;
     font-size: 1rem;
-    line-height: 1.375;
+    line-height: 1.5;
+    letter-spacing: -0.01em;
     color: #192534;
-    margin: 0 0 0.25rem;
+    margin: 0 0 0.125rem;
   }
 
   .ls-hiw__step-text {
@@ -63,6 +64,13 @@
     line-height: 1.375rem;
     color: #192534;
     margin: 0;
+  }
+
+  @media (max-width: 749px) {
+    .ls-hiw {
+      padding-top: var(--mobile-pt) !important;
+      padding-bottom: var(--mobile-pb) !important;
+    }
   }
 
   /* Desktop */
@@ -93,8 +101,12 @@
 <section
   class="section section--full-width ls-hiw"
   style="
-    padding-top: {{ section.settings.padding_top }}px;
-    padding-bottom: {{ section.settings.padding_bottom }}px;
+    --desktop-pt: {{ section.settings.padding_top }}px;
+    --desktop-pb: {{ section.settings.padding_bottom }}px;
+    --mobile-pt: {{ section.settings.mobile_padding_top }}px;
+    --mobile-pb: {{ section.settings.mobile_padding_bottom }}px;
+    padding-top: var(--desktop-pt);
+    padding-bottom: var(--desktop-pb);
   "
 >
   <div class="ls-hiw__inner">
@@ -103,38 +115,31 @@
     {%- endif -%}
 
     <div class="ls-hiw__steps">
-      {%- for i in (1..3) -%}
-        {%- assign image_key = 'step_' | append: i | append: '_image' -%}
-        {%- assign title_key = 'step_' | append: i | append: '_title' -%}
-        {%- assign text_key = 'step_' | append: i | append: '_text' -%}
-        {%- assign step_image = section.settings[image_key] -%}
-        {%- assign step_title = section.settings[title_key] -%}
-        {%- assign step_text = section.settings[text_key] -%}
-
-        {%- if step_title != blank or step_text != blank -%}
-          <div class="ls-hiw__step">
-            {%- if step_image != blank -%}
+      {%- for block in section.blocks -%}
+        {%- if block.settings.title != blank or block.settings.text != blank -%}
+          <div class="ls-hiw__step" {{ block.shopify_attributes }}>
+            {%- if block.settings.image != blank -%}
               <div class="ls-hiw__step-image">
                 {{
-                  step_image
+                  block.settings.image
                   | image_url: width: 224
                   | image_tag:
                     widths: '112, 224',
                     sizes: '112px',
                     loading: 'lazy',
-                    alt: step_title
+                    alt: block.settings.title
                 }}
               </div>
             {%- else -%}
               <div class="ls-hiw__step-image" style="background: #E5E3E0; border-radius: 50%;"></div>
             {%- endif -%}
 
-            {%- if step_title != blank -%}
-              <p class="ls-hiw__step-title">{{ i }}. {{ step_title }}</p>
+            {%- if block.settings.title != blank -%}
+              <p class="ls-hiw__step-title">{{ forloop.index }}. {{ block.settings.title }}</p>
             {%- endif -%}
 
-            {%- if step_text != blank -%}
-              <p class="ls-hiw__step-text">{{ step_text }}</p>
+            {%- if block.settings.text != blank -%}
+              <p class="ls-hiw__step-text">{{ block.settings.text }}</p>
             {%- endif -%}
           </div>
         {%- endif -%}
@@ -154,69 +159,6 @@
       "id": "heading",
       "label": "Heading",
       "default": "How It Works"
-    },
-    {
-      "type": "header",
-      "content": "Step 1"
-    },
-    {
-      "type": "image_picker",
-      "id": "step_1_image",
-      "label": "Step 1 illustration"
-    },
-    {
-      "type": "text",
-      "id": "step_1_title",
-      "label": "Step 1 title",
-      "default": "Find the perfect gift for this moment"
-    },
-    {
-      "type": "textarea",
-      "id": "step_1_text",
-      "label": "Step 1 description",
-      "default": "Browse by occasion and choose the keepsake that fits the memory."
-    },
-    {
-      "type": "header",
-      "content": "Step 2"
-    },
-    {
-      "type": "image_picker",
-      "id": "step_2_image",
-      "label": "Step 2 illustration"
-    },
-    {
-      "type": "text",
-      "id": "step_2_title",
-      "label": "Step 2 title",
-      "default": "Make it completely theirs"
-    },
-    {
-      "type": "textarea",
-      "id": "step_2_text",
-      "label": "Step 2 description",
-      "default": "Upload your photo, personalize the details, and see a live preview."
-    },
-    {
-      "type": "header",
-      "content": "Step 3"
-    },
-    {
-      "type": "image_picker",
-      "id": "step_3_image",
-      "label": "Step 3 illustration"
-    },
-    {
-      "type": "text",
-      "id": "step_3_title",
-      "label": "Step 3 title",
-      "default": "We handcraft it. They treasure it forever"
-    },
-    {
-      "type": "textarea",
-      "id": "step_3_text",
-      "label": "Step 3 description",
-      "default": "UV-printed by hand in the USA. Made to last a lifetime."
     },
     {
       "type": "header",
@@ -241,11 +183,78 @@
       "step": 4,
       "unit": "px",
       "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "label": "Padding top (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "label": "Padding bottom (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    }
+  ],
+  "max_blocks": 6,
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Illustration"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Description"
+        }
+      ]
     }
   ],
   "presets": [
     {
-      "name": "LS How It Works"
+      "name": "LS How It Works",
+      "blocks": [
+        {
+          "type": "step",
+          "settings": {
+            "title": "Find the perfect gift for this moment",
+            "text": "Browse by occasion and choose the keepsake that fits the memory."
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "title": "Make it completely theirs",
+            "text": "Upload your photo, personalize the details, and see a live preview."
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "title": "We handcraft it. They treasure it forever",
+            "text": "UV-printed by hand in the USA. Made to last a lifetime."
+          }
+        }
+      ]
     }
   ]
 }

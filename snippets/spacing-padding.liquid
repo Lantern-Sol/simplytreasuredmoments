@@ -7,19 +7,5 @@
       settings: {block.settings || section.settings}
 {%- endcomment -%}
 
---padding-block-start: {{ settings['padding-block-start'] | divided_by: 16.0 | default: 0 }}rem; --padding-block-end:{{- settings['padding-block-end'] | divided_by: 16.0 | default: 0 -}}rem;
---padding-inline-start:{{ settings['padding-inline-start'] | divided_by: 16.0 | default: 0 }}rem; --padding-inline-end:{{- settings['padding-inline-end'] | divided_by: 16.0 | default: 0 -}}rem;
-{% if settings.use_mobile_padding %}
-  --padding-block-start-mobile: {{ settings['padding-block-start-mobile'] | divided_by: 16.0 | default: 0 }}rem; --padding-block-end-mobile:{{- settings['padding-block-end-mobile'] | divided_by: 16.0 | default: 0 -}}rem;
-  --padding-inline-start-mobile:{{ settings['padding-inline-start-mobile'] | divided_by: 16.0 | default: 0 }}rem; --padding-inline-end-mobile:{{- settings['padding-inline-end-mobile'] | divided_by: 16.0 | default: 0 -}}rem;
-{% else %}
-  --padding-block-start-mobile: {{ settings['padding-block-start'] | divided_by: 16.0 | default: 0 }}rem; --padding-block-end-mobile:{{- settings['padding-block-end'] | divided_by: 16.0 | default: 0 -}}rem;
-  --padding-inline-start-mobile:{{ settings['padding-inline-start'] | divided_by: 16.0 | default: 0 }}rem; --padding-inline-end-mobile:{{- settings['padding-inline-end'] | divided_by: 16.0 | default: 0 -}}rem;
-{% endif %}
-{% if settings.use_mobile_margin %}
-  --margin-block-start-mobile: {{ settings['margin-block-start-mobile'] | divided_by: 16.0 | default: 0 }}rem; --margin-block-end-mobile:{{- settings['margin-block-end-mobile'] | divided_by: 16.0 | default: 0 -}}rem;
-  --margin-inline-start-mobile:{{ settings['margin-inline-start-mobile'] | divided_by: 16.0 | default: 0 }}rem; --margin-inline-end-mobile:{{- settings['margin-inline-end-mobile'] | divided_by: 16.0 | default: 0 -}}rem;
-{% elsif settings['margin-block-start'] != blank and settings['margin-block-end'] != blank and settings['margin-inline-start'] != blank and settings['margin-inline-end'] != blank %}
-  --margin-block-start-mobile: {{ settings['margin-block-start'] | divided_by: 16.0 | default: 0 }}rem; --margin-block-end-mobile:{{- settings['margin-block-end'] | divided_by: 16.0 | default: 0 -}}rem;
-  --margin-inline-start-mobile:{{ settings['margin-inline-start'] | divided_by: 16.0 | default: 0 }}rem; --margin-inline-end-mobile:{{- settings['margin-inline-end'] | divided_by: 16.0 | default: 0 -}}rem;
-{% endif %}
+--padding-block-start: {{ settings.padding-block-start | default: 0 }}px; --padding-block-end:{{- settings.padding-block-end | default: 0 -}}px; 
+--padding-inline-start:{{ settings.padding-inline-start | default: 0 }}px; --padding-inline-end:{{- settings.padding-inline-end | default: 0 -}}px; 

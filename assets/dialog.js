@@ -1,6 +1,5 @@
 import { Component } from '@theme/component';
-import { debounce, isClickedOutside, lockScroll, onAnimationEnd, unlockScroll } from '@theme/utilities';
-import { getScrollTop, scrollTo } from '@theme/scroll-container';
+import { debounce, isClickedOutside, onAnimationEnd } from '@theme/utilities';
 
 /**
  * A custom element that manages a dialog.
@@ -26,7 +25,6 @@ export class DialogComponent extends Component {
     if (this.minWidth || this.maxWidth) {
       window.removeEventListener('resize', this.#handleResize);
     }
-    unlockScroll(this.refs.dialog);
   }
 
   #handleResize = debounce(() => {
@@ -40,8 +38,6 @@ export class DialogComponent extends Component {
     }
   }, 50);
 
-  #previousScrollY = 0;
-
   /**
    * Shows the dialog.
    */
@@ -50,15 +46,17 @@ export class DialogComponent extends Component {
 
     if (dialog.open) return;
 
-    this.#previousScrollY = getScrollTop();
+    document.body.style.width = '100%';
+    const scrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
 
-    // Prevent layout thrashing by separating DOM reads from DOM writes
-    requestAnimationFrame(() => {
-      lockScroll(dialog);
+    dialog.showModal();
+    this.dispatchEvent(new DialogOpenEvent());
 
-      dialog.showModal();
-      this.dispatchEvent(new DialogOpenEvent());
-
+    // Wait until the next tick to add the event listeners to avoid race condition
+    // when `showDialog` is called within a click event listener.
+    setTimeout(() => {
       this.addEventListener('click', this.#handleClick);
       this.addEventListener('keydown', this.#handleKeyDown);
     });
@@ -75,23 +73,17 @@ export class DialogComponent extends Component {
     this.removeEventListener('click', this.#handleClick);
     this.removeEventListener('keydown', this.#handleKeyDown);
 
-    // Force browser to restart animation by resetting it
-    // Temporarily remove any existing animation state
-    dialog.style.animation = 'none';
-
-    // Force a reflow
-    void dialog.offsetWidth;
-
-    // Now add the closing class and restore animation
     dialog.classList.add('dialog-closing');
-    dialog.style.animation = '';
 
     await onAnimationEnd(dialog, undefined, {
       subtree: false,
     });
 
-    unlockScroll(dialog);
-    scrollTo({ top: this.#previousScrollY, behavior: 'instant' });
+    document.body.style.width = '';
+    const scrollY = document.body.style.top;
+    document.body.style.position = '';
+    document.body.style.top = '';
+    window.scrollTo({ top: parseInt(scrollY) * -1, behavior: 'instant' });
 
     dialog.close();
     dialog.classList.remove('dialog-closing');
@@ -175,13 +167,14 @@ export class DialogCloseEvent extends CustomEvent {
 document.addEventListener(
   'toggle',
   (event) => {
-    if (event.target instanceof HTMLDetailsElement) {
+    if (event.target instanceof HTMLDialogElement || event.target instanceof HTMLDetailsElement) {
       if (event.target.hasAttribute('scroll-lock')) {
         const { open } = event.target;
+
         if (open) {
-          lockScroll(event.target);
+          document.documentElement.setAttribute('scroll-lock', '');
         } else {
-          unlockScroll(event.target);
+          document.documentElement.removeAttribute('scroll-lock');
         }
       }
     }
