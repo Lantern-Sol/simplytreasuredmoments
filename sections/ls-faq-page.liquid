@@ -1,0 +1,527 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Host+Grotesk:wght@700&family=Nunito+Sans:wght@400;600;700&display=swap');
+
+  .ls-faqp__inner {
+    grid-column: 2;
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    max-width: 67.25rem;
+    margin: 0 auto;
+  }
+
+  .ls-faqp__sidebar {
+    position: sticky;
+    top: 120px;
+    flex-shrink: 0;
+    width: 191px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .ls-faqp__sidebar-label {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #B9AA99;
+    margin: 0 0 0.25rem;
+    padding-left: 0.75rem;
+  }
+
+  .ls-faqp__filter {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #E2E3E5;
+    background: #FDFCFC;
+    color: #B9AA99;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    line-height: 1.3;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    width: 100%;
+  }
+
+  .ls-faqp__filter:hover {
+    border-color: #C8A45D;
+    color: #192534;
+  }
+
+  .ls-faqp__filter.is-active {
+    background: #E6D8BC;
+    border: 2px solid #C8A45D;
+    color: #192534;
+  }
+
+  .ls-faqp__main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .ls-faqp__category-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 700;
+    font-size: 2rem;
+    line-height: 1.2;
+    letter-spacing: 0.04em;
+    color: #192534;
+    text-transform: capitalize;
+    margin: 0 0 1rem;
+    scroll-margin-top: 100px;
+  }
+
+  .ls-faqp__category-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .ls-faqp__item {
+    background-color: #FAFAFA;
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+
+  .ls-faqp__item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    list-style: none;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 1.375rem;
+    line-height: 1.5;
+    letter-spacing: -0.014rem;
+    color: #192534;
+    gap: 2rem;
+  }
+
+  .ls-faqp__item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .ls-faqp__item summary::marker {
+    display: none;
+    content: '';
+  }
+
+  .ls-faqp__chevron {
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    transition: transform 0.3s ease;
+  }
+
+  .ls-faqp__item[open] .ls-faqp__chevron {
+    transform: rotate(180deg);
+  }
+
+  .ls-faqp__answer {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    letter-spacing: -0.009375rem;
+    color: #192534;
+    padding: 0 1.25rem 1.25rem 1.5rem;
+    margin: 0;
+    white-space: pre-line;
+  }
+
+  /* Mobile: sidebar becomes horizontal pills */
+  @media (max-width: 749px) {
+    .ls-faqp {
+      padding-top: var(--mobile-pt) !important;
+      padding-bottom: var(--mobile-pb) !important;
+    }
+
+    .ls-faqp__inner {
+      flex-direction: column;
+      gap: 1.5rem;
+      padding-inline: 10px;
+    }
+
+    .ls-faqp__sidebar {
+      position: static;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      padding-bottom: 0.25rem;
+    }
+
+    .ls-faqp__filter[data-faqp-filter="orders"]   { order: 1; }
+    .ls-faqp__filter[data-faqp-filter="process"]  { order: 2; }
+    .ls-faqp__filter[data-faqp-filter="shipping"] { order: 3; }
+    .ls-faqp__filter[data-faqp-filter="selling"]  { order: 4; }
+    .ls-faqp__filter[data-faqp-filter="products"] { order: 5; }
+    .ls-faqp__filter[data-faqp-filter="account"]  { order: 6; }
+    .ls-faqp__filter[data-faqp-filter="returns"]  { order: 7; }
+
+    .ls-faqp__sidebar-label {
+      font-family: 'Host Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.03em;
+      line-height: 1.4;
+      color: #192534;
+      text-transform: none;
+      padding-left: 0;
+      grid-column: 1 / -1;
+      order: 0;
+      margin: 0 0 0.25rem;
+    }
+
+    .ls-faqp__filter {
+      width: fit-content;
+      flex-shrink: 0;
+      min-height: 38px;
+      padding: 0 12px;
+      font-size: 0.875rem;
+      white-space: nowrap;
+    }
+
+    .ls-faqp__category-heading {
+      font-size: 2rem;
+    }
+
+    .ls-faqp__item summary {
+      font-size: 1.375rem;
+      padding: 1rem;
+      gap: 3rem;
+    }
+
+    .ls-faqp__answer {
+      padding: 0 1rem 1rem 1.5rem;
+    }
+  }
+</style>
+
+{%- assign category_labels = 'orders:Orders & Customization,shipping:Shipping & Production,products:Products & Quality,returns:Returns & Guarantee,selling:Selling & Trading,process:Our Process,account:Account' | split: ',' -%}
+
+{%- comment -%} Build array of unique categories that have at least one block {%- endcomment -%}
+{%- assign used_categories = '' -%}
+{%- for block in section.blocks -%}
+  {%- assign cat = block.settings.category -%}
+  {%- unless used_categories contains cat -%}
+    {%- if used_categories == '' -%}
+      {%- assign used_categories = cat -%}
+    {%- else -%}
+      {%- assign used_categories = used_categories | append: ',' | append: cat -%}
+    {%- endif -%}
+  {%- endunless -%}
+{%- endfor -%}
+{%- assign used_categories_arr = used_categories | split: ',' -%}
+
+<section
+  class="section section--full-width ls-faqp"
+  id="ls-faqp-{{ section.id }}"
+  style="
+    --desktop-pt: {{ section.settings.padding_top }}px;
+    --desktop-pb: {{ section.settings.padding_bottom }}px;
+    --mobile-pt: {{ section.settings.mobile_padding_top }}px;
+    --mobile-pb: {{ section.settings.mobile_padding_bottom }}px;
+    padding-top: var(--desktop-pt);
+    padding-bottom: var(--desktop-pb);
+  "
+>
+  <div class="ls-faqp__inner">
+    {%- if used_categories_arr.size > 1 -%}
+      <aside class="ls-faqp__sidebar" aria-label="FAQ category filters">
+        <p class="ls-faqp__sidebar-label">Quick Filters</p>
+        {%- for cat_entry in category_labels -%}
+          {%- assign cat_parts = cat_entry | split: ':' -%}
+          {%- assign cat_key = cat_parts[0] -%}
+          {%- assign cat_label = cat_parts[1] -%}
+          {%- if used_categories contains cat_key -%}
+            <button
+              class="ls-faqp__filter{% if forloop.first %} is-active{% endif %}"
+              type="button"
+              data-faqp-filter="{{ cat_key }}"
+              aria-label="Jump to {{ cat_label }}"
+            >
+              {{ cat_label }}
+            </button>
+          {%- endif -%}
+        {%- endfor -%}
+      </aside>
+    {%- endif -%}
+
+    <div class="ls-faqp__main">
+      {%- for cat_entry in category_labels -%}
+        {%- assign cat_parts = cat_entry | split: ':' -%}
+        {%- assign cat_key = cat_parts[0] -%}
+        {%- assign cat_label = cat_parts[1] -%}
+        {%- unless used_categories contains cat_key -%}{%- continue -%}{%- endunless -%}
+
+        <div class="ls-faqp__category" data-faqp-category="{{ cat_key }}">
+          <h2 class="ls-faqp__category-heading" id="faqp-cat-{{ cat_key }}-{{ section.id }}">{{ cat_label }}</h2>
+          <div class="ls-faqp__category-list">
+            {%- for block in section.blocks -%}
+              {%- if block.settings.category == cat_key and block.settings.question != blank -%}
+                <details class="ls-faqp__item" {{ block.shopify_attributes }}>
+                  <summary>
+                    {{ block.settings.question }}
+                    <svg class="ls-faqp__chevron" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5 7.5L10 12.5L15 7.5" stroke="#192534" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </summary>
+                  {%- if block.settings.answer != blank -%}
+                    <p class="ls-faqp__answer">{{ block.settings.answer }}</p>
+                  {%- endif -%}
+                </details>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<script>
+  (function() {
+    var sectionEl = document.getElementById('ls-faqp-{{ section.id }}');
+    if (!sectionEl) return;
+
+    var filters = sectionEl.querySelectorAll('[data-faqp-filter]');
+    var headings = sectionEl.querySelectorAll('.ls-faqp__category-heading');
+
+    // Click handler: scroll to category
+    filters.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var cat = btn.getAttribute('data-faqp-filter');
+        var heading = sectionEl.querySelector('#faqp-cat-' + cat + '-{{ section.id }}');
+        if (heading) {
+          heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        // Update active state immediately on click
+        filters.forEach(function(f) { f.classList.remove('is-active'); });
+        btn.classList.add('is-active');
+      });
+    });
+
+    // Scroll spy with IntersectionObserver
+    if ('IntersectionObserver' in window && headings.length > 0) {
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            var id = entry.target.id;
+            var catKey = id.replace('faqp-cat-', '').replace('-{{ section.id }}', '');
+            filters.forEach(function(f) {
+              f.classList.toggle('is-active', f.getAttribute('data-faqp-filter') === catKey);
+            });
+          }
+        });
+      }, {
+        rootMargin: '-80px 0px -60% 0px',
+        threshold: 0
+      });
+
+      headings.forEach(function(h) { observer.observe(h); });
+    }
+
+    // Search integration: listen for input from the hero search
+    var heroInput = document.querySelector('.ls-faq-hero__input');
+    if (heroInput) {
+      var items = sectionEl.querySelectorAll('.ls-faqp__item');
+      var categories = sectionEl.querySelectorAll('.ls-faqp__category');
+      var noResults = document.querySelector('.ls-faq-hero__no-results');
+
+      function filterBySearch() {
+        var query = heroInput.value.trim().toLowerCase();
+        var visibleCount = 0;
+
+        items.forEach(function(item) {
+          var summary = item.querySelector('summary');
+          var answer = item.querySelector('.ls-faqp__answer');
+          var qText = summary ? summary.textContent.toLowerCase() : '';
+          var aText = answer ? answer.textContent.toLowerCase() : '';
+
+          if (!query || qText.indexOf(query) !== -1 || aText.indexOf(query) !== -1) {
+            item.style.display = '';
+            visibleCount++;
+          } else {
+            item.style.display = 'none';
+          }
+        });
+
+        // Hide category headings if all their items are hidden
+        categories.forEach(function(cat) {
+          var visibleItems = cat.querySelectorAll('.ls-faqp__item:not([style*="display: none"])');
+          cat.style.display = visibleItems.length ? '' : 'none';
+        });
+
+        if (noResults) {
+          noResults.style.display = (query && visibleCount === 0) ? 'block' : 'none';
+        }
+      }
+
+      var debounceTimer;
+      heroInput.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(filterBySearch, 200);
+      });
+
+      // Also handle the search button
+      var heroBtn = document.querySelector('.ls-faq-hero__search-btn');
+      if (heroBtn) {
+        heroBtn.addEventListener('click', filterBySearch);
+      }
+
+      heroInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          filterBySearch();
+        }
+      });
+
+      // Insert no-results message if not already present
+      if (!noResults) {
+        var main = sectionEl.querySelector('.ls-faqp__main');
+        if (main) {
+          noResults = document.createElement('p');
+          noResults.className = 'ls-faq-hero__no-results';
+          noResults.textContent = 'No questions match your search. Try a different term.';
+          noResults.style.display = 'none';
+          main.appendChild(noResults);
+        }
+      }
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "LS FAQ Page",
+  "tag": "section",
+  "class": "ls-faq-page-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "label": "Padding top (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "label": "Padding bottom (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "max_blocks": 50,
+  "blocks": [
+    {
+      "type": "faq",
+      "name": "FAQ",
+      "settings": [
+        {
+          "type": "select",
+          "id": "category",
+          "label": "Category",
+          "options": [
+            { "value": "orders", "label": "Orders & Customization" },
+            { "value": "shipping", "label": "Shipping & Production" },
+            { "value": "products", "label": "Products & Quality" },
+            { "value": "returns", "label": "Returns & Guarantee" },
+            { "value": "selling", "label": "Selling & Trading" },
+            { "value": "process", "label": "Our Process" },
+            { "value": "account", "label": "Account" }
+          ],
+          "default": "orders"
+        },
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question"
+        },
+        {
+          "type": "textarea",
+          "id": "answer",
+          "label": "Answer"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "LS FAQ Page",
+      "blocks": [
+        {
+          "type": "faq",
+          "settings": {
+            "category": "orders",
+            "question": "How do I place a custom order?",
+            "answer": "Simply choose your product, upload your photo, and add any custom text. Our team will review your order and begin handcrafting your keepsake."
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "category": "shipping",
+            "question": "How long does shipping take?",
+            "answer": "Most orders ship within 3–5 business days. Custom and personalized items may take a bit longer as they are handcrafted to order."
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "category": "returns",
+            "question": "What is your return policy?",
+            "answer": "We offer a 60-day satisfaction guarantee. If you're not happy with your purchase, contact us and we'll arrange a replacement or refund."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,272 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Nunito+Sans:wght@400&display=swap');
+
+  .ls-faq-contact__inner {
+    grid-column: 1 / -1;
+    max-width: calc(854px + var(--page-margin, 40px) * 2);
+    margin: 0 auto;
+    padding: 2rem var(--page-margin, 40px);
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .ls-faq-contact__heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 2rem;
+    line-height: 2.3rem;
+    color: #192534;
+    text-transform: capitalize;
+    margin: 0 0 1rem;
+  }
+
+  .ls-faq-contact__cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 854px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .ls-faq-contact__card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+    border: 0.5px solid #B9AA99;
+    border-radius: 1rem;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    color: inherit;
+    transition: background-color 0.2s ease;
+  }
+
+  .ls-faq-contact__card:hover {
+    background-color: rgba(230, 216, 188, 0.15);
+  }
+
+  .ls-faq-contact__icon {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    background-color: #E6D8BC;
+    border-radius: 0.625rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ls-faq-contact__icon svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .ls-faq-contact__text {
+    flex: 1;
+    text-align: left;
+  }
+
+  .ls-faq-contact__label {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    letter-spacing: -0.00875rem;
+    color: #192534;
+    margin: 0;
+  }
+
+  .ls-faq-contact__value {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    letter-spacing: -0.00875rem;
+    color: #9B7427;
+    margin: 0;
+  }
+
+  .ls-faq-contact__sub {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    letter-spacing: -0.0075rem;
+    color: #B9AA99;
+    margin: 0;
+  }
+
+  .ls-faq-contact__arrow {
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  @media (min-width: 750px) {
+    .ls-faq-contact__cards {
+      flex-direction: row;
+    }
+  }
+
+  @media (max-width: 749px) {
+    .ls-faq-contact {
+      padding-top: var(--mobile-pt) !important;
+      padding-bottom: var(--mobile-pb) !important;
+    }
+
+    .ls-faq-contact__inner {
+      padding: 2rem 17px;
+    }
+  }
+</style>
+
+<section
+  class="section section--full-width ls-faq-contact"
+  style="
+    --desktop-pt: {{ section.settings.padding_top }}px;
+    --desktop-pb: {{ section.settings.padding_bottom }}px;
+    --mobile-pt: {{ section.settings.mobile_padding_top }}px;
+    --mobile-pb: {{ section.settings.mobile_padding_bottom }}px;
+    padding-top: var(--desktop-pt);
+    padding-bottom: var(--desktop-pb);
+  "
+>
+  <div class="ls-faq-contact__inner">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="ls-faq-contact__heading">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+
+    <div class="ls-faq-contact__cards">
+      {%- if section.settings.phone_number != blank -%}
+        <a href="tel:{{ section.settings.phone_number | remove: '(' | remove: ')' | remove: ' ' | remove: '-' }}" class="ls-faq-contact__card">
+          <div class="ls-faq-contact__icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6.49187 2.25C6.0993 2.25 5.71258 2.39063 5.39031 2.64844L5.34344 2.67188L5.32 2.69531L2.97625 5.10938L2.99969 5.13281C2.27605 5.80078 2.0534 6.7998 2.36687 7.66406C2.3698 7.66992 2.36394 7.68164 2.36687 7.6875C3.00262 9.50684 4.62859 13.0195 7.80437 16.1953C10.9919 19.3828 14.5514 20.9443 16.3122 21.6328H16.3356C17.2468 21.9375 18.2341 21.7207 18.9372 21.1172L21.3044 18.75C21.9255 18.1289 21.9255 17.0508 21.3044 16.4297L18.2575 13.3828L18.2341 13.3359C17.613 12.7148 16.5114 12.7148 15.8903 13.3359L14.3903 14.8359C13.8483 14.5752 12.5563 13.9072 11.32 12.7266C10.0925 11.5547 9.46551 10.207 9.23406 9.67969L10.7341 8.17969C11.3639 7.54981 11.3757 6.50098 10.7106 5.88281L10.7341 5.85938L10.6637 5.78906L7.66375 2.69531L7.64031 2.67188L7.59344 2.64844C7.27117 2.39063 6.88445 2.25 6.49187 2.25ZM6.49187 3.75C6.54754 3.75 6.6032 3.77637 6.65594 3.82031L9.65594 6.89063L9.72625 6.96094C9.72039 6.95508 9.77019 7.03418 9.67937 7.125L7.80437 9L7.45281 9.32813L7.61687 9.79688C7.61687 9.79688 8.4782 12.1025 10.2887 13.8281L10.4528 13.9688C12.196 15.5596 14.2497 16.4297 14.2497 16.4297L14.7184 16.6406L16.945 14.4141C17.0739 14.2852 17.0505 14.2852 17.1794 14.4141L20.2497 17.4844C20.3786 17.6133 20.3786 17.5664 20.2497 17.6953L17.9528 19.9922C17.6071 20.2881 17.2409 20.3496 16.8044 20.2031C15.1052 19.5352 11.8034 18.085 8.85906 15.1406C5.89129 12.1729 4.34148 8.80664 3.77312 7.17188C3.65887 6.86719 3.7409 6.41602 4.0075 6.1875L4.05437 6.14063L6.32781 3.82031C6.38055 3.77637 6.43621 3.75 6.49187 3.75Z" fill="#9B7427"/>
+            </svg>
+          </div>
+          <div class="ls-faq-contact__text">
+            <p class="ls-faq-contact__label">Call or text us</p>
+            <p class="ls-faq-contact__value">{{ section.settings.phone_number }}</p>
+            {%- if section.settings.phone_hours != blank -%}
+              <p class="ls-faq-contact__sub">{{ section.settings.phone_hours }}</p>
+            {%- endif -%}
+          </div>
+          <svg class="ls-faq-contact__arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14.0391 5.08594L12.9609 6.16406L18.0469 11.25H3V12.75H18.0469L12.9609 17.8359L14.0391 18.9141L20.4141 12.5391L20.9297 12L20.4141 11.4609L14.0391 5.08594Z" fill="#B9AA99"/>
+          </svg>
+        </a>
+      {%- endif -%}
+
+      {%- if section.settings.email_address != blank -%}
+        <a href="mailto:{{ section.settings.email_address }}" class="ls-faq-contact__card">
+          <div class="ls-faq-contact__icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 18V6H20V18H4ZM12 12.75L5.6 9V16.5H18.4V9L12 12.75ZM12 11.25L18.4 7.5H5.6L12 11.25ZM5.6 9V7.5V16.5V9Z" fill="#9B7427"/>
+            </svg>
+          </div>
+          <div class="ls-faq-contact__text">
+            <p class="ls-faq-contact__label">Email support</p>
+            <p class="ls-faq-contact__value">{{ section.settings.email_address }}</p>
+            {%- if section.settings.email_response != blank -%}
+              <p class="ls-faq-contact__sub">{{ section.settings.email_response }}</p>
+            {%- endif -%}
+          </div>
+          <svg class="ls-faq-contact__arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14.0391 5.08594L12.9609 6.16406L18.0469 11.25H3V12.75H18.0469L12.9609 17.8359L14.0391 18.9141L20.4141 12.5391L20.9297 12L20.4141 11.4609L14.0391 5.08594Z" fill="#B9AA99"/>
+          </svg>
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "LS FAQ Contact",
+  "tag": "section",
+  "class": "ls-faq-contact-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Still Have Questions?"
+    },
+    {
+      "type": "text",
+      "id": "phone_number",
+      "label": "Phone number",
+      "default": "(714) 248-5066"
+    },
+    {
+      "type": "text",
+      "id": "phone_hours",
+      "label": "Phone hours",
+      "default": "Mon–Fri, 9AM–5PM PST"
+    },
+    {
+      "type": "text",
+      "id": "email_address",
+      "label": "Email address",
+      "default": "support@treasuredmoments.com"
+    },
+    {
+      "type": "text",
+      "id": "email_response",
+      "label": "Email response time",
+      "default": "Response within 24hrs"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "label": "Padding top (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "label": "Padding bottom (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "LS FAQ Contact"
+    }
+  ]
+}
+{% endschema %}

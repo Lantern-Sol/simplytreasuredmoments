@@ -1,0 +1,505 @@
+<style>
+  .ls-faq-form__inner {
+    grid-column: 2;
+    max-width: 53.4375rem;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .ls-faq-form__subtitle {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #9B7427;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 0.5rem;
+  }
+
+  .ls-faq-form__heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 2rem;
+    line-height: 1.2;
+    color: #192534;
+    margin: 0 0 1.75rem;
+  }
+
+  .ls-faq-form__subject-label {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #192534;
+    margin: 0 0 0.75rem;
+  }
+
+  .ls-faq-form__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .ls-faq-form__pill {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: #192534;
+    background-color: #FAFAFA;
+    border: 1px solid #B9AA99;
+    border-radius: 6.25rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    user-select: none;
+  }
+
+  .ls-faq-form__pill:hover {
+    background-color: #F2F0EE;
+  }
+
+  .ls-faq-form__pill[aria-pressed="true"] {
+    background-color: #E6D8BC;
+    border: 2px solid #9B7427;
+    padding: calc(0.5rem - 1px) calc(1rem - 1px);
+  }
+
+  .ls-faq-form__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .ls-faq-form__field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+  }
+
+  .ls-faq-form__row .ls-faq-form__field {
+    margin-bottom: 0;
+  }
+
+  .ls-faq-form__label {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #192534;
+    margin-bottom: 0.375rem;
+  }
+
+  .ls-faq-form__label--optional::after {
+    content: " (optional)";
+    font-weight: 400;
+    color: #B9AA99;
+  }
+
+  .ls-faq-form__input,
+  .ls-faq-form__textarea {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 0.875rem;
+    color: #192534;
+    background-color: #FDFCFC;
+    border: 1px solid #B9AA99;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    height: 2.875rem;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+
+  .ls-faq-form__input::placeholder,
+  .ls-faq-form__textarea::placeholder {
+    color: #6A5D4D;
+  }
+
+  .ls-faq-form__input:focus,
+  .ls-faq-form__textarea:focus {
+    border-color: #9B7427;
+  }
+
+  .ls-faq-form__textarea {
+    height: auto;
+    min-height: 7.5rem;
+    resize: vertical;
+  }
+
+  .ls-faq-form__checkbox-wrap {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .ls-faq-form__checkbox {
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin: 0;
+    accent-color: #9B7427;
+    cursor: pointer;
+  }
+
+  .ls-faq-form__checkbox-text {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #192534;
+  }
+
+  .ls-faq-form__submit {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #ffffff;
+    background-color: #C8A45D;
+    border: none;
+    border-radius: 5px;
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .ls-faq-form__submit:hover {
+    background-color: #b8944d;
+  }
+
+  .ls-faq-form__submit svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .ls-faq-form__privacy {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: #192534;
+    margin: 1rem 0 0;
+  }
+
+  .ls-faq-form__error {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 0.8125rem;
+    color: #c0392b;
+    margin-top: 0.25rem;
+    display: none;
+  }
+
+  .ls-faq-form__error--visible {
+    display: block;
+  }
+
+  .ls-faq-form__success {
+    background-color: #E6D8BC;
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #192534;
+    text-align: center;
+    display: none;
+  }
+
+  .ls-faq-form__success--visible {
+    display: block;
+  }
+
+  @media (max-width: 749px) {
+    .ls-faq-form {
+      padding-top: var(--mobile-pt) !important;
+      padding-bottom: var(--mobile-pb) !important;
+    }
+
+    .ls-faq-form__row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<section
+  class="section section--full-width ls-faq-form"
+  style="
+    --desktop-pt: {{ section.settings.padding_top }}px;
+    --desktop-pb: {{ section.settings.padding_bottom }}px;
+    --mobile-pt: {{ section.settings.mobile_padding_top }}px;
+    --mobile-pb: {{ section.settings.mobile_padding_bottom }}px;
+    padding-top: var(--desktop-pt);
+    padding-bottom: var(--desktop-pb);
+  "
+>
+  <div class="ls-faq-form__inner">
+    {%- if section.settings.subtitle != blank -%}
+      <p class="ls-faq-form__subtitle">{{ section.settings.subtitle }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.heading != blank -%}
+      <h2 class="ls-faq-form__heading">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+
+    {%- assign subject_options = section.settings.subject_options | split: ',' -%}
+
+    {%- if subject_options.size > 0 -%}
+      <p class="ls-faq-form__subject-label">{{ section.settings.subject_label }}</p>
+      <div class="ls-faq-form__pills" role="group" aria-label="{{ section.settings.subject_label }}">
+        {%- for option in subject_options -%}
+          {%- assign trimmed_option = option | strip -%}
+          <button
+            type="button"
+            class="ls-faq-form__pill"
+            aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
+            data-subject="{{ trimmed_option }}"
+          >
+            {{ trimmed_option }}
+          </button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {% form 'contact' %}
+      <input type="hidden" name="contact[subject]" value="{{ subject_options.first | strip }}">
+
+      {%- if form.posted_successfully? -%}
+        <div class="ls-faq-form__success ls-faq-form__success--visible">
+          {{ section.settings.success_message }}
+        </div>
+      {%- endif -%}
+
+      {%- if form.errors -%}
+        <div class="ls-faq-form__error ls-faq-form__error--visible" role="alert">
+          {{ form.errors | default_errors }}
+        </div>
+      {%- endif -%}
+
+      {%- unless form.posted_successfully? -%}
+        <div class="ls-faq-form__row">
+          <div class="ls-faq-form__field">
+            <label class="ls-faq-form__label" for="contact-first-name-{{ section.id }}">First name</label>
+            <input
+              class="ls-faq-form__input"
+              type="text"
+              id="contact-first-name-{{ section.id }}"
+              name="contact[first_name]"
+              placeholder="Jane"
+              required
+            >
+          </div>
+          <div class="ls-faq-form__field">
+            <label class="ls-faq-form__label" for="contact-last-name-{{ section.id }}">Last name</label>
+            <input
+              class="ls-faq-form__input"
+              type="text"
+              id="contact-last-name-{{ section.id }}"
+              name="contact[last_name]"
+              placeholder="Doe"
+              required
+            >
+          </div>
+        </div>
+
+        <div class="ls-faq-form__row">
+          <div class="ls-faq-form__field">
+            <label class="ls-faq-form__label" for="contact-email-{{ section.id }}">Email</label>
+            <input
+              class="ls-faq-form__input"
+              type="email"
+              id="contact-email-{{ section.id }}"
+              name="contact[email]"
+              placeholder="jane@email.com"
+              required
+            >
+          </div>
+          <div class="ls-faq-form__field">
+            <label class="ls-faq-form__label" for="contact-phone-{{ section.id }}">Phone</label>
+            <input
+              class="ls-faq-form__input"
+              type="tel"
+              id="contact-phone-{{ section.id }}"
+              name="contact[phone]"
+              placeholder="(555) 123-4567"
+            >
+          </div>
+        </div>
+
+        <div class="ls-faq-form__field">
+          <label class="ls-faq-form__label ls-faq-form__label--optional" for="contact-order-{{ section.id }}">Order / Listing number</label>
+          <input
+            class="ls-faq-form__input"
+            type="text"
+            id="contact-order-{{ section.id }}"
+            name="contact[order_number]"
+            placeholder="#12345"
+          >
+        </div>
+
+        <div class="ls-faq-form__field">
+          <label class="ls-faq-form__label" for="contact-message-{{ section.id }}">Message</label>
+          <textarea
+            class="ls-faq-form__textarea"
+            id="contact-message-{{ section.id }}"
+            name="contact[body]"
+            placeholder="Tell us how we can help..."
+            required
+          ></textarea>
+        </div>
+
+        <div class="ls-faq-form__checkbox-wrap">
+          <input
+            class="ls-faq-form__checkbox"
+            type="checkbox"
+            id="contact-terms-{{ section.id }}"
+            required
+          >
+          <label class="ls-faq-form__checkbox-text" for="contact-terms-{{ section.id }}">
+            {{ section.settings.checkbox_text }}
+          </label>
+        </div>
+
+        <button type="submit" class="ls-faq-form__submit">
+          {{ section.settings.button_text }}
+          <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4.167 10h11.666M10.833 5L15.833 10L10.833 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        {%- if section.settings.privacy_text != blank -%}
+          <p class="ls-faq-form__privacy">{{ section.settings.privacy_text }}</p>
+        {%- endif -%}
+      {%- endunless -%}
+    {% endform %}
+  </div>
+</section>
+
+<script>
+  (function() {
+    const section = document.querySelector('.ls-faq-form');
+    if (!section) return;
+
+    const pills = section.querySelectorAll('.ls-faq-form__pill');
+    const hiddenInput = section.querySelector('input[name="contact[subject]"]');
+
+    pills.forEach(function(pill) {
+      pill.addEventListener('click', function() {
+        pills.forEach(function(p) { p.setAttribute('aria-pressed', 'false'); });
+        pill.setAttribute('aria-pressed', 'true');
+        if (hiddenInput) {
+          hiddenInput.value = pill.getAttribute('data-subject');
+        }
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "LS FAQ Form",
+  "tag": "section",
+  "class": "ls-faq-form-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "SEND A MESSAGE"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Tell Us What You Need"
+    },
+    {
+      "type": "text",
+      "id": "subject_label",
+      "label": "Subject label",
+      "default": "What is this about?"
+    },
+    {
+      "type": "text",
+      "id": "subject_options",
+      "label": "Subject options (comma-separated)",
+      "default": "Pre-purchase question, Order status, Return or exchange, Something else"
+    },
+    {
+      "type": "text",
+      "id": "checkbox_text",
+      "label": "Checkbox text",
+      "default": "I confirm this gear is mine to sell. View full terms — we keep it simple."
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Submit"
+    },
+    {
+      "type": "text",
+      "id": "privacy_text",
+      "label": "Privacy note",
+      "default": "Your info is never shared or sold. We respond within 1 business day."
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "Thank you! We'll get back to you within 1 business day."
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "label": "Padding top (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "label": "Padding bottom (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "LS FAQ Form"
+    }
+  ]
+}
+{% endschema %}

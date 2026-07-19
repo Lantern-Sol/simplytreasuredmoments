@@ -115,7 +115,9 @@
         "enable_transparent_header_product": false,
         "product_color_scheme": "default",
         "enable_transparent_header_collection": false,
-        "collection_color_scheme": "default"
+        "collection_color_scheme": "default",
+        "enable_transparent_header_faq": true,
+        "faq_color_scheme": "default"
       }
     },
     "header_announcements_hY64iQ": {

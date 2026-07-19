@@ -1,0 +1,437 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "ls_faq_hero": {
+      "type": "ls-faq-hero",
+      "settings": {
+        "heading": "Everything you want to know before you buy",
+        "subtitle": "Most common questions answered. If yours isn't here, we're one message away.",
+        "placeholder": "Search questions. Try \"personalization\" or \"return policy\"",
+        "background_image": "shopify://shop_images/Group_48099715.png",
+        "overlay_color": "#000000",
+        "overlay_opacity": 0,
+        "padding_top": 16,
+        "padding_bottom": 28,
+        "mobile_padding_top": 16,
+        "mobile_padding_bottom": 28
+      }
+    },
+    "ls_faq_page": {
+      "type": "ls-faq-page",
+      "blocks": {
+        "orders_1": {
+          "type": "faq",
+          "settings": {
+            "category": "orders",
+            "question": "How do I place a custom order?",
+            "answer": "Simply choose your product, upload your photo, and add any custom text. Our team will review your order and begin handcrafting your keepsake."
+          }
+        },
+        "orders_2": {
+          "type": "faq",
+          "settings": {
+            "category": "orders",
+            "question": "Can I customize the text on my keepsake?",
+            "answer": "Yes! Most of our products allow you to add custom text such as names, dates, or short messages. You'll see the customization options on each product page."
+          }
+        },
+        "orders_3": {
+          "type": "faq",
+          "settings": {
+            "category": "orders",
+            "question": "What type of photo should I upload?",
+            "answer": "For the best results, use a high-resolution photo with good lighting. Close-up portraits and well-lit images produce the sharpest details on our keepsakes."
+          }
+        },
+        "orders_4": {
+          "type": "faq",
+          "settings": {
+            "category": "orders",
+            "question": "Can I see a preview before my order is made?",
+            "answer": "We provide a digital proof for certain products before production begins. You'll receive it via email for your approval."
+          }
+        },
+        "orders_5": {
+          "type": "faq",
+          "settings": {
+            "category": "orders",
+            "question": "Can I cancel or change my order after it's placed?",
+            "answer": "We begin processing orders quickly. If you need to make a change, contact us within 2 hours of placing your order and we'll do our best to accommodate."
+          }
+        },
+        "orders_6": {
+          "type": "faq",
+          "settings": {
+            "category": "orders",
+            "question": "Do you offer bulk or wholesale orders?",
+            "answer": "Yes, we offer bulk pricing for events, corporate gifts, and resellers. Please reach out to our team with your requirements for a custom quote."
+          }
+        },
+        "orders_7": {
+          "type": "faq",
+          "settings": {
+            "category": "orders",
+            "question": "What file formats do you accept for photos?",
+            "answer": "We accept JPG, PNG, and HEIC files. For best quality, upload images that are at least 1000x1000 pixels."
+          }
+        },
+        "orders_8": {
+          "type": "faq",
+          "settings": {
+            "category": "orders",
+            "question": "Can I order a product without personalization?",
+            "answer": "Some of our products are available without customization. Check the product page for available options."
+          }
+        },
+        "orders_9": {
+          "type": "faq",
+          "settings": {
+            "category": "orders",
+            "question": "How do I track my order?",
+            "answer": "Once your order ships, you'll receive a confirmation email with a tracking number. You can also check your order status in your account dashboard."
+          }
+        },
+        "orders_10": {
+          "type": "faq",
+          "settings": {
+            "category": "orders",
+            "question": "Is there a minimum order quantity?",
+            "answer": "No minimum! You can order a single personalized keepsake or as many as you'd like."
+          }
+        },
+        "orders_11": {
+          "type": "faq",
+          "settings": {
+            "category": "orders",
+            "question": "Do you offer rush orders?",
+            "answer": "We offer expedited processing for an additional fee. Select the rush option at checkout or contact us for availability."
+          }
+        },
+        "orders_12": {
+          "type": "faq",
+          "settings": {
+            "category": "orders",
+            "question": "Can I add a gift message to my order?",
+            "answer": "Yes! During checkout you can include a personalized gift message that will be printed on a card and included with your order."
+          }
+        },
+        "orders_13": {
+          "type": "faq",
+          "settings": {
+            "category": "orders",
+            "question": "What happens if I upload a low-quality photo?",
+            "answer": "Our team will review your photo and reach out if it doesn't meet our quality standards. We'll work with you to find the best image for your keepsake."
+          }
+        },
+        "orders_14": {
+          "type": "faq",
+          "settings": {
+            "category": "orders",
+            "question": "Do you offer gift wrapping?",
+            "answer": "We offer beautiful gift-ready packaging on select items. Look for the gift wrap option at checkout."
+          }
+        },
+        "orders_15": {
+          "type": "faq",
+          "settings": {
+            "category": "orders",
+            "question": "Can I reorder a previous design?",
+            "answer": "Yes! If you've ordered before, contact us with your previous order number and we can recreate it or use the same design for a new product."
+          }
+        },
+        "orders_16": {
+          "type": "faq",
+          "settings": {
+            "category": "orders",
+            "question": "How do I apply a discount code?",
+            "answer": "Enter your discount code in the promo field at checkout. The discount will be applied to your order total before payment."
+          }
+        },
+        "shipping_1": {
+          "type": "faq",
+          "settings": {
+            "category": "shipping",
+            "question": "How long does shipping take?",
+            "answer": "Most orders ship within 3–5 business days. Custom and personalized items may take a bit longer as they are handcrafted to order."
+          }
+        },
+        "shipping_2": {
+          "type": "faq",
+          "settings": {
+            "category": "shipping",
+            "question": "Do you ship internationally?",
+            "answer": "Yes, we ship to most countries worldwide. International shipping typically takes 7–14 business days depending on your location."
+          }
+        },
+        "shipping_3": {
+          "type": "faq",
+          "settings": {
+            "category": "shipping",
+            "question": "How long does production take?",
+            "answer": "Production time varies by product. Most custom items take 2–4 business days to create before shipping. You'll see estimated timelines on each product page."
+          }
+        },
+        "shipping_4": {
+          "type": "faq",
+          "settings": {
+            "category": "shipping",
+            "question": "Is shipping free?",
+            "answer": "We offer free standard shipping on orders over $50 within the United States. International and expedited shipping rates are calculated at checkout."
+          }
+        },
+        "shipping_5": {
+          "type": "faq",
+          "settings": {
+            "category": "shipping",
+            "question": "What if my package is lost or damaged?",
+            "answer": "If your package is lost or arrives damaged, contact us immediately. We'll file a claim and send a replacement at no extra cost."
+          }
+        },
+        "products_1": {
+          "type": "faq",
+          "settings": {
+            "category": "products",
+            "question": "What materials are your keepsakes made from?",
+            "answer": "Our products are crafted from premium materials including high-grade acrylic, natural wood, and museum-quality photo paper. Each material is chosen for durability and beauty."
+          }
+        },
+        "products_2": {
+          "type": "faq",
+          "settings": {
+            "category": "products",
+            "question": "How do I care for my keepsake?",
+            "answer": "Gently dust with a soft, dry cloth. Avoid direct sunlight for extended periods to preserve colors. Acrylic items can be cleaned with a microfiber cloth."
+          }
+        },
+        "products_3": {
+          "type": "faq",
+          "settings": {
+            "category": "products",
+            "question": "Are your products eco-friendly?",
+            "answer": "We prioritize sustainable materials and processes wherever possible. Our packaging is recyclable and we're continuously working to reduce our environmental footprint."
+          }
+        },
+        "products_4": {
+          "type": "faq",
+          "settings": {
+            "category": "products",
+            "question": "What sizes are available?",
+            "answer": "Sizes vary by product. Each product page lists all available size options with detailed dimensions to help you choose the perfect fit."
+          }
+        },
+        "returns_1": {
+          "type": "faq",
+          "settings": {
+            "category": "returns",
+            "question": "What is your return policy?",
+            "answer": "We offer a 60-day satisfaction guarantee. If you're not happy with your purchase, contact us and we'll arrange a replacement or full refund."
+          }
+        },
+        "returns_2": {
+          "type": "faq",
+          "settings": {
+            "category": "returns",
+            "question": "What if I'm unhappy with my order?",
+            "answer": "We want you to love your keepsake. If something isn't right, reach out within 60 days and we'll make it right with a replacement or full refund."
+          }
+        },
+        "returns_3": {
+          "type": "faq",
+          "settings": {
+            "category": "returns",
+            "question": "Can I exchange my item for a different product?",
+            "answer": "Yes, we accept exchanges within 60 days. Contact our support team to arrange the exchange and we'll guide you through the process."
+          }
+        },
+        "returns_4": {
+          "type": "faq",
+          "settings": {
+            "category": "returns",
+            "question": "How long do refunds take to process?",
+            "answer": "Once we receive your return, refunds are processed within 3–5 business days. It may take an additional 5–10 days for your bank to reflect the credit."
+          }
+        },
+        "selling_1": {
+          "type": "faq",
+          "settings": {
+            "category": "selling",
+            "question": "Can I resell your products?",
+            "answer": "We offer a wholesale program for authorized resellers. Contact our team to learn about partnership opportunities and wholesale pricing."
+          }
+        },
+        "selling_2": {
+          "type": "faq",
+          "settings": {
+            "category": "selling",
+            "question": "Do you offer white-label products?",
+            "answer": "Yes, we offer white-label solutions for businesses. Reach out to discuss custom branding and packaging options for your brand."
+          }
+        },
+        "selling_3": {
+          "type": "faq",
+          "settings": {
+            "category": "selling",
+            "question": "Can I sell on marketplaces like Etsy with your products?",
+            "answer": "Our wholesale partners are welcome to sell on third-party marketplaces. Contact us for details about our marketplace seller program."
+          }
+        },
+        "process_1": {
+          "type": "faq",
+          "settings": {
+            "category": "process",
+            "question": "How are your keepsakes made?",
+            "answer": "Each keepsake is individually handcrafted by our team. We use professional-grade printing technology combined with skilled hand-finishing to ensure every piece meets our quality standards."
+          }
+        },
+        "process_2": {
+          "type": "faq",
+          "settings": {
+            "category": "process",
+            "question": "Do you do quality checks before shipping?",
+            "answer": "Every single item goes through a multi-point quality inspection before it's packaged and shipped. We check print quality, color accuracy, and finishing details."
+          }
+        },
+        "process_3": {
+          "type": "faq",
+          "settings": {
+            "category": "process",
+            "question": "What printing technology do you use?",
+            "answer": "We use UV-cured printing and dye-sublimation depending on the product. Both methods produce vivid, long-lasting colors that won't fade over time."
+          }
+        },
+        "account_1": {
+          "type": "faq",
+          "settings": {
+            "category": "account",
+            "question": "Do I need an account to place an order?",
+            "answer": "No, you can checkout as a guest. However, creating an account lets you track orders, save designs, and reorder more easily."
+          }
+        },
+        "account_2": {
+          "type": "faq",
+          "settings": {
+            "category": "account",
+            "question": "How do I reset my password?",
+            "answer": "Click 'Forgot Password' on the login page and enter your email. You'll receive a reset link within a few minutes."
+          }
+        },
+        "account_3": {
+          "type": "faq",
+          "settings": {
+            "category": "account",
+            "question": "Can I view my order history?",
+            "answer": "Yes! Log into your account and visit the 'Orders' section to see all your past purchases, tracking info, and reorder options."
+          }
+        }
+      },
+      "block_order": [
+        "orders_1",
+        "orders_2",
+        "orders_3",
+        "orders_4",
+        "orders_5",
+        "orders_6",
+        "orders_7",
+        "orders_8",
+        "orders_9",
+        "orders_10",
+        "orders_11",
+        "orders_12",
+        "orders_13",
+        "orders_14",
+        "orders_15",
+        "orders_16",
+        "shipping_1",
+        "shipping_2",
+        "shipping_3",
+        "shipping_4",
+        "shipping_5",
+        "products_1",
+        "products_2",
+        "products_3",
+        "products_4",
+        "returns_1",
+        "returns_2",
+        "returns_3",
+        "returns_4",
+        "selling_1",
+        "selling_2",
+        "selling_3",
+        "process_1",
+        "process_2",
+        "process_3",
+        "account_1",
+        "account_2",
+        "account_3"
+      ],
+      "settings": {
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "mobile_padding_top": 40,
+        "mobile_padding_bottom": 40
+      }
+    },
+    "ls_faq_contact": {
+      "type": "ls-faq-contact",
+      "settings": {
+        "heading": "Still Have Questions?",
+        "phone_number": "(714) 248-5066",
+        "phone_hours": "Mon–Fri, 9AM–5PM PST",
+        "email_address": "support@treasuredmoments.com",
+        "email_response": "Response within 24hrs",
+        "padding_top": 0,
+        "padding_bottom": 60,
+        "mobile_padding_top": 0,
+        "mobile_padding_bottom": 40
+      }
+    },
+    "ls_faq_form": {
+      "type": "ls-faq-form",
+      "settings": {
+        "subtitle": "SEND A MESSAGE",
+        "heading": "Tell Us What You Need",
+        "subject_label": "What is this about?",
+        "subject_options": "Pre-purchase question, Order status, Return or exchange, Something else",
+        "checkbox_text": "I confirm this gear is mine to sell. View full terms — we keep it simple.",
+        "button_text": "Submit",
+        "privacy_text": "Your info is never shared or sold. We respond within 1 business day.",
+        "success_message": "Thank you! We'll get back to you within 1 business day.",
+        "padding_top": 0,
+        "padding_bottom": 60,
+        "mobile_padding_top": 0,
+        "mobile_padding_bottom": 40
+      }
+    },
+    "ls_handcrafted_pWmM4n": {
+      "type": "ls-handcrafted",
+      "settings": {
+        "image": "shopify://shop_images/barnsbury-inside-mobile-2_900b9772-c8d5-41e2-a710-9012410959b9_jpg.png",
+        "image_mobile": "shopify://shop_images/barnsbury-inside-mobile-2_900b9772-c8d5-41e2-a710-9012410959b9.jpg_1.png",
+        "color_scheme": "scheme-ls-hero",
+        "heading": "Get 10% off your first keepsake",
+        "subtext": "Plus gift ideas, new arrivals, and occasions worth remembering.",
+        "input_placeholder": "Enter your email address",
+        "button_label": "Get 10% Off",
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "mobile_padding_top": 0,
+        "mobile_padding_bottom": 0
+      }
+    }
+  },
+  "order": [
+    "ls_faq_hero",
+    "ls_faq_page",
+    "ls_faq_contact",
+    "ls_faq_form",
+    "ls_handcrafted_pWmM4n"
+  ]
+}
