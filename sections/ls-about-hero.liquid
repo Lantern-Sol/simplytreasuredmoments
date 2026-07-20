@@ -331,44 +331,22 @@
             Swiper calculates loopedSlides ~4, so we need ≥ 12 total.
             Repeat up to 3× to handle any original slide count.
           {%- endcomment -%}
-          {%- assign min_loop_slides = 12 -%}
-          {%- assign slide_total = slides.size -%}
-
-          {%- if slide_total > 0 and slide_total < min_loop_slides -%}
-            {%- for block in slides -%}
-              <div class="swiper-slide" aria-hidden="true">
-                {%- if block.settings.image != blank -%}
-                  {{ block.settings.image | image_url: width: 900 | image_tag: widths: '400, 600, 900', sizes: '(min-width: 960px) 408px, 280px', loading: 'lazy', alt: block.settings.image.alt | default: section.settings.heading }}
-                {%- else -%}
-                  <div style="width: 100%; aspect-ratio: 408 / 436; background: #F0EDE8; border-radius: 12px;"></div>
-                {%- endif -%}
-              </div>
-            {%- endfor -%}
-            {%- assign slide_total = slide_total | plus: slides.size -%}
-          {%- endif -%}
-
-          {%- if slide_total > 0 and slide_total < min_loop_slides -%}
-            {%- for block in slides -%}
-              <div class="swiper-slide" aria-hidden="true">
-                {%- if block.settings.image != blank -%}
-                  {{ block.settings.image | image_url: width: 900 | image_tag: widths: '400, 600, 900', sizes: '(min-width: 960px) 408px, 280px', loading: 'lazy', alt: block.settings.image.alt | default: section.settings.heading }}
-                {%- else -%}
-                  <div style="width: 100%; aspect-ratio: 408 / 436; background: #F0EDE8; border-radius: 12px;"></div>
-                {%- endif -%}
-              </div>
-            {%- endfor -%}
-            {%- assign slide_total = slide_total | plus: slides.size -%}
-          {%- endif -%}
-
-          {%- if slide_total > 0 and slide_total < min_loop_slides -%}
-            {%- for block in slides -%}
-              <div class="swiper-slide" aria-hidden="true">
-                {%- if block.settings.image != blank -%}
-                  {{ block.settings.image | image_url: width: 900 | image_tag: widths: '400, 600, 900', sizes: '(min-width: 960px) 408px, 280px', loading: 'lazy', alt: block.settings.image.alt | default: section.settings.heading }}
-                {%- else -%}
-                  <div style="width: 100%; aspect-ratio: 408 / 436; background: #F0EDE8; border-radius: 12px;"></div>
-                {%- endif -%}
-              </div>
+          {%- comment -%}
+            Duplicate slides for Swiper loop mode.
+            Need ≥ 12 total slides for coverflow + loop to work smoothly.
+          {%- endcomment -%}
+          {%- if slides.size > 0 and slides.size < 12 -%}
+            {%- assign iterations = 12 | divided_by: slides.size -%}
+            {%- for i in (1..iterations) -%}
+              {%- for block in slides -%}
+                <div class="swiper-slide" aria-hidden="true">
+                  {%- if block.settings.image != blank -%}
+                    {{ block.settings.image | image_url: width: 900 | image_tag: widths: '400, 600, 900', sizes: '(min-width: 960px) 408px, 280px', loading: 'lazy', alt: block.settings.image.alt | default: section.settings.heading }}
+                  {%- else -%}
+                    <div style="width: 100%; aspect-ratio: 408 / 436; background: #F0EDE8; border-radius: 12px;"></div>
+                  {%- endif -%}
+                </div>
+              {%- endfor -%}
             {%- endfor -%}
           {%- endif -%}
         </div>
@@ -441,13 +419,14 @@
 
 <script>
   (function () {
-    var sectionEl = document.querySelector('.ls-about-hero__swiper');
+    var sectionEl = document.querySelector('#shopify-section-{{ section.id }} .ls-about-hero__swiper');
     if (!sectionEl) return;
 
     function initSwiper() {
       if (typeof Swiper === 'undefined') return;
+      if (sectionEl.querySelectorAll('.swiper-slide').length <= 1) return;
 
-      new Swiper('.ls-about-hero__swiper', {
+      new Swiper(sectionEl, {
         effect: 'coverflow',
         centeredSlides: true,
         slidesPerView: 'auto',
