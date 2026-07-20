@@ -1,0 +1,232 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Nunito+Sans:wght@400&display=swap');
+
+  .ls-about-story {
+    background: #FFFFFF;
+  }
+
+  .ls-about-story__container {
+    grid-column: 2;
+    display: flex;
+    align-items: center;
+    gap: 103px;
+    padding-inline: 140px;
+  }
+
+  .ls-about-story__image-wrap {
+    flex-shrink: 0;
+    width: 481px;
+    max-width: 45%;
+  }
+
+  .ls-about-story__image-wrap img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 481 / 525;
+    object-fit: cover;
+    border-radius: 5px;
+  }
+
+  .ls-about-story__image-placeholder {
+    width: 100%;
+    aspect-ratio: 481 / 525;
+    background: #F0EDE8;
+    border-radius: 5px;
+  }
+
+  .ls-about-story__text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ls-about-story__heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 36.8px;
+    color: #192534;
+    text-transform: capitalize;
+    margin: 0 0 24px;
+  }
+
+  .ls-about-story__body {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    color: #192534;
+  }
+
+  .ls-about-story__body p {
+    margin: 0 0 16px;
+  }
+
+  .ls-about-story__body p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* ── Tablet ── */
+  @media screen and (min-width: 750px) and (max-width: 959px) {
+    .ls-about-story__container {
+      gap: 40px;
+      padding-inline: 0;
+    }
+  }
+
+  /* ── Mobile ── */
+  @media screen and (max-width: 749px) {
+    .section.ls-about-story {
+      padding-top: var(--mobile-pt) !important;
+      padding-bottom: var(--mobile-pb) !important;
+    }
+
+    .ls-about-story__container {
+      flex-direction: column;
+      gap: 32px;
+      padding-inline: 0;
+    }
+
+    .ls-about-story__image-wrap {
+      width: calc(100% + var(--page-margin) * 2);
+      max-width: none;
+      margin-inline: calc(var(--page-margin) * -1);
+      border-radius: 0;
+    }
+
+    .ls-about-story__image-wrap img {
+      border-radius: 0;
+    }
+
+    .ls-about-story__heading {
+      font-size: 26px;
+      line-height: 30px;
+      text-align: center;
+    }
+
+    .ls-about-story__body {
+      font-size: 15px;
+      line-height: 21px;
+    }
+  }
+</style>
+
+<section
+  class="section ls-about-story"
+  style="
+    --desktop-pt: {{ section.settings.padding_top }}px;
+    --desktop-pb: {{ section.settings.padding_bottom }}px;
+    --mobile-pt: {{ section.settings.mobile_padding_top }}px;
+    --mobile-pb: {{ section.settings.mobile_padding_bottom }}px;
+    padding-top: var(--desktop-pt);
+    padding-bottom: var(--desktop-pb);
+  "
+>
+  <div class="ls-about-story__container">
+    <div class="ls-about-story__image-wrap">
+      {%- if section.settings.image != blank -%}
+        {{
+          section.settings.image
+          | image_url: width: 1000
+          | image_tag:
+            widths: '400, 600, 800, 1000',
+            sizes: '(min-width: 960px) 481px, (min-width: 750px) 340px, calc(100vw - 30px)',
+            loading: 'lazy',
+            alt: section.settings.image.alt | default: section.settings.heading
+        }}
+      {%- else -%}
+        <div class="ls-about-story__image-placeholder"></div>
+      {%- endif -%}
+    </div>
+
+    <div class="ls-about-story__text">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="ls-about-story__heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+
+      {%- if section.settings.body_text != blank -%}
+        <div class="ls-about-story__body">{{ section.settings.body_text }}</div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "LS About Story",
+  "tag": "section",
+  "class": "ls-about-story-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Forty years in the craft. Then something more personal"
+    },
+    {
+      "type": "richtext",
+      "id": "body_text",
+      "label": "Body text",
+      "default": "<p>Kyle has been working with leather, paper, and binding techniques for over forty years. What started as a bookbinding trade grew into a deep understanding of materials, craftsmanship, and the kind of work that lasts.</p><p>When he and Tracy started Treasured Moments Photos, the goal was simple: take that same care and apply it to something personal. Every piece we make is assembled by hand in our South Jordan, Utah workshop using UV-printed images on real wood and vegan leather — built to hold up, not just look good on a shelf.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "label": "Padding top (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "label": "Padding bottom (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    }
+  ],
+  "presets": [
+    {
+      "name": "LS About Story"
+    }
+  ]
+}
+{% endschema %}
