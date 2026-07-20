@@ -254,6 +254,14 @@
       noResults.textContent = 'No questions match your search. Try a different term.';
       faqList.parentNode.insertBefore(noResults, faqList.nextSibling);
     }
+
+    // Auto-filter from ?q= param (e.g. coming from Contact page search)
+    var urlParams = new URLSearchParams(window.location.search);
+    var qParam = urlParams.get('q');
+    if (qParam) {
+      input.value = qParam;
+      filterFaq();
+    }
   })();
 </script>
 

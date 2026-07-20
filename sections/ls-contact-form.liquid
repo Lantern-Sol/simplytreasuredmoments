@@ -1,0 +1,610 @@
+<style>
+  .ls-contact-form {
+    background: #FFFEFD;
+  }
+
+  .ls-contact-form__inner {
+    grid-column: 2;
+    width: 100%;
+    margin: 0;
+    padding-top: var(--desktop-pt);
+    padding-bottom: var(--desktop-pb);
+    padding-inline: calc(20.28vw - var(--page-margin, 40px));
+  }
+
+  .ls-contact-form__overline {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: -0.01rem;
+    color: #9B7427;
+    margin: 0 0 4px;
+    text-transform: uppercase;
+  }
+
+  .ls-contact-form__heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 2rem;
+    letter-spacing: 0.04rem;
+    line-height: 1.2;
+    color: #192534;
+    text-transform: capitalize;
+    margin: 0 0 24px;
+  }
+
+  /* Topic chips */
+  .ls-contact-form__topic-label {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 1.25rem;
+    letter-spacing: -0.0125rem;
+    color: #192534;
+    margin: 0 0 8px;
+    padding-left: 8px;
+  }
+
+  .ls-contact-form__topic-label .required {
+    color: #EB4343;
+  }
+
+  .ls-contact-form__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .ls-contact-form__chip {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: rgba(25, 37, 52, 0.7);
+    background: #FAFAFA;
+    border: 1px solid #B9AA99;
+    border-radius: 8px;
+    padding: 8px 12px;
+    min-width: 48px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: center;
+  }
+
+  .ls-contact-form__chip:hover {
+    border-color: #9B7427;
+  }
+
+  .ls-contact-form__chip.is-active {
+    background: #E6D8BC;
+    border: 2px solid #9B7427;
+    font-weight: 700;
+    color: #192534;
+    padding: 7px 11px;
+  }
+
+  /* Form fields */
+  .ls-contact-form__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .ls-contact-form__row--full {
+    grid-template-columns: 1fr;
+  }
+
+  .ls-contact-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .ls-contact-form__label {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 0.9375rem;
+    letter-spacing: -0.009375rem;
+    color: #192534;
+    padding-left: 8px;
+  }
+
+  .ls-contact-form__label .required {
+    color: #EB4343;
+  }
+
+  .ls-contact-form__input,
+  .ls-contact-form__textarea {
+    background: #FDFCFC;
+    border: 1px solid #B9AA99;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 0.9375rem;
+    color: #192534;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+
+  .ls-contact-form__input {
+    height: 46px;
+  }
+
+  .ls-contact-form__textarea {
+    min-height: 80px;
+    resize: vertical;
+  }
+
+  .ls-contact-form__input::placeholder,
+  .ls-contact-form__textarea::placeholder {
+    color: #6A5D4D;
+  }
+
+  .ls-contact-form__input:focus,
+  .ls-contact-form__textarea:focus {
+    border-color: #9B7427;
+  }
+
+  /* Consent + submit */
+  .ls-contact-form__consent {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .ls-contact-form__checkbox {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    background: #FDFCFC;
+    border: 1.5px solid #B9AA99;
+    border-radius: 4px;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    margin: 0;
+    position: relative;
+  }
+
+  .ls-contact-form__checkbox:checked {
+    background: #C8A45D;
+    border-color: #C8A45D;
+  }
+
+  .ls-contact-form__checkbox:checked::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 7px;
+    width: 6px;
+    height: 10px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  .ls-contact-form__consent-text {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 0.9375rem;
+    color: #192534;
+    line-height: 1.5;
+  }
+
+  .ls-contact-form__submit {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #C8A45D;
+    color: #FDFCFC;
+    border: none;
+    border-radius: 5px;
+    padding: 12px 24px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    margin-bottom: 12px;
+  }
+
+  .ls-contact-form__submit:hover {
+    opacity: 0.9;
+  }
+
+  .ls-contact-form__submit svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .ls-contact-form__disclaimer {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 0.8125rem;
+    letter-spacing: -0.00813rem;
+    color: #192534;
+    margin: 0;
+  }
+
+  /* Success / error messages */
+  .ls-contact-form__success {
+    background: #E6D8BC;
+    border-radius: 8px;
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .ls-contact-form__success p {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 1rem;
+    color: #192534;
+    margin: 0;
+  }
+
+  .ls-contact-form__errors {
+    background: #fef2f2;
+    border: 1px solid #EB4343;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 24px;
+  }
+
+  .ls-contact-form__errors li {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 0.875rem;
+    color: #EB4343;
+  }
+
+  @media (max-width: 749px) {
+    .ls-contact-form__inner {
+      padding-top: var(--mobile-pt);
+      padding-bottom: var(--mobile-pb);
+      padding-inline: 0;
+    }
+
+    .ls-contact-form__row {
+      grid-template-columns: 1fr;
+    }
+
+    .ls-contact-form__submit {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
+
+<section
+  class="section ls-contact-form"
+  style="
+    --desktop-pt: {{ section.settings.padding_top }}px;
+    --desktop-pb: {{ section.settings.padding_bottom }}px;
+    --mobile-pt: {{ section.settings.mobile_padding_top }}px;
+    --mobile-pb: {{ section.settings.mobile_padding_bottom }}px;
+  "
+>
+  <div class="ls-contact-form__inner">
+    {%- if section.settings.overline != blank -%}
+      <p class="ls-contact-form__overline">{{ section.settings.overline }}</p>
+    {%- endif -%}
+    <h2 class="ls-contact-form__heading">{{ section.settings.heading }}</h2>
+
+    {%- form 'contact', id: 'ls-contact-form' -%}
+      {%- if form.posted_successfully? -%}
+        <div class="ls-contact-form__success">
+          <p>Thank you for reaching out! We'll get back to you within 1 business day.</p>
+        </div>
+      {%- endif -%}
+
+      {%- if form.errors -%}
+        <div class="ls-contact-form__errors">
+          <ul>
+            {%- for field in form.errors -%}
+              <li>{{ form.errors.translated_fields[field] }} {{ form.errors.messages[field] }}</li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+
+      <!-- Topic chips -->
+      <p class="ls-contact-form__topic-label">
+        {{ section.settings.topic_label }} <span class="required">*</span>
+      </p>
+      <div class="ls-contact-form__chips" data-contact-chips>
+        {%- for i in (1..4) -%}
+          {%- assign topic_key = 'topic_' | append: i -%}
+          {%- assign topic_val = section.settings[topic_key] -%}
+          {%- if topic_val != blank -%}
+            <button
+              type="button"
+              class="ls-contact-form__chip{% if forloop.first %} is-active{% endif %}"
+              data-topic="{{ topic_val | escape }}"
+            >
+              {{ topic_val }}
+            </button>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+      <input type="hidden" name="contact[topic]" value="{{ section.settings.topic_1 | escape }}" data-contact-topic-input>
+
+      <!-- Row 1: Name + Last Name -->
+      <div class="ls-contact-form__row">
+        <div class="ls-contact-form__field">
+          <label class="ls-contact-form__label" for="contact-name-{{ section.id }}">
+            Name <span class="required">*</span>
+          </label>
+          <input
+            class="ls-contact-form__input"
+            type="text"
+            id="contact-name-{{ section.id }}"
+            name="contact[first_name]"
+            placeholder="John"
+            required
+          >
+        </div>
+        <div class="ls-contact-form__field">
+          <label class="ls-contact-form__label" for="contact-lastname-{{ section.id }}">
+            Last Name <span class="required">*</span>
+          </label>
+          <input
+            class="ls-contact-form__input"
+            type="text"
+            id="contact-lastname-{{ section.id }}"
+            name="contact[last_name]"
+            placeholder="Doe"
+            required
+          >
+        </div>
+      </div>
+
+      <!-- Row 2: Email + Phone -->
+      <div class="ls-contact-form__row">
+        <div class="ls-contact-form__field">
+          <label class="ls-contact-form__label" for="contact-email-{{ section.id }}">
+            Email <span class="required">*</span>
+          </label>
+          <input
+            class="ls-contact-form__input"
+            type="email"
+            id="contact-email-{{ section.id }}"
+            name="contact[email]"
+            placeholder="johndoe@example.com"
+            required
+          >
+        </div>
+        <div class="ls-contact-form__field">
+          <label class="ls-contact-form__label" for="contact-phone-{{ section.id }}">
+            Phone <span class="required">*</span>
+          </label>
+          <input
+            class="ls-contact-form__input"
+            type="tel"
+            id="contact-phone-{{ section.id }}"
+            name="contact[phone]"
+            placeholder="(123)4567890"
+            required
+          >
+        </div>
+      </div>
+
+      <!-- Row 3: Order number -->
+      <div class="ls-contact-form__row ls-contact-form__row--full">
+        <div class="ls-contact-form__field">
+          <label class="ls-contact-form__label" for="contact-order-{{ section.id }}">
+            {{ section.settings.order_field_label }}
+          </label>
+          <input
+            class="ls-contact-form__input"
+            type="text"
+            id="contact-order-{{ section.id }}"
+            name="contact[order_number]"
+            placeholder="13FQ32DS"
+          >
+        </div>
+      </div>
+
+      <!-- Row 4: Message -->
+      <div class="ls-contact-form__row ls-contact-form__row--full">
+        <div class="ls-contact-form__field">
+          <label class="ls-contact-form__label" for="contact-message-{{ section.id }}">
+            Your Message
+          </label>
+          <textarea
+            class="ls-contact-form__textarea"
+            id="contact-message-{{ section.id }}"
+            name="contact[body]"
+            placeholder="Write your message here..."
+            rows="4"
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Consent -->
+      {%- if section.settings.consent_text != blank -%}
+        <div class="ls-contact-form__consent">
+          <input
+            class="ls-contact-form__checkbox"
+            type="checkbox"
+            id="contact-consent-{{ section.id }}"
+            name="contact[consent]"
+            value="yes"
+            required
+          >
+          <label class="ls-contact-form__consent-text" for="contact-consent-{{ section.id }}">
+            {{ section.settings.consent_text }}
+          </label>
+        </div>
+      {%- endif -%}
+
+      <!-- Submit -->
+      <button type="submit" class="ls-contact-form__submit">
+        {{ section.settings.submit_text }}
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8.70711 1.29289L15.4142 8L8.70711 14.7071L7.29289 13.2929L11.5858 9H1V7H11.5858L7.29289 2.70711L8.70711 1.29289Z" fill="currentColor"/>
+        </svg>
+      </button>
+
+      {%- if section.settings.disclaimer != blank -%}
+        <p class="ls-contact-form__disclaimer">{{ section.settings.disclaimer }}</p>
+      {%- endif -%}
+    {%- endform -%}
+  </div>
+</section>
+
+<script>
+  (function() {
+    var section = document.querySelector('.ls-contact-form');
+    if (!section) return;
+
+    var chips = section.querySelectorAll('[data-topic]');
+    var hiddenInput = section.querySelector('[data-contact-topic-input]');
+
+    chips.forEach(function(chip) {
+      chip.addEventListener('click', function() {
+        chips.forEach(function(c) { c.classList.remove('is-active'); });
+        chip.classList.add('is-active');
+        if (hiddenInput) {
+          hiddenInput.value = chip.getAttribute('data-topic');
+        }
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "LS Contact Form",
+  "tag": "section",
+  "class": "ls-contact-form-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "overline",
+      "label": "Overline text",
+      "default": "SEND A MESSAGE"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "How Can We Help You?"
+    },
+    {
+      "type": "header",
+      "content": "Topic chips"
+    },
+    {
+      "type": "text",
+      "id": "topic_label",
+      "label": "Topic label",
+      "default": "What is this about?"
+    },
+    {
+      "type": "text",
+      "id": "topic_1",
+      "label": "Topic 1",
+      "default": "Pre-purchase question"
+    },
+    {
+      "type": "text",
+      "id": "topic_2",
+      "label": "Topic 2",
+      "default": "Order status"
+    },
+    {
+      "type": "text",
+      "id": "topic_3",
+      "label": "Topic 3",
+      "default": "Return or exchange"
+    },
+    {
+      "type": "text",
+      "id": "topic_4",
+      "label": "Topic 4",
+      "default": "Something else"
+    },
+    {
+      "type": "header",
+      "content": "Form fields"
+    },
+    {
+      "type": "text",
+      "id": "order_field_label",
+      "label": "Order field label",
+      "default": "Order or Listing number (Optional)"
+    },
+    {
+      "type": "header",
+      "content": "Consent & submit"
+    },
+    {
+      "type": "text",
+      "id": "consent_text",
+      "label": "Consent checkbox text",
+      "default": "I confirm this gear is mine to sell. View full terms — we keep it simple."
+    },
+    {
+      "type": "text",
+      "id": "submit_text",
+      "label": "Submit button text",
+      "default": "Submit"
+    },
+    {
+      "type": "textarea",
+      "id": "disclaimer",
+      "label": "Disclaimer text",
+      "default": "Your info is never shared or sold. We respond within 1 business day."
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "label": "Padding top (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "label": "Padding bottom (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    }
+  ],
+  "presets": [
+    {
+      "name": "LS Contact Form"
+    }
+  ]
+}
+{% endschema %}
