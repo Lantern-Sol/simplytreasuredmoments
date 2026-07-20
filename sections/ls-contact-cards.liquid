@@ -1,0 +1,238 @@
+<style>
+  .ls-contact-cards__inner {
+    grid-column: 2;
+    width: 100%;
+    margin: 0;
+    padding-top: var(--desktop-pt);
+    padding-bottom: var(--desktop-pb);
+    padding-inline: calc(29.51vw - var(--page-margin, 40px));
+  }
+
+  .ls-contact-cards__eyebrow {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.8125rem;
+    letter-spacing: -0.00813rem;
+    color: #C4BBAB;
+    text-align: center;
+    margin: 0 0 8px;
+    text-transform: uppercase;
+  }
+
+  .ls-contact-cards__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .ls-contact-cards__card {
+    background: #D9D3C9;
+    border-radius: 8px;
+    padding: 20px 24px 16px;
+    display: flex;
+    flex-direction: column;
+    min-height: 148px;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.2s ease;
+  }
+
+  .ls-contact-cards__card:hover {
+    opacity: 0.9;
+  }
+
+  .ls-contact-cards__title {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: -0.01rem;
+    color: #192534;
+    margin: 0 0 4px;
+  }
+
+  .ls-contact-cards__desc {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 0.75rem;
+    letter-spacing: -0.0075rem;
+    color: #192534;
+    line-height: 1.5;
+    margin: 0;
+    flex: 1;
+  }
+
+  .ls-contact-cards__link {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 0.75rem;
+    letter-spacing: -0.0075rem;
+    color: #4D3B19;
+    text-decoration: underline;
+    margin-top: auto;
+  }
+
+  @media (max-width: 749px) {
+    .ls-contact-cards__inner {
+      padding-top: var(--mobile-pt);
+      padding-bottom: var(--mobile-pb);
+      padding-inline: 0;
+    }
+
+    .ls-contact-cards__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<section
+  class="section ls-contact-cards"
+  style="
+    --desktop-pt: {{ section.settings.padding_top }}px;
+    --desktop-pb: {{ section.settings.padding_bottom }}px;
+    --mobile-pt: {{ section.settings.mobile_padding_top }}px;
+    --mobile-pb: {{ section.settings.mobile_padding_bottom }}px;
+  "
+>
+  <div class="ls-contact-cards__inner">
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="ls-contact-cards__eyebrow">{{ section.settings.eyebrow }}</p>
+    {%- endif -%}
+
+    <div class="ls-contact-cards__grid">
+      {%- if section.settings.card_1_url != blank -%}
+        <a href="{{ section.settings.card_1_url }}" class="ls-contact-cards__card">
+          <p class="ls-contact-cards__title">{{ section.settings.card_1_title }}</p>
+          <p class="ls-contact-cards__desc">{{ section.settings.card_1_description }}</p>
+          <span class="ls-contact-cards__link">&rarr; {{ section.settings.card_1_link_text }}</span>
+        </a>
+      {%- endif -%}
+
+      {%- if section.settings.card_2_url != blank -%}
+        <a href="{{ section.settings.card_2_url }}" class="ls-contact-cards__card">
+          <p class="ls-contact-cards__title">{{ section.settings.card_2_title }}</p>
+          <p class="ls-contact-cards__desc">{{ section.settings.card_2_description }}</p>
+          <span class="ls-contact-cards__link">&rarr; {{ section.settings.card_2_link_text }}</span>
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "LS Contact Cards",
+  "tag": "section",
+  "class": "ls-contact-cards-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "MIGHT SAVE YOU A WAIT"
+    },
+    {
+      "type": "header",
+      "content": "Card 1"
+    },
+    {
+      "type": "text",
+      "id": "card_1_title",
+      "label": "Title",
+      "default": "FAQ"
+    },
+    {
+      "type": "textarea",
+      "id": "card_1_description",
+      "label": "Description",
+      "default": "Common questions answered, condition, compatibility, shipping, and more."
+    },
+    {
+      "type": "text",
+      "id": "card_1_link_text",
+      "label": "Link text",
+      "default": "Browse FAQ"
+    },
+    {
+      "type": "url",
+      "id": "card_1_url",
+      "label": "Link URL"
+    },
+    {
+      "type": "header",
+      "content": "Card 2"
+    },
+    {
+      "type": "text",
+      "id": "card_2_title",
+      "label": "Title",
+      "default": "How It Works"
+    },
+    {
+      "type": "textarea",
+      "id": "card_2_description",
+      "label": "Description",
+      "default": "See exactly how your photo becomes a handcrafted keepsake, from upload to your door."
+    },
+    {
+      "type": "text",
+      "id": "card_2_link_text",
+      "label": "Link text",
+      "default": "Learn more"
+    },
+    {
+      "type": "url",
+      "id": "card_2_url",
+      "label": "Link URL"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "label": "Padding top (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "label": "Padding bottom (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "LS Contact Cards"
+    }
+  ]
+}
+{% endschema %}

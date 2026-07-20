@@ -26,6 +26,9 @@
   elsif section.settings.enable_transparent_header_faq and template.name == 'page' and template.suffix == 'faq'
     assign transparent = 'always'
     assign transparent_color_scheme = section.settings.faq_color_scheme
+  elsif section.settings.enable_transparent_header_contact and template.name == 'page' and template.suffix == 'contact'
+    assign transparent = 'always'
+    assign transparent_color_scheme = section.settings.contact_color_scheme
   endif
 
   if section.settings.enable_sticky_header == 'always'
@@ -1082,6 +1085,33 @@
       ],
       "default": "default",
       "visible_if": "{{ section.settings.enable_transparent_header_faq }}"
+    },
+    {
+      "type": "header",
+      "content": "Contact page"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_transparent_header_contact",
+      "label": "t:settings.transparent_background",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "contact_color_scheme",
+      "label": "t:settings.color_scheme",
+      "options": [
+        {
+          "value": "default",
+          "label": "t:options.default"
+        },
+        {
+          "value": "inverse",
+          "label": "t:options.inverse"
+        }
+      ],
+      "default": "default",
+      "visible_if": "{{ section.settings.enable_transparent_header_contact }}"
     }
   ],
   "presets": []
