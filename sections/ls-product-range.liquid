@@ -1,0 +1,289 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Nunito+Sans:wght@400;700&display=swap');
+
+  .ls-product-range {
+    position: relative;
+  }
+
+  .ls-product-range__media {
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+    min-height: 580px;
+    overflow: hidden;
+  }
+
+  .ls-product-range__media-desktop,
+  .ls-product-range__media-mobile {
+    width: 100%;
+    height: 100%;
+  }
+
+  .ls-product-range__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ls-product-range__media-mobile {
+    display: none;
+  }
+
+  .ls-product-range__media-placeholder {
+    width: 100%;
+    height: 100%;
+    background: #F0EDE8;
+  }
+
+  .ls-product-range__content {
+    grid-column: 2;
+    grid-row: 1 / -1;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+    padding-top: 55px;
+  }
+
+  .ls-product-range__heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 1.15;
+    color: #192534;
+    text-transform: capitalize;
+    margin: 0 0 5px;
+  }
+
+  .ls-product-range__body {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    color: #39332d;
+    max-width: 682px;
+    margin: 0 0 3px;
+  }
+
+  .ls-product-range__cta {
+    display: inline-block;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 16.8px;
+    color: #FAFAFA;
+    background: #C8A45D;
+    border: none;
+    border-radius: 3px;
+    padding: 12px 24px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+
+  .ls-product-range__cta:hover {
+    opacity: 0.9;
+  }
+
+  /* ── Mobile ── */
+  @media screen and (max-width: 749px) {
+    .section.ls-product-range {
+      padding-top: var(--mobile-pt) !important;
+      padding-bottom: var(--mobile-pb) !important;
+    }
+
+    .ls-product-range__media {
+      height: 433px;
+      min-height: auto;
+    }
+
+    .ls-product-range__media-desktop {
+      display: none;
+    }
+
+    .ls-product-range__media-mobile {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .ls-product-range__heading {
+      font-size: 26px;
+      max-width: 210px;
+    }
+
+    .ls-product-range__body {
+      font-size: 15px;
+      line-height: 21px;
+    }
+
+    .ls-product-range__content {
+      padding-top: 32px;
+    }
+  }
+</style>
+
+<section
+  class="section section--full-width ls-product-range"
+  style="
+    --desktop-pt: {{ section.settings.padding_top }}px;
+    --desktop-pb: {{ section.settings.padding_bottom }}px;
+    --mobile-pt: {{ section.settings.mobile_padding_top }}px;
+    --mobile-pb: {{ section.settings.mobile_padding_bottom }}px;
+    padding-top: var(--desktop-pt);
+    padding-bottom: var(--desktop-pb);
+  "
+>
+  <div class="ls-product-range__media">
+    {%- if section.settings.image != blank -%}
+      <div class="ls-product-range__media-desktop">
+        {{
+          section.settings.image
+          | image_url: width: 2000
+          | image_tag:
+            widths: '800, 1200, 1600, 2000',
+            sizes: '100vw',
+            loading: 'lazy',
+            alt: section.settings.image.alt | default: section.settings.heading
+        }}
+      </div>
+    {%- endif -%}
+
+    {%- assign mobile_img = section.settings.mobile_image | default: section.settings.image -%}
+    {%- if mobile_img != blank -%}
+      <div class="ls-product-range__media-mobile">
+        {{
+          mobile_img
+          | image_url: width: 900
+          | image_tag:
+            widths: '400, 600, 900',
+            sizes: '100vw',
+            loading: 'lazy',
+            alt: mobile_img.alt | default: section.settings.heading
+        }}
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.image == blank and section.settings.mobile_image == blank -%}
+      <div class="ls-product-range__media-placeholder"></div>
+    {%- endif -%}
+  </div>
+
+  <div class="ls-product-range__content">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="ls-product-range__heading">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.body_text != blank -%}
+      <p class="ls-product-range__body">{{ section.settings.body_text }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.button_label != blank -%}
+      <a
+        class="ls-product-range__cta"
+        {% if section.settings.button_link != blank %}href="{{ section.settings.button_link }}"{% endif %}
+      >
+        {{ section.settings.button_label }}
+      </a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "LS Product Range",
+  "tag": "section",
+  "class": "ls-product-range-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background image (desktop)"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Background image (mobile)"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Every Keepsake, Made By Hand"
+    },
+    {
+      "type": "textarea",
+      "id": "body_text",
+      "label": "Body text",
+      "default": "From engraved photo frames and custom acrylic night lights to collectible coins and wooden keepsakes — every product is designed, printed, and assembled in our Utah workshop."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Shop All Keepsakes"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "label": "Padding top (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "label": "Padding bottom (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "LS Product Range"
+    }
+  ]
+}
+{% endschema %}

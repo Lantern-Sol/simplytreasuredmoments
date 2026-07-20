@@ -135,7 +135,7 @@
             {%- endif -%}
 
             {%- if block.settings.title != blank -%}
-              <p class="ls-hiw__step-title">{{ forloop.index }}. {{ block.settings.title }}</p>
+              <p class="ls-hiw__step-title">{% if section.settings.show_step_numbers %}{{ forloop.index }}. {% endif %}{{ block.settings.title }}</p>
             {%- endif -%}
 
             {%- if block.settings.text != blank -%}
@@ -159,6 +159,12 @@
       "id": "heading",
       "label": "Heading",
       "default": "How It Works"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_step_numbers",
+      "label": "Show step numbers",
+      "default": true
     },
     {
       "type": "header",
