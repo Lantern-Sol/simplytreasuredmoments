@@ -1,0 +1,254 @@
+{%- doc -%}
+  Renders a single customizer accordion step.
+
+  @param {number} step_number - Step number (1-based)
+  @param {string} title - Step heading text
+  @param {string} input_type - One of: swatch, button-group, text-fields, file, dropdown, color-picker, file-text
+  @param {string} property - The properties[...] key for Shopify line items
+  @param {string} [options] - Comma-separated list of option values
+  @param {string} [text_fields] - Pipe-separated label|maxlength pairs, comma-separated
+  @param {boolean} [required] - Whether the step must be completed
+  @param {string} [form_id] - The product form ID to associate inputs with
+  @param {string} [conditional_key] - Data attribute name for conditional logic (e.g. 'coin-type', 'sports-mode')
+{%- enddoc -%}
+
+{%- liquid
+  assign options_arr = options | split: ','
+  assign prop_name = 'properties[' | append: property | append: ']'
+-%}
+
+<details class="ls-step" data-step="{{ step_number }}">
+  <summary class="ls-step__header">
+    <span class="ls-step__header-left">
+      <span class="ls-step__number">{{ step_number }}</span>
+      <span class="ls-step__title">{{ step_number }}. {{ title }}</span>
+    </span>
+    <span class="ls-step__selection"></span>
+    <span class="ls-step__toggle">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </span>
+  </summary>
+
+  <div class="ls-step__content">
+    {%- case input_type -%}
+
+      {%- comment -%} ---- SWATCH SELECTOR ---- {%- endcomment -%}
+      {%- when 'swatch' -%}
+        <div class="ls-swatches">
+          {%- for option in options_arr -%}
+            {%- assign option_clean = option | strip -%}
+            {%- assign input_id = 'ls-' | append: property | append: '-' | append: step_number | append: '-' | append: forloop.index | handleize -%}
+            <label class="ls-swatch">
+              <input
+                type="radio"
+                name="{{ prop_name }}"
+                value="{{ option_clean }}"
+                id="{{ input_id }}"
+                form="{{ form_id }}"
+                {% if required %}required data-required{% endif %}
+                {% if conditional_key %}data-{{ conditional_key }}="{{ option_clean | handleize }}"{% endif %}
+              >
+              <span class="ls-swatch__visual">
+                <span class="ls-swatch__color" style="background: #e5e1dc;"></span>
+                <span class="ls-swatch__label">{{ option_clean }}</span>
+              </span>
+            </label>
+          {%- endfor -%}
+        </div>
+
+      {%- comment -%} ---- BUTTON GROUP ---- {%- endcomment -%}
+      {%- when 'button-group' -%}
+        <div class="ls-btn-group">
+          {%- for option in options_arr -%}
+            {%- assign option_clean = option | strip -%}
+            {%- assign input_id = 'ls-' | append: property | append: '-' | append: step_number | append: '-' | append: forloop.index | handleize -%}
+            <label class="ls-btn-option">
+              <input
+                type="radio"
+                name="{{ prop_name }}"
+                value="{{ option_clean }}"
+                id="{{ input_id }}"
+                form="{{ form_id }}"
+                {% if required %}required data-required{% endif %}
+                {% if conditional_key %}data-{{ conditional_key }}="{{ option_clean | handleize }}"{% endif %}
+              >
+              <span class="ls-btn-option__label">{{ option_clean }}</span>
+            </label>
+          {%- endfor -%}
+        </div>
+
+      {%- comment -%} ---- TEXT FIELDS ---- {%- endcomment -%}
+      {%- when 'text-fields' -%}
+        {%- assign fields = text_fields | split: ',' -%}
+        {%- for field in fields -%}
+          {%- assign parts = field | split: '|' -%}
+          {%- assign label = parts[0] | strip -%}
+          {%- assign maxlen = parts[1] | strip | plus: 0 -%}
+          {%- assign field_prop = 'properties[' | append: label | append: ']' -%}
+          {%- assign field_id = 'ls-' | append: label | append: '-' | append: step_number | handleize -%}
+          <div class="ls-text-field">
+            <label class="ls-text-field__label" for="{{ field_id }}">{{ label }}</label>
+            {%- if maxlen > 80 -%}
+              <textarea
+                class="ls-text-field__input ls-textarea"
+                id="{{ field_id }}"
+                name="{{ field_prop }}"
+                maxlength="{{ maxlen }}"
+                placeholder="Enter {{ label | downcase }}"
+                form="{{ form_id }}"
+                rows="3"
+                {% if required %}required data-required{% endif %}
+              ></textarea>
+            {%- else -%}
+              <input
+                type="text"
+                class="ls-text-field__input"
+                id="{{ field_id }}"
+                name="{{ field_prop }}"
+                maxlength="{{ maxlen }}"
+                placeholder="Enter {{ label | downcase }}"
+                form="{{ form_id }}"
+                {% if required %}required data-required{% endif %}
+              >
+            {%- endif -%}
+            {%- if maxlen > 0 -%}
+              <span class="ls-text-field__char-count">0 / {{ maxlen }}</span>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+
+      {%- comment -%} ---- FILE UPLOAD ---- {%- endcomment -%}
+      {%- when 'file' -%}
+        {%- assign file_id = 'ls-file-' | append: property | append: '-' | append: step_number | handleize -%}
+        <div class="ls-file-upload">
+          <div class="ls-file-upload__dropzone">
+            <span class="ls-file-upload__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+              </svg>
+            </span>
+            <p class="ls-file-upload__text">
+              Drag & drop or <span>browse</span>
+            </p>
+            <p class="ls-file-upload__hint">JPG, PNG, HEIC — max 20MB</p>
+          </div>
+          <input
+            type="file"
+            name="{{ prop_name }}"
+            id="{{ file_id }}"
+            accept="image/*"
+            form="{{ form_id }}"
+            {% if required %}required data-required{% endif %}
+            style="display: none;"
+          >
+          <div class="ls-file-upload__preview">
+            <img class="ls-file-upload__thumb" src="" alt="Preview">
+            <div class="ls-file-upload__info">
+              <span class="ls-file-upload__name"></span>
+              <span class="ls-file-upload__size"></span>
+            </div>
+            <button type="button" class="ls-file-upload__remove" aria-label="Remove file">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+        </div>
+
+      {%- comment -%} ---- FILE + TEXT COMBO (for All Occasion coin) ---- {%- endcomment -%}
+      {%- when 'file-text' -%}
+        {%- assign file_id = 'ls-file-' | append: property | append: '-' | append: step_number | handleize -%}
+        <div class="ls-file-upload">
+          <div class="ls-file-upload__dropzone">
+            <span class="ls-file-upload__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+              </svg>
+            </span>
+            <p class="ls-file-upload__text">
+              Drag & drop or <span>browse</span>
+            </p>
+            <p class="ls-file-upload__hint">JPG, PNG, HEIC — max 20MB</p>
+          </div>
+          <input
+            type="file"
+            name="{{ prop_name }}"
+            id="{{ file_id }}"
+            accept="image/*"
+            form="{{ form_id }}"
+            {% if required %}required data-required{% endif %}
+            style="display: none;"
+          >
+          <div class="ls-file-upload__preview">
+            <img class="ls-file-upload__thumb" src="" alt="Preview">
+            <div class="ls-file-upload__info">
+              <span class="ls-file-upload__name"></span>
+              <span class="ls-file-upload__size"></span>
+            </div>
+            <button type="button" class="ls-file-upload__remove" aria-label="Remove file">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+        </div>
+        {%- assign fields = text_fields | split: ',' -%}
+        {%- for field in fields -%}
+          {%- assign parts = field | split: '|' -%}
+          {%- assign label = parts[0] | strip -%}
+          {%- assign maxlen = parts[1] | strip | plus: 0 -%}
+          {%- assign field_prop = 'properties[' | append: label | append: ']' -%}
+          {%- assign field_id = 'ls-' | append: label | append: '-' | append: step_number | handleize -%}
+          <div class="ls-text-field">
+            <label class="ls-text-field__label" for="{{ field_id }}">{{ label }}</label>
+            <input
+              type="text"
+              class="ls-text-field__input"
+              id="{{ field_id }}"
+              name="{{ field_prop }}"
+              maxlength="{{ maxlen }}"
+              placeholder="Enter {{ label | downcase }}"
+              form="{{ form_id }}"
+            >
+            {%- if maxlen > 0 -%}
+              <span class="ls-text-field__char-count">0 / {{ maxlen }}</span>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+
+      {%- comment -%} ---- DROPDOWN ---- {%- endcomment -%}
+      {%- when 'dropdown' -%}
+        {%- assign select_id = 'ls-' | append: property | append: '-' | append: step_number | handleize -%}
+        <select
+          class="ls-select"
+          name="{{ prop_name }}"
+          id="{{ select_id }}"
+          form="{{ form_id }}"
+          {% if required %}required data-required{% endif %}
+        >
+          <option value="">Select {{ property | downcase }}...</option>
+          {%- for option in options_arr -%}
+            {%- assign option_clean = option | strip -%}
+            <option value="{{ option_clean }}">{{ option_clean }}</option>
+          {%- endfor -%}
+        </select>
+
+      {%- comment -%} ---- COLOR PICKER ---- {%- endcomment -%}
+      {%- when 'color-picker' -%}
+        <div class="ls-color-grid">
+          {%- for option in options_arr -%}
+            {%- assign color = option | strip -%}
+            {%- assign input_id = 'ls-color-' | append: step_number | append: '-' | append: forloop.index -%}
+            <label class="ls-color-option">
+              <input
+                type="radio"
+                name="{{ prop_name }}"
+                value="{{ color }}"
+                id="{{ input_id }}"
+                form="{{ form_id }}"
+                {% if required %}required data-required{% endif %}
+              >
+              <span class="ls-color-option__swatch" style="background: {{ color }};"></span>
+            </label>
+          {%- endfor -%}
+        </div>
+
+    {%- endcase -%}
+  </div>
+</details>

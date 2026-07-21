@@ -1,0 +1,992 @@
+/* ============================================================
+   Product Customizer — Accordion Steps
+   ============================================================ */
+
+.ls-customizer {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+}
+
+/* --- Step Accordion Row --- */
+.ls-step {
+  border-bottom: 1px solid #AEB2B8;
+}
+
+.ls-step:first-child {
+  border-top: 1px solid #AEB2B8;
+}
+
+.ls-step__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  gap: 12px;
+}
+
+.ls-step__header::-webkit-details-marker {
+  display: none;
+}
+
+.ls-step__header::marker {
+  display: none;
+  content: "";
+}
+
+.ls-step__header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ls-step__number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #f5f2ee;
+  color: #192534;
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: background 0.2s, color 0.2s;
+}
+
+.ls-step[data-completed] .ls-step__number {
+  background: #c8a45d;
+  color: #fff;
+}
+
+.ls-step__title {
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #192534;
+  line-height: 1.3;
+  letter-spacing: -0.16px;
+}
+
+.ls-step__selection {
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: #b9aa99;
+  margin-left: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+.ls-step__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+
+.ls-step__toggle svg {
+  width: 16px;
+  height: 16px;
+  stroke: #192534;
+  stroke-width: 2;
+  fill: none;
+}
+
+.ls-step[open] .ls-step__toggle {
+  transform: rotate(45deg);
+}
+
+/* --- Step Content --- */
+.ls-step__content {
+  padding: 0 0 20px 40px;
+}
+
+@media screen and (max-width: 749px) {
+  .ls-step__content {
+    padding-left: 0;
+  }
+}
+
+/* --- Swatch Selector --- */
+.ls-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.ls-swatch {
+  position: relative;
+  cursor: pointer;
+}
+
+.ls-swatch input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.ls-swatch__visual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  transition: border-color 0.2s;
+  min-width: 80px;
+}
+
+.ls-swatch input:checked + .ls-swatch__visual {
+  border-color: #c8a45d;
+}
+
+.ls-swatch input:focus-visible + .ls-swatch__visual {
+  outline: 2px solid #c8a45d;
+  outline-offset: 2px;
+}
+
+.ls-swatch:hover .ls-swatch__visual {
+  border-color: #e5e1dc;
+}
+
+.ls-swatch input:checked + .ls-swatch__visual {
+  border-color: #c8a45d;
+}
+
+.ls-swatch__image {
+  width: 64px;
+  height: 64px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: #f5f2ee;
+}
+
+.ls-swatch__color {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid #e5e1dc;
+}
+
+.ls-swatch__label {
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #192534;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* --- Button Group --- */
+.ls-btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ls-btn-option {
+  position: relative;
+  cursor: pointer;
+}
+
+.ls-btn-option input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.ls-btn-option__label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  border: 1px solid #e5e1dc;
+  border-radius: 6px;
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #192534;
+  background: #fff;
+  transition: border-color 0.2s, background 0.2s;
+  white-space: nowrap;
+}
+
+.ls-btn-option input:checked + .ls-btn-option__label {
+  border-color: #c8a45d;
+  background: #fdf8ee;
+  color: #192534;
+  font-weight: 600;
+}
+
+.ls-btn-option:hover .ls-btn-option__label {
+  border-color: #c8a45d;
+}
+
+.ls-btn-option input:focus-visible + .ls-btn-option__label {
+  outline: 2px solid #c8a45d;
+  outline-offset: 2px;
+}
+
+/* --- Text Input --- */
+.ls-text-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.ls-text-field__label {
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.ls-text-field__input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #e5e1dc;
+  border-radius: 6px;
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 14px;
+  color: #192534;
+  background: #fff;
+  transition: border-color 0.2s;
+}
+
+.ls-text-field__input:focus {
+  outline: none;
+  border-color: #c8a45d;
+}
+
+.ls-text-field__input::placeholder {
+  color: #b9aa99;
+}
+
+.ls-text-field__char-count {
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 11px;
+  color: #b9aa99;
+  text-align: right;
+}
+
+/* --- Textarea --- */
+.ls-textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* --- File Upload --- */
+.ls-file-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.ls-file-upload__dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 28px 20px;
+  border: 2px dashed #e5e1dc;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  background: #faf9f7;
+}
+
+.ls-file-upload__dropzone:hover,
+.ls-file-upload__dropzone.is-dragover {
+  border-color: #c8a45d;
+  background: #fdf8ee;
+}
+
+.ls-file-upload__icon svg {
+  width: 32px;
+  height: 32px;
+  stroke: #b9aa99;
+  fill: none;
+}
+
+.ls-file-upload__text {
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 13px;
+  color: #495057;
+  text-align: center;
+}
+
+.ls-file-upload__text span {
+  color: #c8a45d;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.ls-file-upload__hint {
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 11px;
+  color: #b9aa99;
+}
+
+.ls-file-upload__preview {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #f5f2ee;
+  border-radius: 8px;
+}
+
+.ls-file-upload__preview.is-visible {
+  display: flex;
+}
+
+.ls-file-upload__thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: #fff;
+}
+
+.ls-file-upload__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ls-file-upload__name {
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #192534;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ls-file-upload__size {
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 11px;
+  color: #b9aa99;
+}
+
+.ls-file-upload__remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: #b9aa99;
+  transition: color 0.2s;
+}
+
+.ls-file-upload__remove:hover {
+  color: #d9534f;
+}
+
+.ls-file-upload__remove svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* --- Dropdown --- */
+.ls-select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #e5e1dc;
+  border-radius: 6px;
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 14px;
+  color: #192534;
+  background: #fff;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23b9aa99' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+  transition: border-color 0.2s;
+}
+
+.ls-select:focus {
+  outline: none;
+  border-color: #c8a45d;
+}
+
+/* --- Progress --- */
+.ls-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 16px 0;
+}
+
+.ls-progress__text {
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  color: #6A5D4D;
+  margin: 0;
+}
+
+.ls-progress__bar {
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: #E4E1DD;
+  overflow: hidden;
+}
+
+.ls-progress__fill {
+  height: 100%;
+  border-radius: 2px;
+  background: #C8A45D;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+/* --- CTA Button --- */
+.ls-cta {
+  width: 100%;
+  height: 52px;
+  padding: 0 24px;
+  border: none;
+  border-radius: 5px;
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: capitalize;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s, transform 0.1s;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.ls-cta--primary {
+  background: #c8a45d;
+  color: #fff;
+}
+
+.ls-cta--primary:hover:not(:disabled) {
+  background: #b89347;
+}
+
+.ls-cta--primary:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.ls-cta--primary:disabled {
+  background: #E4E1DD;
+  color: #B9AA99;
+  cursor: not-allowed;
+}
+
+/* --- Trust Badges --- */
+.ls-trust-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 20px 0 0;
+}
+
+.ls-trust-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #192534;
+  letter-spacing: 0.02em;
+}
+
+.ls-trust-badge svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* --- Color Picker (for sports text colors) --- */
+.ls-color-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ls-color-option {
+  position: relative;
+  cursor: pointer;
+}
+
+.ls-color-option input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.ls-color-option__swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  transition: border-color 0.2s;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+}
+
+.ls-color-option input:checked + .ls-color-option__swatch {
+  border-color: #c8a45d;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #c8a45d;
+}
+
+/* --- Live Preview Label --- */
+.ls-preview-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 0 0;
+}
+
+.ls-preview-label__title {
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #c8a45d;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.ls-preview-label__subtitle {
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 11px;
+  color: #b9aa99;
+  font-style: italic;
+}
+
+/* --- Relocated Preview (moved into product media column) --- */
+.ls-preview--relocated {
+  position: sticky;
+  top: 20px;
+  background: #faf9f7;
+  border: 1px solid #e5e1dc;
+  border-radius: 10px;
+  padding: 24px;
+  margin-bottom: 0;
+  z-index: 5;
+}
+
+/* When preview has been moved out, collapse the customizer's top spacing */
+.ls-product-customizer-section:not(:has(.ls-preview)) {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Merge customizer section visually with product-information above it */
+.ls-product-customizer-section {
+  margin-top: -20px;
+}
+
+/* --- Conditional Sections (coin type branching) --- */
+.ls-conditional {
+  display: none;
+}
+
+.ls-conditional.is-active {
+  display: block;
+}
+
+/* --- Pre-filled Step (hidden when URL param pre-selects) --- */
+.ls-step--prefilled {
+  display: none;
+}
+
+/* ============================================================
+   Live Preview
+   ============================================================ */
+
+/* --- Custom Properties (defaults, overridden by JS) --- */
+.ls-preview {
+  --ls-frame-color: #1a1a1a;
+  --ls-shape: none;
+  --ls-base-color: #5C4033;
+  --ls-finish-gradient: radial-gradient(circle, #D4AF37 0%, #B8860B 50%, #DAA520 100%);
+  --ls-glow-color: rgba(255, 255, 200, 0.5);
+  --ls-accent-color: #1a1a2e;
+}
+
+/* --- Container --- */
+.ls-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  background: #faf9f7;
+  border-radius: 10px;
+  border: 1px solid #e5e1dc;
+  position: sticky;
+  top: 16px;
+  z-index: 5;
+}
+
+.ls-preview__frame {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 1;
+}
+
+/* --- Canvas (fabric.js) --- */
+.ls-preview__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 4px;
+}
+
+/* fabric.js creates a wrapper div — ensure it fills the frame */
+.ls-preview__frame .canvas-container {
+  position: absolute !important;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Back canvas hidden by default (coins) */
+.ls-preview__canvas--back,
+.ls-preview__frame .canvas-container:has(.ls-preview__canvas--back) {
+  display: none;
+}
+
+.ls-preview[data-preview-face="back"] .ls-preview__canvas[data-face="front"],
+.ls-preview[data-preview-face="back"] .canvas-container:has(.ls-preview__canvas[data-face="front"]) {
+  display: none;
+}
+
+.ls-preview[data-preview-face="back"] .ls-preview__canvas--back,
+.ls-preview[data-preview-face="back"] .canvas-container:has(.ls-preview__canvas--back) {
+  display: block;
+}
+
+/* --- Mobile/Touch Controls --- */
+.ls-preview__controls {
+  display: none;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 0 0;
+}
+
+.ls-preview__controls.is-visible {
+  display: flex;
+}
+
+.ls-preview__ctrl {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #AEB2B8;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #192534;
+  transition: background 0.15s;
+  padding: 0;
+}
+
+.ls-preview__ctrl:active {
+  background: #f0ede8;
+}
+
+.ls-preview__ctrl svg {
+  width: 18px;
+  height: 18px;
+  stroke: #192534;
+  fill: none;
+  pointer-events: none;
+}
+
+.ls-preview__ctrl--replace {
+  width: auto;
+  padding: 0 16px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: "Nunito Sans", sans-serif;
+}
+
+/* --- Frame Overlay (SVG on top of photo) --- */
+.ls-preview__overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ls-preview__caption removed — replaced by .ls-preview-label two-line block */
+
+/* --- Coin Toggle --- */
+.ls-preview__coin-toggle {
+  display: flex;
+  gap: 4px;
+  background: #e5e1dc;
+  border-radius: 6px;
+  padding: 3px;
+}
+
+.ls-preview__coin-btn {
+  padding: 6px 18px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #7a7265;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.ls-preview__coin-btn.is-active {
+  background: #fff;
+  color: #192534;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+/* Coin: front/back canvas visibility handled via .ls-preview__canvas rules above */
+
+/* --- Desktop Plaque Base --- */
+.ls-preview__base {
+  width: 70%;
+  height: 14px;
+  background: var(--ls-base-color);
+  border-radius: 3px 3px 6px 6px;
+  margin-top: -2px;
+  transition: background 0.3s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* ============================================================
+   Per-Product-Type Preview Styles
+   ============================================================ */
+
+/* --- Per-Type Frame Aspect Ratios (canvas handles borders/clips internally) --- */
+[data-preview-type="print-media"] .ls-preview {
+  background: rgb(249, 248, 251);
+  border-color: rgb(239, 238, 241);
+}
+
+[data-preview-type="print-media"] .ls-preview__frame {
+  aspect-ratio: 1662 / 1293;
+  max-width: 380px;
+}
+
+[data-preview-type="shadow-box"] .ls-preview__frame {
+  aspect-ratio: 4/5;
+}
+
+[data-preview-type="light-box"] .ls-preview__frame {
+  aspect-ratio: 1;
+}
+
+[data-preview-type="desktop-plaque"] .ls-preview__frame {
+  aspect-ratio: 1;
+}
+
+[data-preview-type="coin"] .ls-preview__frame {
+  aspect-ratio: 1;
+  max-width: 260px;
+}
+
+[data-preview-type="missionary-plaque"] .ls-preview__frame {
+  aspect-ratio: 4/5;
+}
+
+[data-preview-type="missionary-canvas"] .ls-preview__frame {
+  aspect-ratio: 4/5;
+}
+
+[data-preview-type="temple-canvas"] .ls-preview__frame {
+  aspect-ratio: 4/5;
+}
+
+[data-preview-type="temple-wall-art"] .ls-preview__frame {
+  aspect-ratio: 4/5;
+}
+
+[data-preview-type="temple-night-light"] .ls-preview__frame {
+  aspect-ratio: 1;
+}
+
+[data-preview-type="puzzle"] .ls-preview__frame {
+  aspect-ratio: 1;
+}
+
+[data-preview-type="vinyl-record"] .ls-preview__frame {
+  aspect-ratio: 1;
+  max-width: 280px;
+}
+
+[data-preview-type="school-frame"] .ls-preview__frame {
+  aspect-ratio: 3/2;
+}
+
+[data-preview-type="sports-display"] .ls-preview__frame {
+  aspect-ratio: 1;
+}
+
+[data-preview-type="acrylic-block"] .ls-preview__frame {
+  aspect-ratio: 1;
+}
+
+/* ============================================================
+   PDP Title & Price Overrides (theme elements, Figma specs)
+   ============================================================ */
+
+/* Product title — Cormorant Garamond 500 · 32px */
+.product-details h1 {
+  color: var(--TMP-color-system-v2-Slate-Navy-900, #192534);
+  font-family: "Cormorant Garamond", serif;
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 36.8px;
+  text-transform: capitalize;
+}
+
+/* "from" label — Nunito Sans SemiBold · 11px · Soft Taupe */
+.product-details [class*="__text_fromLabel"] {
+  --color: #B9AA99 !important;
+  --font-family: "Nunito Sans", sans-serif !important;
+  --font-size: 11px !important;
+  --font-weight: 600 !important;
+  --line-height: 15.4px !important;
+  --text-transform: capitalize !important;
+  margin-top: auto;
+}
+
+.product-details [class*="__text_fromLabel"] p {
+  margin-top: auto;
+}
+
+/* Price — Nunito Sans 700 · 20px · Gold */
+.product-details product-price .price {
+  color: var(--TMP-color-system-v2-Warm-Gold-500, #C8A45D);
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  vertical-align: bottom;
+  margin-top: auto;
+}
+
+/* ============================================================
+   Relocated Customizer (inside product-details column)
+   ============================================================ */
+
+.ls-customizer-relocated {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.ls-customizer-relocated > .ls-step:first-child,
+.ls-customizer-relocated > .ls-conditional:first-child .ls-step:first-child {
+  border-top: 1px solid #AEB2B8;
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+
+@media screen and (max-width: 749px) {
+  .ls-preview {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  .ls-preview__frame {
+    max-width: 220px;
+  }
+
+  [data-preview-type="coin"] .ls-preview__frame {
+    max-width: 180px;
+  }
+
+  [data-preview-type="vinyl-record"] .ls-preview__frame {
+    max-width: 200px;
+  }
+
+  .ls-preview__controls {
+    padding: 8px 0 0;
+    gap: 6px;
+  }
+
+  .ls-preview__ctrl {
+    width: 36px;
+    height: 36px;
+  }
+
+  .ls-swatches {
+    gap: 8px;
+  }
+
+  .ls-swatch__visual {
+    min-width: 70px;
+    padding: 6px;
+  }
+
+  .ls-swatch__image {
+    width: 52px;
+    height: 52px;
+  }
+
+  .ls-btn-option__label {
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+
+  .ls-trust-badges {
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .ls-step__selection {
+    max-width: 120px;
+  }
+}

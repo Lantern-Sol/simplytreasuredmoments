@@ -1,0 +1,945 @@
+{%- doc -%}
+  Product Customizer Section
+  Renders numbered accordion steps with input components for product personalization.
+  Each product type gets a fixed step configuration via the `customizer_type` setting.
+  All inputs use name="properties[Label]" so Shopify includes them in the order line item.
+{%- enddoc -%}
+
+{%- liquid
+  assign type = product.metafields.custom.customizer_type.value | default: section.settings.customizer_type
+  assign product_form_id = 'LsCustomizerForm-' | append: section.id
+  assign variant = product.selected_or_first_available_variant
+-%}
+
+{{ 'ls-product-customizer.css' | asset_url | stylesheet_tag }}
+
+<div
+  class="ls-customizer"
+  data-customizer-type="{{ type }}"
+  data-form-id="{{ product_form_id }}"
+  data-product-url="{{ product.url }}"
+  {{ section.shopify_attributes }}
+>
+  <form
+    method="post"
+    action="/cart/add"
+    id="{{ product_form_id }}"
+    accept-charset="UTF-8"
+    enctype="multipart/form-data"
+    novalidate
+    data-type="add-to-cart-form"
+  >
+    <input type="hidden" name="form_type" value="product">
+    <input type="hidden" name="utf8" value="✓">
+    <input type="hidden" name="id" value="{{ variant.id }}">
+    <input type="hidden" name="quantity" value="1">
+  </form>
+  {%- comment -%} Live Preview {%- endcomment -%}
+  <div class="ls-preview" data-preview-type="{{ type }}">
+    {%- if type == 'coin' -%}
+      <div class="ls-preview__coin-toggle">
+        <button type="button" class="ls-preview__coin-btn is-active" data-face="front">Front</button>
+        <button type="button" class="ls-preview__coin-btn" data-face="back">Back</button>
+      </div>
+    {%- endif -%}
+    {%- liquid
+      comment
+        Resolve the frame overlay per product type.
+        Each overlay PNG has a transparent center where the customer photo shows through,
+        plus product-specific frame edges, shadows, and accents (stand clips, grooves, etc.).
+      endcomment
+      case type
+        when 'print-media'
+          assign frame_overlay = 'ls-frame-print-media.png' | asset_url
+        when 'shadow-box'
+          assign frame_overlay = 'ls-frame-shadow-box.png' | asset_url
+        else
+          assign frame_overlay = ''
+      endcase
+    -%}
+    <div class="ls-preview__frame">
+      {%- comment -%} Canvas-based photo preview (fabric.js) {%- endcomment -%}
+      <canvas
+        class="ls-preview__canvas"
+        id="ls-preview-canvas-{{ section.id }}"
+        data-face="front"
+      ></canvas>
+      {%- if type == 'coin' -%}
+        <canvas
+          class="ls-preview__canvas ls-preview__canvas--back"
+          id="ls-preview-canvas-back-{{ section.id }}"
+          data-face="back"
+        ></canvas>
+      {%- endif -%}
+
+      {%- comment -%} Frame overlay (transparent center, edges + stand visible) {%- endcomment -%}
+      {%- if frame_overlay != blank -%}
+        <img class="ls-preview__overlay" src="{{ frame_overlay }}" alt="" loading="lazy" draggable="false">
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Mobile/touch controls — visible once a photo is uploaded {%- endcomment -%}
+    <div class="ls-preview__controls">
+      <button type="button" class="ls-preview__ctrl" data-action="up" aria-label="Move up">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5m0 0l-7 7m7-7l7 7"/></svg>
+      </button>
+      <button type="button" class="ls-preview__ctrl" data-action="down" aria-label="Move down">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14m0 0l7-7m-7 7l-7-7"/></svg>
+      </button>
+      <button type="button" class="ls-preview__ctrl" data-action="left" aria-label="Move left">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m0 0l7-7m-7 7l7 7"/></svg>
+      </button>
+      <button type="button" class="ls-preview__ctrl" data-action="right" aria-label="Move right">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m0 0l-7-7m7 7l-7 7"/></svg>
+      </button>
+      <button type="button" class="ls-preview__ctrl" data-action="zoom-in" aria-label="Zoom in">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6v12m-6-6h12"/></svg>
+      </button>
+      <button type="button" class="ls-preview__ctrl" data-action="zoom-out" aria-label="Zoom out">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 12h12"/></svg>
+      </button>
+      <button type="button" class="ls-preview__ctrl" data-action="rotate" aria-label="Rotate">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 12c0-4.14 3.36-7.5 7.5-7.5 2.93 0 5.47 1.68 6.71 4.13M19.5 4.5v4.13h-4.13"/><path d="M19.5 12c0 4.14-3.36 7.5-7.5 7.5a7.49 7.49 0 01-6.71-4.13M4.5 19.5v-4.13h4.13"/></svg>
+      </button>
+      <button type="button" class="ls-preview__ctrl ls-preview__ctrl--replace" data-action="replace" aria-label="Replace photo">Replace</button>
+    </div>
+
+    {%- if type == 'desktop-plaque' -%}
+      <div class="ls-preview__base"></div>
+    {%- endif -%}
+    <div class="ls-preview-label">
+      <p class="ls-preview-label__title">Live Preview</p>
+      <p class="ls-preview-label__subtitle">Drag, zoom & rotate your photo to fit</p>
+    </div>
+  </div>
+
+  {%- case type -%}
+
+    {%- comment -%} ===================== PRINT MEDIA ===================== {%- endcomment -%}
+    {%- when 'print-media' -%}
+      {%- render 'ls-customizer-step',
+        step_number: 1,
+        title: 'Choose Your Material & Frame',
+        input_type: 'swatch',
+        property: 'Material & Frame',
+        options: 'Canvas Print,Metal Print,Wood Print,Acrylic Print',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 2,
+        title: 'Select Orientation & Size',
+        input_type: 'button-group',
+        property: 'Orientation & Size',
+        options: 'Landscape 8×10,Landscape 11×14,Landscape 16×20,Portrait 8×10,Portrait 11×14,Portrait 16×20,Square 10×10,Square 12×12',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 3,
+        title: 'Choose Texture',
+        input_type: 'button-group',
+        property: 'Texture',
+        options: 'Matte,Glossy,Satin',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 4,
+        title: 'Upload Your Photo',
+        input_type: 'file',
+        property: 'Photo',
+        required: true,
+        form_id: product_form_id
+      -%}
+
+    {%- comment -%} ===================== SHADOW BOX ===================== {%- endcomment -%}
+    {%- when 'shadow-box' -%}
+      {%- render 'ls-customizer-step',
+        step_number: 1,
+        title: 'Select Occasion',
+        input_type: 'button-group',
+        property: 'Occasion',
+        options: 'Missionary,Wedding,Baby,Graduation,Memorial,Anniversary,Birthday,Other',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 2,
+        title: 'Select Orientation & Size',
+        input_type: 'button-group',
+        property: 'Orientation & Size',
+        options: 'Landscape 8×10,Landscape 11×14,Portrait 8×10,Portrait 11×14',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 3,
+        title: 'Choose Frame Color',
+        input_type: 'swatch',
+        property: 'Frame Color',
+        options: 'Black,White,Walnut,Natural Oak,Cherry',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 4,
+        title: 'Add Your Text',
+        input_type: 'text-fields',
+        property: 'Text',
+        text_fields: 'Name or Title|50,Date or Subtitle|30,Personal Message|200',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 5,
+        title: 'Upload Your Photo',
+        input_type: 'file',
+        property: 'Photo',
+        required: true,
+        form_id: product_form_id
+      -%}
+
+    {%- comment -%} ===================== LIGHT BOX ===================== {%- endcomment -%}
+    {%- when 'light-box' -%}
+      {%- render 'ls-customizer-step',
+        step_number: 1,
+        title: 'Choose Style',
+        input_type: 'swatch',
+        property: 'Style',
+        options: 'Classic,Modern,Heart,Oval',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 2,
+        title: 'Add Your Text',
+        input_type: 'text-fields',
+        property: 'Text',
+        text_fields: 'Line 1|40,Line 2|40',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 3,
+        title: 'Upload Your Photo',
+        input_type: 'file',
+        property: 'Photo',
+        required: true,
+        form_id: product_form_id
+      -%}
+
+    {%- comment -%} ===================== DESKTOP PLAQUE ===================== {%- endcomment -%}
+    {%- when 'desktop-plaque' -%}
+      {%- render 'ls-customizer-step',
+        step_number: 1,
+        title: 'Select Occasion',
+        input_type: 'button-group',
+        property: 'Occasion',
+        options: 'Missionary,Wedding,Baby,Graduation,Memorial,Anniversary,Birthday,Other',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 2,
+        title: 'Choose Style',
+        input_type: 'swatch',
+        property: 'Style',
+        options: 'Rectangle,Heart,Oval,Arch',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 3,
+        title: 'Wood Base & Lighting',
+        input_type: 'swatch',
+        property: 'Wood Base & Lighting',
+        options: 'Walnut with LED,Maple with LED,Black with LED,No Base',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 4,
+        title: 'Add Your Text',
+        input_type: 'text-fields',
+        property: 'Text',
+        text_fields: 'Name or Title|50,Date or Subtitle|30,Personal Message|200',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 5,
+        title: 'Upload Your Photo(s)',
+        input_type: 'file',
+        property: 'Photo',
+        required: true,
+        form_id: product_form_id
+      -%}
+
+    {%- comment -%} ===================== COIN ===================== {%- endcomment -%}
+    {%- when 'coin' -%}
+      {%- render 'ls-customizer-step',
+        step_number: 1,
+        title: 'Choose Your Coin Type',
+        input_type: 'button-group',
+        property: 'Coin Type',
+        options: 'Missionary,Temple,Sports,Cruise,All Occasion',
+        required: true,
+        form_id: product_form_id,
+        conditional_key: 'coin-type'
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 2,
+        title: 'Choose Your Finish',
+        input_type: 'button-group',
+        property: 'Finish',
+        options: 'Gold,Silver',
+        required: true,
+        form_id: product_form_id
+      -%}
+
+      {%- comment -%} -- Missionary Coin -- {%- endcomment -%}
+      <div class="ls-conditional" data-coin-type="missionary">
+        {%- render 'ls-customizer-step',
+          step_number: 3,
+          title: 'Add Missionary Name & Start Date',
+          input_type: 'text-fields',
+          property: 'Missionary Info',
+          text_fields: 'Missionary Name (Elder or Sister)|50,Mission Start Month/Year|20',
+          required: true,
+          form_id: product_form_id
+        -%}
+        {%- render 'ls-customizer-step',
+          step_number: 4,
+          title: 'Enter Mission Name',
+          input_type: 'text-fields',
+          property: 'Mission',
+          text_fields: 'Mission Name|60',
+          required: true,
+          form_id: product_form_id
+        -%}
+        {%- render 'ls-customizer-step',
+          step_number: 5,
+          title: 'Upload Their Photo',
+          input_type: 'file',
+          property: 'Photo',
+          required: true,
+          form_id: product_form_id
+        -%}
+      </div>
+
+      {%- comment -%} -- Temple Coin -- {%- endcomment -%}
+      <div class="ls-conditional" data-coin-type="temple">
+        {%- render 'ls-customizer-step',
+          step_number: 3,
+          title: 'Choose Standard or Personalized',
+          input_type: 'button-group',
+          property: 'Temple Style',
+          options: 'Standard,Personalized',
+          required: true,
+          form_id: product_form_id,
+          conditional_key: 'temple-mode'
+        -%}
+        {%- render 'ls-customizer-step',
+          step_number: 4,
+          title: 'Choose Your Temple',
+          input_type: 'dropdown',
+          property: 'Temple',
+          options: 'Salt Lake City,Provo City Center,Payson,Mount Timpanogos,Draper,Oquirrh Mountain,Jordan River,Bountiful,Ogden,Logan,St. George,Manti,Cedar City,Laie,Mesa,Gilbert,Oakland,San Diego,Portland,Seattle,Denver,Washington D.C.,Nauvoo,Other',
+          required: true,
+          form_id: product_form_id
+        -%}
+        <div class="ls-conditional" data-temple-mode="personalized">
+          {%- render 'ls-customizer-step',
+            step_number: 5,
+            title: 'Add Front Text',
+            input_type: 'text-fields',
+            property: 'Front Text',
+            text_fields: 'Front Line 1|40,Front Line 2|40',
+            required: true,
+            form_id: product_form_id
+          -%}
+          {%- render 'ls-customizer-step',
+            step_number: 6,
+            title: 'Upload Front Photo',
+            input_type: 'file',
+            property: 'Front Photo',
+            required: true,
+            form_id: product_form_id
+          -%}
+          {%- render 'ls-customizer-step',
+            step_number: 7,
+            title: 'Add Back Text',
+            input_type: 'text-fields',
+            property: 'Back Text',
+            text_fields: 'Back Line 1|40,Back Line 2|40',
+            required: true,
+            form_id: product_form_id
+          -%}
+          {%- render 'ls-customizer-step',
+            step_number: 8,
+            title: 'Upload Back Photo',
+            input_type: 'file',
+            property: 'Back Photo',
+            required: true,
+            form_id: product_form_id
+          -%}
+        </div>
+      </div>
+
+      {%- comment -%} -- Sports Coin -- {%- endcomment -%}
+      <div class="ls-conditional" data-coin-type="sports">
+        {%- render 'ls-customizer-step',
+          step_number: 3,
+          title: 'Choose Individual or Team',
+          input_type: 'button-group',
+          property: 'Display Type',
+          options: 'Individual,Team',
+          required: true,
+          form_id: product_form_id,
+          conditional_key: 'sports-mode'
+        -%}
+        {%- render 'ls-customizer-step',
+          step_number: 4,
+          title: 'Choose Your Sport',
+          input_type: 'dropdown',
+          property: 'Sport',
+          options: 'Baseball,Basketball,Cheerleading,Cross Country,Dance,Football,Golf,Gymnastics,Hockey,Lacrosse,Soccer,Softball,Swimming,Tennis,Track & Field',
+          required: true,
+          form_id: product_form_id
+        -%}
+        {%- render 'ls-customizer-step',
+          step_number: 5,
+          title: 'Add Player Name(s)',
+          input_type: 'text-fields',
+          property: 'Player Info',
+          text_fields: 'Player Name(s)|50',
+          required: true,
+          form_id: product_form_id
+        -%}
+        <div class="ls-conditional" data-sports-mode="team">
+          {%- render 'ls-customizer-step',
+            step_number: 6,
+            title: 'Add Front Text',
+            input_type: 'text-fields',
+            property: 'Front Text',
+            text_fields: 'Team Name|50,Season / League|40',
+            required: true,
+            form_id: product_form_id
+          -%}
+        </div>
+        {%- render 'ls-customizer-step',
+          step_number: 7,
+          title: 'Choose Text Color',
+          input_type: 'color-picker',
+          property: 'Text Color',
+          options: '#1a1a2e,#e94560,#0f3460,#16213e,#533483,#00b4d8,#f77f00,#2d6a4f,#d4a373,#bc6c25,#606c38,#ffffff',
+          required: true,
+          form_id: product_form_id
+        -%}
+        {%- render 'ls-customizer-step',
+          step_number: 8,
+          title: 'Add Back Text',
+          input_type: 'text-fields',
+          property: 'Back Text',
+          text_fields: 'Back Line 1|40,Back Line 2|40',
+          required: true,
+          form_id: product_form_id
+        -%}
+        {%- render 'ls-customizer-step',
+          step_number: 9,
+          title: 'Upload Photo',
+          input_type: 'file',
+          property: 'Photo',
+          required: true,
+          form_id: product_form_id
+        -%}
+      </div>
+
+      {%- comment -%} -- Cruise Coin (no photo upload) -- {%- endcomment -%}
+      <div class="ls-conditional" data-coin-type="cruise">
+        {%- render 'ls-customizer-step',
+          step_number: 3,
+          title: 'Enter Cruise Line & Ship Name',
+          input_type: 'text-fields',
+          property: 'Cruise Front',
+          text_fields: 'Cruise Line|50,Ship Name|50',
+          required: true,
+          form_id: product_form_id
+        -%}
+        {%- render 'ls-customizer-step',
+          step_number: 4,
+          title: 'Enter Sailing Date',
+          input_type: 'text-fields',
+          property: 'Sailing Date',
+          text_fields: 'Sailing Date|30',
+          required: true,
+          form_id: product_form_id
+        -%}
+        {%- render 'ls-customizer-step',
+          step_number: 5,
+          title: 'Enter Itinerary & Port Destinations',
+          input_type: 'text-fields',
+          property: 'Itinerary',
+          text_fields: 'Complete Itinerary & Port Destinations|200',
+          required: true,
+          form_id: product_form_id
+        -%}
+      </div>
+
+      {%- comment -%} -- All Occasion Coin -- {%- endcomment -%}
+      <div class="ls-conditional" data-coin-type="all-occasion">
+        {%- render 'ls-customizer-step',
+          step_number: 3,
+          title: 'Upload Front Photo & Add Text',
+          input_type: 'file-text',
+          property: 'Front Photo',
+          text_fields: 'Front Line 1|40,Front Line 2|40',
+          required: true,
+          form_id: product_form_id
+        -%}
+        {%- render 'ls-customizer-step',
+          step_number: 4,
+          title: 'Upload Back Photo & Add Text',
+          input_type: 'file-text',
+          property: 'Back Photo',
+          text_fields: 'Back Line 1|40,Back Line 2|40',
+          required: true,
+          form_id: product_form_id
+        -%}
+      </div>
+
+    {%- comment -%} ===================== MISSIONARY PLAQUE ===================== {%- endcomment -%}
+    {%- when 'missionary-plaque' -%}
+      {%- render 'ls-customizer-step',
+        step_number: 1,
+        title: 'Choose Wood Base',
+        input_type: 'swatch',
+        property: 'Wood Base',
+        options: 'Walnut,Maple,Cherry,Black',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 2,
+        title: 'Add Your Text',
+        input_type: 'text-fields',
+        property: 'Text',
+        text_fields: 'Missionary Name|50,Mission Name|50,Mission Dates|30',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 3,
+        title: 'Upload Your Photo',
+        input_type: 'file',
+        property: 'Photo',
+        required: true,
+        form_id: product_form_id
+      -%}
+
+    {%- comment -%} ===================== MISSIONARY CANVAS ===================== {%- endcomment -%}
+    {%- when 'missionary-canvas' -%}
+      {%- render 'ls-customizer-step',
+        step_number: 1,
+        title: 'Select Canvas Size',
+        input_type: 'button-group',
+        property: 'Canvas Size',
+        options: '8×10,11×14,16×20,18×24',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 2,
+        title: 'Add Your Text',
+        input_type: 'text-fields',
+        property: 'Text',
+        text_fields: 'Missionary Name|50,Mission Name|50,Mission Dates|30',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 3,
+        title: 'Upload Your Photo',
+        input_type: 'file',
+        property: 'Photo',
+        required: true,
+        form_id: product_form_id
+      -%}
+
+    {%- comment -%} ===================== TEMPLE CANVAS ===================== {%- endcomment -%}
+    {%- when 'temple-canvas' -%}
+      {%- render 'ls-customizer-step',
+        step_number: 1,
+        title: 'Choose Canvas Style',
+        input_type: 'swatch',
+        property: 'Canvas Style',
+        options: 'Watercolor,Photo Realistic,Minimalist,Sunset',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 2,
+        title: 'Select Size',
+        input_type: 'button-group',
+        property: 'Size',
+        options: '8×10,11×14,16×20,18×24,24×36',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 3,
+        title: 'Upload Your Photo',
+        input_type: 'file',
+        property: 'Photo',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 4,
+        title: 'Add Your Text',
+        input_type: 'text-fields',
+        property: 'Text',
+        text_fields: 'Names|50,Date|30,Personal Message|150',
+        required: true,
+        form_id: product_form_id
+      -%}
+
+    {%- comment -%} ===================== TEMPLE WALL ART ===================== {%- endcomment -%}
+    {%- when 'temple-wall-art' -%}
+      {%- render 'ls-customizer-step',
+        step_number: 1,
+        title: 'Choose Material',
+        input_type: 'swatch',
+        property: 'Material',
+        options: 'Canvas,Metal,Acrylic,Wood',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 2,
+        title: 'Select Size',
+        input_type: 'button-group',
+        property: 'Size',
+        options: '8×10,11×14,16×20,18×24,24×36',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 3,
+        title: 'Upload Your Photo',
+        input_type: 'file',
+        property: 'Photo',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 4,
+        title: 'Add Your Text',
+        input_type: 'text-fields',
+        property: 'Text',
+        text_fields: 'Names|50,Date|30,Quote or Message|150',
+        required: true,
+        form_id: product_form_id
+      -%}
+
+    {%- comment -%} ===================== TEMPLE NIGHT LIGHT ===================== {%- endcomment -%}
+    {%- when 'temple-night-light' -%}
+      {%- render 'ls-customizer-step',
+        step_number: 1,
+        title: 'Select Temple',
+        input_type: 'dropdown',
+        property: 'Temple',
+        options: 'Salt Lake City,Provo City Center,Payson,Mount Timpanogos,Draper,Oquirrh Mountain,Jordan River,Bountiful,Ogden,Logan,St. George,Manti,Cedar City,Laie,Mesa,Gilbert,Oakland,San Diego,Portland,Seattle,Denver,Washington D.C.,Nauvoo,Other',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 2,
+        title: 'Choose Style',
+        input_type: 'swatch',
+        property: 'Style',
+        options: 'Rectangle,Heart,Oval,Arch',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 3,
+        title: 'Add Your Text',
+        input_type: 'text-fields',
+        property: 'Text',
+        text_fields: 'Names|50,Date|30,Personal Message|150',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 4,
+        title: 'Upload Your Photo',
+        input_type: 'file',
+        property: 'Photo',
+        required: true,
+        form_id: product_form_id
+      -%}
+
+    {%- comment -%} ===================== PUZZLE ===================== {%- endcomment -%}
+    {%- when 'puzzle' -%}
+      {%- render 'ls-customizer-step',
+        step_number: 1,
+        title: 'Choose Shape',
+        input_type: 'button-group',
+        property: 'Shape',
+        options: 'Heart,Rectangle,Circle,Star',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 2,
+        title: 'Select Size',
+        input_type: 'button-group',
+        property: 'Size',
+        options: 'Small,Medium,Large',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 3,
+        title: 'Upload Your Photo',
+        input_type: 'file',
+        property: 'Photo',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 4,
+        title: 'Add Your Text',
+        input_type: 'text-fields',
+        property: 'Text',
+        text_fields: 'Line 1|40,Line 2|40',
+        required: false,
+        form_id: product_form_id
+      -%}
+
+    {%- comment -%} ===================== VINYL RECORD ===================== {%- endcomment -%}
+    {%- when 'vinyl-record' -%}
+      {%- render 'ls-customizer-step',
+        step_number: 1,
+        title: 'Select Size',
+        input_type: 'button-group',
+        property: 'Size',
+        options: '7 inch,10 inch,12 inch',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 2,
+        title: 'Upload Your Photo',
+        input_type: 'file',
+        property: 'Photo',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 3,
+        title: 'Song & Artist Details',
+        input_type: 'text-fields',
+        property: 'Song Details',
+        text_fields: 'Song Title|60,Artist Name|40',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 4,
+        title: 'Add Your Text',
+        input_type: 'text-fields',
+        property: 'Text',
+        text_fields: 'Custom Label Text|50,Date or Message|40',
+        required: false,
+        form_id: product_form_id
+      -%}
+
+    {%- comment -%} ===================== SCHOOL FRAME ===================== {%- endcomment -%}
+    {%- when 'school-frame' -%}
+      {%- render 'ls-customizer-step',
+        step_number: 1,
+        title: 'Choose Frame Style',
+        input_type: 'swatch',
+        property: 'Frame Style',
+        options: 'Classic Black,White,Walnut,Natural Oak',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 2,
+        title: 'Select Size',
+        input_type: 'button-group',
+        property: 'Size',
+        options: 'K-12 (13 photos),K-8 (9 photos),Pre-K to 5th (7 photos)',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 3,
+        title: 'Upload Your Photo(s)',
+        input_type: 'file',
+        property: 'Photos',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 4,
+        title: 'Add Your Text',
+        input_type: 'text-fields',
+        property: 'Text',
+        text_fields: 'Child Name|40,School Name|50',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 5,
+        title: 'Select Year Range',
+        input_type: 'text-fields',
+        property: 'Year Range',
+        text_fields: 'Start Year (e.g. 2012)|4,End Year (e.g. 2024)|4',
+        required: true,
+        form_id: product_form_id
+      -%}
+
+    {%- comment -%} ===================== SPORTS DISPLAY ===================== {%- endcomment -%}
+    {%- when 'sports-display' -%}
+      {%- render 'ls-customizer-step',
+        step_number: 1,
+        title: 'Individual or Team',
+        input_type: 'button-group',
+        property: 'Display Type',
+        options: 'Individual,Team',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 2,
+        title: 'Select Sport',
+        input_type: 'dropdown',
+        property: 'Sport',
+        options: 'Baseball,Basketball,Cheerleading,Cross Country,Dance,Football,Golf,Gymnastics,Hockey,Lacrosse,Soccer,Softball,Swimming,Tennis,Track & Field,Volleyball,Wrestling,Other',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 3,
+        title: 'Add Your Text',
+        input_type: 'text-fields',
+        property: 'Text',
+        text_fields: 'Player/Team Name|50,Number|10,Season/Year|20',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 4,
+        title: 'Upload Your Photo',
+        input_type: 'file',
+        property: 'Photo',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 5,
+        title: 'Choose Colors',
+        input_type: 'color-picker',
+        property: 'Colors',
+        options: '#1a1a2e,#e94560,#0f3460,#16213e,#533483,#e94560,#00b4d8,#f77f00,#2d6a4f,#d4a373,#bc6c25,#606c38',
+        required: true,
+        form_id: product_form_id
+      -%}
+
+    {%- comment -%} ===================== ACRYLIC BLOCK ===================== {%- endcomment -%}
+    {%- when 'acrylic-block' -%}
+      {%- render 'ls-customizer-step',
+        step_number: 1,
+        title: 'Choose Shape',
+        input_type: 'button-group',
+        property: 'Shape',
+        options: 'Heart,Rectangle,Circle,Diamond',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 2,
+        title: 'Upload Your Photo',
+        input_type: 'file',
+        property: 'Photo',
+        required: true,
+        form_id: product_form_id
+      -%}
+
+  {%- endcase -%}
+
+  {%- comment -%} Progress indicator {%- endcomment -%}
+  <div class="ls-progress">
+    <p class="ls-progress__text"></p>
+    <div class="ls-progress__bar">
+      <div class="ls-progress__fill"></div>
+    </div>
+  </div>
+
+  {%- comment -%} CTA Button {%- endcomment -%}
+  <button type="submit" form="{{ product_form_id }}" class="ls-cta ls-cta--primary" disabled>
+    Complete All Steps to Add to Cart
+  </button>
+
+  {%- comment -%} Trust Badges {%- endcomment -%}
+  <div class="ls-trust-badges">
+    <span class="ls-trust-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/></svg>
+      Handcrafted in USA
+    </span>
+    <span class="ls-trust-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"/></svg>
+      Satisfaction Guaranteed
+    </span>
+    <span class="ls-trust-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3"/></svg>
+      60 Days Free Returns
+    </span>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/fabric@6.6.1/dist/index.min.js" defer></script>
+<script src="{{ 'ls-product-customizer.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Product Customizer",
+  "tag": "section",
+  "class": "ls-product-customizer-section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "customizer_type",
+      "label": "Product Type",
+      "options": [
+        { "value": "print-media", "label": "Print Media" },
+        { "value": "shadow-box", "label": "Shadow Box" },
+        { "value": "light-box", "label": "Light Box" },
+        { "value": "desktop-plaque", "label": "Desktop Plaque / Night Light" },
+        { "value": "coin", "label": "Commemorative Coin" },
+        { "value": "missionary-plaque", "label": "LDS Missionary Photo Plaque" },
+        { "value": "missionary-canvas", "label": "LDS Missionary Flag Canvas" },
+        { "value": "temple-canvas", "label": "LDS Temple Canvas" },
+        { "value": "temple-wall-art", "label": "LDS Temple Wall Art" },
+        { "value": "temple-night-light", "label": "LDS Temple Night Light" },
+        { "value": "puzzle", "label": "Personalized Acrylic Photo Puzzle" },
+        { "value": "vinyl-record", "label": "Vinyl Record Photo Print" },
+        { "value": "school-frame", "label": "School Years Photo Frame" },
+        { "value": "sports-display", "label": "Sports Desktop Display" },
+        { "value": "acrylic-block", "label": "Personalized Acrylic Block" }
+      ],
+      "default": "print-media"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Customizer"
+    }
+  ]
+}
+{% endschema %}
