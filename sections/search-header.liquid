@@ -16,7 +16,7 @@
     {% endif %}
 
     {% capture heading_text %}
-      <h3>{{ heading_text }}</h3>
+      <h3>{{ heading_text }}{% if search.performed and search.terms != blank %} for "{{ search.terms }}"{% endif %}</h3>
     {% endcapture %}
 
     {% content_for 'block', id: 'heading', type: '_heading', text: heading_text %}
