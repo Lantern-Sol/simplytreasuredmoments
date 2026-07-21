@@ -6,6 +6,8 @@
   @param {object} products - Array of product objects
   @param {string} [title] - Header of the collection or search results
   @param {string} children - List or grid of product cards
+  @param {boolean} [has_promos] - Whether promo cards are injected in the grid
+  @param {boolean} [force_4_col] - Force 4-column grid on desktop
 {%- enddoc -%}
 
 {% capture product_card_size %}
@@ -42,6 +44,12 @@
           --product-grid-columns-desktop: repeat(4, 1fr);
         }
     {% endcase %}
+
+    {% if force_4_col %}
+      .product-grid--{{ section.id }}:is(.product-grid--4-col) {
+        --product-grid-columns-desktop: repeat(4, 1fr);
+      }
+    {% endif %}
 
     /* This logic helps prevent displaying one column for an large or extra-large product card size on a small screen. We want it to display at least two columns. */
     {% case section.settings.product_card_size %}
@@ -108,13 +116,11 @@
         </p>
       </div>
     {% else %}
-      <span ref="viewMorePrevious"></span>
-
       {% if title %}
         <h4 class="main-collection-grid__title">{{ title }}</h4>
       {% endif %}
       <ul
-        class="product-grid product-grid--{{ section.id }} product-grid--{{ section.settings.layout_type }} {% if section.settings.mobile_product_card_size == 'large' %} product-grid-mobile--large{% endif %}"
+        class="product-grid product-grid--{{ section.id }} product-grid--{{ section.settings.layout_type }}{% if force_4_col %} product-grid--4-col{% endif %}{% if has_promos %} product-grid--has-promos{% endif %}{% if section.settings.mobile_product_card_size == 'large' %} product-grid-mobile--large{% endif %}"
         product-grid-view="default"
         ref="grid"
         role="list"
@@ -123,7 +129,6 @@
       >
         {{ children }}
       </ul>
-      <span ref="viewMoreNext"></span>
     {% endif %}
   </div>
 </div>

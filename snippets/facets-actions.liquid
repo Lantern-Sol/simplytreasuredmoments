@@ -40,7 +40,7 @@
       type="button"
       on:click="dialog-component/closeDialog"
     >
-      {{- 'actions.see_items' | t: count: products_count -}}
+      {%- if in_drawer -%}Show Items{%- else -%}{{- 'actions.see_items' | t: count: products_count -}}{%- endif -%}
     </button>
   {% endif %}
 </div>

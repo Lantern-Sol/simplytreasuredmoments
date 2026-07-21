@@ -40,7 +40,7 @@
         id="sort-select-{{ section_id }}"
         name="sort_by"
         class="sorting-filter__select"
-        {% if should_use_select_on_mobile == false %}
+        {% if should_use_select_on_mobile == false or in_drawer %}
           disabled
         {% endif %}
       >
@@ -101,7 +101,13 @@
           {{- status -}}
         </span>
         <span class="svg-wrapper icon-caret icon-animated">
-          {{- 'icon-caret.svg' | inline_asset_content -}}
+          {%- if in_drawer -%}
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M2.67578 11.8945L3.57422 12.793L10 6.36719L16.4258 12.793L17.3242 11.8945L10.4492 5.01953L10 4.58984L9.55078 5.01953L2.67578 11.8945Z" fill="#192534"/>
+            </svg>
+          {%- else -%}
+            {{- 'icon-caret.svg' | inline_asset_content -}}
+          {%- endif -%}
         </span>
       </summary>
       <floating-panel-component
@@ -312,6 +318,7 @@
   .facets-toggle .sorting-filter__container {
     @media screen and (max-width: 749px) {
       padding: 0;
+      margin-inline-end: 0;
     }
   }
 

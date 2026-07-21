@@ -1,5 +1,9 @@
 
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+
 <script
   src="{{ 'results-list.js' | asset_url }}"
   type="module"
@@ -20,6 +24,17 @@
       { once: true }
     );
   }
+
+  /* Force sort accordion open inside drawer */
+  const observer = new MutationObserver(() => {
+    const drawer = document.querySelector('.facets--drawer');
+    if (!drawer) return;
+    const sortDetails = drawer.querySelector('.sorting-filter .facets__panel');
+    if (sortDetails && !sortDetails.open) {
+      sortDetails.open = true;
+    }
+  });
+  observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['open'] });
 {% endjavascript %}
 
 {% comment %} We always render this full-width, as the child blocks have width: page/full settings {% endcomment %}
@@ -34,16 +49,53 @@
   <div
     class="collection-wrapper grid gap-style"
   >
+    {% paginate collection.products by 24 %}
+
     {% content_for 'block',
       type: 'filters',
       id: 'filters',
       results: collection,
       results_size: collection.products_count
     %}
+      {%- comment -%} Promo card setup {%- endcomment -%}
+      {% assign promo_count = 0 %}
+      {% if section.settings.promo_1_image != blank %}{% assign promo_count = 1 %}{% endif %}
+      {% if section.settings.promo_2_image != blank %}{% assign promo_count = 2 %}{% endif %}
+      {% if section.settings.promo_3_image != blank %}{% assign promo_count = 3 %}{% endif %}
 
-    {% paginate collection.products by 24 %}
+      {% assign show_promos = false %}
+      {% if section.settings.enable_promo_cards and promo_count > 0 and collection.products_count >= 8 %}
+        {% assign show_promos = true %}
+      {% endif %}
+
+      {%- comment -%} DEV TEST: hardcoded promo at position 8 (last in row 2) if no promos configured {%- endcomment -%}
+      {% assign dev_test_promos = false %}
+      {% if section.settings.enable_promo_cards and promo_count == 0 and collection.products_count >= 8 %}
+        {% assign dev_test_promos = true %}
+      {% endif %}
+
       {% capture children %}
+        {% assign promo_idx = 0 %}
         {% for product in collection.products %}
+          {%- if show_promos -%}
+            {% assign cycle_pos = forloop.index0 | modulo: 14 %}
+            {%- if cycle_pos == 11 -%}
+              {%- comment -%} Promo BEFORE this product (first in row 4 of cycle) {%- endcomment -%}
+              {% assign current_promo = promo_idx | modulo: promo_count | plus: 1 %}
+              <li class="product-grid__item product-grid__item--promo">
+                {% case current_promo %}
+                  {% when 1 %}
+                    {% render 'ls-promo-card', image: section.settings.promo_1_image, eyebrow: section.settings.promo_1_eyebrow, title: section.settings.promo_1_title, description: section.settings.promo_1_description, cta_text: section.settings.promo_1_cta_text, cta_link: section.settings.promo_1_cta_link %}
+                  {% when 2 %}
+                    {% render 'ls-promo-card', image: section.settings.promo_2_image, eyebrow: section.settings.promo_2_eyebrow, title: section.settings.promo_2_title, description: section.settings.promo_2_description, cta_text: section.settings.promo_2_cta_text, cta_link: section.settings.promo_2_cta_link %}
+                  {% when 3 %}
+                    {% render 'ls-promo-card', image: section.settings.promo_3_image, eyebrow: section.settings.promo_3_eyebrow, title: section.settings.promo_3_title, description: section.settings.promo_3_description, cta_text: section.settings.promo_3_cta_text, cta_link: section.settings.promo_3_cta_link %}
+                {% endcase %}
+              </li>
+              {% assign promo_idx = promo_idx | plus: 1 %}
+            {%- endif -%}
+          {%- endif -%}
+
           <li
             id="{{ section.id }}-{{ product.id }}"
             class="product-grid__item product-grid__item--{{ forloop.index0 }}"
@@ -55,6 +107,51 @@
             {% content_for 'block', type: '_product-card', id: 'product-card', closest.product: product %}
             {% # theme-check-enable %}
           </li>
+
+          {%- if show_promos -%}
+            {%- if cycle_pos == 6 -%}
+              {%- comment -%} Promo AFTER this product (last in row 2 of cycle) {%- endcomment -%}
+              {% assign current_promo = promo_idx | modulo: promo_count | plus: 1 %}
+              <li class="product-grid__item product-grid__item--promo">
+                {% case current_promo %}
+                  {% when 1 %}
+                    {% render 'ls-promo-card', image: section.settings.promo_1_image, eyebrow: section.settings.promo_1_eyebrow, title: section.settings.promo_1_title, description: section.settings.promo_1_description, cta_text: section.settings.promo_1_cta_text, cta_link: section.settings.promo_1_cta_link %}
+                  {% when 2 %}
+                    {% render 'ls-promo-card', image: section.settings.promo_2_image, eyebrow: section.settings.promo_2_eyebrow, title: section.settings.promo_2_title, description: section.settings.promo_2_description, cta_text: section.settings.promo_2_cta_text, cta_link: section.settings.promo_2_cta_link %}
+                  {% when 3 %}
+                    {% render 'ls-promo-card', image: section.settings.promo_3_image, eyebrow: section.settings.promo_3_eyebrow, title: section.settings.promo_3_title, description: section.settings.promo_3_description, cta_text: section.settings.promo_3_cta_text, cta_link: section.settings.promo_3_cta_link %}
+                {% endcase %}
+              </li>
+              {% assign promo_idx = promo_idx | plus: 1 %}
+            {%- endif -%}
+          {%- endif -%}
+
+          {%- comment -%} DEV TEST: inject hardcoded promo cards for visual testing {%- endcomment -%}
+          {%- if dev_test_promos -%}
+            {% assign cycle_pos_dev = forloop.index0 | modulo: 14 %}
+            {%- if cycle_pos_dev == 6 -%}
+              <li class="product-grid__item product-grid__item--promo">
+                {% render 'ls-promo-card',
+                  eyebrow: 'The Gift Edit',
+                  title: 'We help you with the choosing',
+                  description: 'Gift-worthy by definition.',
+                  cta_text: 'SHOP PHOTO PUZZLE',
+                  cta_link: '/collections/all'
+                %}
+              </li>
+            {%- endif -%}
+            {%- if cycle_pos_dev == 10 -%}
+              <li class="product-grid__item product-grid__item--promo">
+                {% render 'ls-promo-card',
+                  eyebrow: 'Bestsellers',
+                  title: 'Our most loved treasures',
+                  description: 'Discover what everyone is talking about.',
+                  cta_text: 'SHOP BESTSELLERS',
+                  cta_link: '/collections/all'
+                %}
+              </li>
+            {%- endif -%}
+          {%- endif -%}
         {% endfor %}
       {% endcapture %}
 
@@ -62,13 +159,215 @@
         section: section,
         children: children,
         products: collection.products,
-        paginate: paginate
+        paginate: paginate,
+        has_promos: show_promos,
+        force_4_col: true
       %}
+
+      <div class="ls-pagination-wrapper">
+        {% render 'pagination-controls', paginate: paginate %}
+      </div>
     {% endpaginate %}
   </div>
 </results-list>
 
 {% stylesheet %}
+  /* --- Promo card styles --- */
+  .ls-promo-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow: hidden;
+    border-radius: 4px;
+    text-decoration: none;
+    aspect-ratio: 303 / 403;
+    height: 100%;
+  }
+
+  .ls-promo-card__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ls-promo-card__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(34, 30, 26, 0.7) 23%, rgba(34, 30, 26, 0) 56%);
+    pointer-events: none;
+  }
+
+  .ls-promo-card__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 29px 19px;
+  }
+
+  .ls-promo-card__eyebrow {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 1.4;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .ls-promo-card__title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 1.2;
+    color: #fff;
+    margin: 0;
+  }
+
+  .ls-promo-card__description {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    color: rgba(255, 255, 255, 0.68);
+    margin: 4px 0 0;
+  }
+
+  .ls-promo-card__cta {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    line-height: 1.4;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #fff;
+    margin-top: 8px;
+  }
+
+  .ls-promo-card--no-image {
+    background: #39332D;
+  }
+
+  /* --- Product card typography overrides --- */
+  .product-grid .text-block p,
+  .product-grid .text-block .rte p {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 22px;
+    color: #192534;
+  }
+
+  .product-grid product-price,
+  .product-grid product-price .price {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 20px;
+    color: #192534;
+  }
+
+  /* --- Pagination overrides to match Figma --- */
+  .ls-pagination-wrapper {
+    grid-column: var(--full-width);
+    display: flex;
+    justify-content: center;
+    padding-top: 32px;
+    padding-bottom: 48px;
+  }
+
+  .ls-pagination-wrapper .pagination {
+    --pagination-size: 34px;
+    --pagination-inset: 0;
+    --pagination-radius: 3;
+    padding: 0;
+    margin-top: 0;
+  }
+
+  .ls-pagination-wrapper .pagination__list {
+    gap: 4px;
+  }
+
+  .ls-pagination-wrapper .pagination__link {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 300;
+    font-size: 11px;
+    line-height: 19px;
+    color: #757575;
+    border: 0.8px solid transparent;
+    border-radius: 3px;
+  }
+
+  .ls-pagination-wrapper .pagination__link--current {
+    color: #121212;
+    border-color: #121212;
+    background: transparent;
+    font-weight: 300;
+  }
+
+  .ls-pagination-wrapper .pagination__link--current::before {
+    display: none;
+  }
+
+  .ls-pagination-wrapper .pagination__link--arrow {
+    color: #9A9086;
+    border-color: transparent;
+  }
+
+  .ls-pagination-wrapper .pagination__link--arrow svg {
+    width: 6px;
+    height: 10px;
+  }
+
+  .ls-pagination-wrapper .pagination__link--disabled {
+    opacity: 0.4;
+  }
+
+  .ls-pagination-wrapper .pagination__link--gap {
+    color: #9A9086;
+    font-family: 'Acumin Pro', sans-serif;
+    font-weight: 300;
+    font-size: 12px;
+  }
+
+  .ls-pagination-wrapper .pagination__link:hover:not(.pagination__link--current, .pagination__link--disabled, .pagination__link--gap) {
+    border-color: #9A9086;
+  }
+
+  .ls-pagination-wrapper .pagination__link:hover::before,
+  .ls-pagination-wrapper .pagination__list::before {
+    display: none !important;
+    content: none !important;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ls-pagination-wrapper .pagination {
+      --pagination-size: 40px;
+    }
+  }
+
+  /* Mobile: promo spans full width as horizontal banner */
+  @media screen and (max-width: 749px) {
+    .product-grid__item--promo {
+      grid-column: 1 / -1;
+    }
+
+    .ls-promo-card {
+      aspect-ratio: auto;
+      min-height: 180px;
+      flex-direction: row;
+    }
+
+    .ls-promo-card__content {
+      padding: 20px;
+      justify-content: center;
+    }
+  }
+
   .main-collection-grid {
     grid-column: var(--grid-column--mobile);
 
@@ -78,6 +377,10 @@
   }
 
   .collection-wrapper {
+    @media screen and (max-width: 749px) {
+      padding-inline: var(--page-margin, 15px);
+    }
+
     @media screen and (min-width: 750px) {
       grid-template-columns:
         1fr repeat(
@@ -139,6 +442,784 @@
       margin-inline-start: calc(-1 * max(var(--padding-xs), var(--padding-inline-start)));
       margin-inline-end: calc(-1 * max(var(--padding-xs), var(--padding-inline-end)));
     }
+  }
+
+  /* =============================================
+     Facets / Filter Bar — Figma overrides
+     ============================================= */
+
+  /* 1. Filter bar background — full-width bleed via pseudo-element */
+  .facets-block-wrapper--horizontal {
+    position: relative;
+  }
+
+  .facets-block-wrapper--horizontal::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    background: #F2F0EE;
+    z-index: -1;
+  }
+
+  .facets-block-wrapper--horizontal {
+    margin-bottom: 15px;
+  }
+
+  .facets--horizontal .facets__form {
+    justify-content: space-between;
+  }
+
+  /* 2. Desktop overrides — all inside one media query */
+  @media screen and (min-width: 750px) {
+
+    /* --- Override overflow-list shadow DOM height (JS sets 44px inline) --- */
+    .facets--horizontal .facets__overflow-list::part(list) {
+      height: auto !important;
+    }
+
+    /* --- Bar height --- */
+    .facets--horizontal {
+      min-height: 95px;
+      align-items: center;
+    }
+
+    /* --- Base summary: transparent flex-wrap container ---
+         !important needed to beat blocks/filters.liquid rules
+         that load after section CSS */
+    .facets--horizontal .facets__summary {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      gap: 3px !important;
+      background: transparent !important;
+      border: none !important;
+      border-radius: 0 !important;
+      height: auto !important;
+      padding: 0 !important;
+      font-family: 'Nunito Sans', sans-serif;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 22px;
+      color: #192534;
+    }
+
+    /* --- Label takes full width → forces rest to 2nd row --- */
+    .facets--horizontal .facets__summary .facets__label {
+      width: 100%;
+      flex-shrink: 0;
+      font-family: 'Nunito Sans', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 1.5;
+      letter-spacing: -0.16px;
+      color: #192534;
+    }
+
+    /* --- Status-wrapper = input box (list & swatch filters) --- */
+    .facets--horizontal .facets__status-wrapper {
+      background: #FFFEFD !important;
+      border: 1px solid #AEB2B8 !important;
+      border-radius: 8px !important;
+      height: 38px !important;
+      padding: 0 16px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      box-sizing: border-box;
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* --- Caret: replace theme SVG with Figma 10×6 filled chevron --- */
+    .facets--horizontal .facets__summary .icon-caret {
+      width: 10px !important;
+      height: 6px !important;
+      margin-block: 0 !important;
+    }
+
+    .facets--horizontal .facets__summary .icon-caret svg {
+      display: none !important;
+    }
+
+    .facets--horizontal .facets__summary .icon-caret::after {
+      content: '';
+      display: block;
+      width: 10px;
+      height: 6px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cg clip-path='url(%23a)'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M9.354.646a.5.5 0 0 0-.708 0L5 4.293 1.354.646a.5.5 0 1 0-.708.708l4 4a.5.5 0 0 0 .708 0l4-4a.5.5 0 0 0 0-.708Z' fill='%23192534'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='a'%3E%3Crect width='10' height='6' fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E");
+      background-size: 10px 6px;
+      background-repeat: no-repeat;
+    }
+
+    /* --- Placeholder for list/swatch filters when empty --- */
+    .facets--horizontal .facets__status-wrapper [hide-when-empty]:empty::after {
+      content: 'Select';
+      color: #BCC6D2;
+      font-family: 'Nunito Sans', sans-serif;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 22px;
+    }
+
+    /* --- Filter item sizing & gap --- */
+    .facets--horizontal .facets__item {
+      width: 230px;
+      min-width: 230px;
+    }
+
+    .facets--horizontal .facets__filters-wrapper {
+      gap: 15px !important;
+    }
+
+    /* --- Active filter "Clear" pill (sits next to label) --- */
+    .facets--horizontal .facets__clear button,
+    .facets--horizontal .facets-remove__pill {
+      background: #B9AA99;
+      color: #FDFCFC;
+      font-family: 'Nunito Sans', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      border-radius: 999px;
+      padding: 2px 8px;
+      line-height: 18.2px;
+    }
+
+    /* --- Label becomes flex when it contains an inline clear button --- */
+    .facets--horizontal .facets__label:has(.facets__inline-clear) {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* --- Inline per-filter "Clear" button next to label --- */
+    .facets--horizontal .facets__inline-clear {
+      display: inline-flex;
+      flex-shrink: 0;
+    }
+
+    .facets--horizontal .facets__inline-clear-btn {
+      background: #B9AA99;
+      color: #FDFCFC;
+      font-family: 'Nunito Sans', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      border-radius: 999px;
+      padding: 2px 8px;
+      line-height: 18.2px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .facets--horizontal .facets__inline-clear-btn:hover {
+      background: #a89988;
+    }
+
+    /* --- Price filter (no .facets__status-wrapper) --- */
+    .facets--horizontal .facets__item .facets__summary:not(:has(.facets__status-wrapper)) {
+      position: relative;
+    }
+
+    /* Input box bg via pseudo-element */
+    .facets--horizontal .facets__item .facets__summary:not(:has(.facets__status-wrapper))::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 38px;
+      background: #FFFEFD;
+      border: 1px solid #AEB2B8;
+      border-radius: 8px;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Keep price status + caret above the bg */
+    .facets--horizontal .facets__item .facets__summary:not(:has(.facets__status-wrapper)) > .facets__status,
+    .facets--horizontal .facets__item .facets__summary:not(:has(.facets__status-wrapper)) > .icon-caret {
+      position: relative;
+      z-index: 1;
+      height: 38px !important;
+      display: flex !important;
+      align-items: center;
+    }
+
+    .facets--horizontal .facets__item .facets__summary:not(:has(.facets__status-wrapper)) > .facets__status {
+      flex: 1;
+      padding-left: 16px;
+      min-width: 0;
+    }
+
+    .facets--horizontal .facets__item .facets__summary:not(:has(.facets__status-wrapper)) > .icon-caret {
+      padding-right: 16px;
+      width: auto !important;
+    }
+
+    .facets--horizontal .facets__item .facets__summary:not(:has(.facets__status-wrapper)) > .icon-caret svg {
+      display: none !important;
+    }
+
+    .facets--horizontal .facets__item .facets__summary:not(:has(.facets__status-wrapper)) > .icon-caret::after {
+      content: '' !important;
+      display: block !important;
+      width: 10px;
+      height: 6px;
+      flex-shrink: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cg clip-path='url(%23a)'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M9.354.646a.5.5 0 0 0-.708 0L5 4.293 1.354.646a.5.5 0 1 0-.708.708l4 4a.5.5 0 0 0 .708 0l4-4a.5.5 0 0 0 0-.708Z' fill='%23192534'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='a'%3E%3Crect width='10' height='6' fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E");
+      background-size: 10px 6px;
+      background-repeat: no-repeat;
+    }
+
+    /* Price placeholder when no range is set */
+    .facets--horizontal .facets__item .facets__summary:not(:has(.facets__status-wrapper)) > .facets__status:has(.hide-when-empty:empty)::after {
+      content: 'Select Price Range';
+      color: #BCC6D2;
+      font-family: 'Nunito Sans', sans-serif;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 22px;
+    }
+
+    /* --- Sort dropdown --- */
+    .facets--horizontal .sorting-filter {
+      min-width: 220px;
+      width: 220px;
+    }
+
+    .facets--horizontal .sorting-filter .facets__summary {
+      position: relative;
+    }
+
+    .facets--horizontal .sorting-filter .facets__label {
+      width: 100%;
+      flex-shrink: 0;
+    }
+
+    /* Unhide selected value on desktop */
+    .facets--horizontal .sorting-filter .facets__status.desktop\:hidden {
+      display: inline !important;
+      flex: 1;
+      min-width: 0;
+      font-family: 'Nunito Sans', sans-serif;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 38px;
+      height: 38px;
+      color: #192534;
+      padding-left: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Sort input-box bg */
+    .facets--horizontal .sorting-filter .facets__summary::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 38px;
+      background: #FFFEFD;
+      border: 1px solid #AEB2B8;
+      border-radius: 8px;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .facets--horizontal .sorting-filter .icon-caret {
+      position: relative;
+      z-index: 1;
+      padding-right: 16px;
+      height: 38px !important;
+      display: flex !important;
+      align-items: center;
+      width: auto !important;
+    }
+
+    .facets--horizontal .sorting-filter .icon-caret svg {
+      display: none !important;
+    }
+
+    .facets--horizontal .sorting-filter .icon-caret::after {
+      content: '' !important;
+      display: block !important;
+      width: 10px;
+      height: 6px;
+      flex-shrink: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cg clip-path='url(%23a)'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M9.354.646a.5.5 0 0 0-.708 0L5 4.293 1.354.646a.5.5 0 1 0-.708.708l4 4a.5.5 0 0 0 .708 0l4-4a.5.5 0 0 0 0-.708Z' fill='%23192534'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='a'%3E%3Crect width='10' height='6' fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E");
+      background-size: 10px 6px;
+      background-repeat: no-repeat;
+    }
+
+    /* --- Hide global "Clear all" on desktop — per-filter inline clears replace it --- */
+    .facets--horizontal .facets__clear-all,
+    .facets--horizontal .facets__clear-all.active {
+      display: none !important;
+    }
+
+    /* --- Hide grid density controls & product count --- */
+    .facets--horizontal .column-options-wrapper,
+    .facets--horizontal .products-count-wrapper {
+      display: none !important;
+    }
+  }
+
+  /* Hide inline clear on mobile and in drawer — desktop horizontal only */
+  .facets__inline-clear {
+    display: none;
+  }
+
+  .facets--drawer .facets__inline-clear {
+    display: none !important;
+  }
+
+  /* 3. Label typography (all breakpoints fallback) */
+  .facets--horizontal .facets__label {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.5;
+    letter-spacing: -0.16px;
+    color: #192534;
+  }
+
+  /* Override facets-toggle inline padding on mobile */
+  .facets-toggle {
+    padding-inline: 0;
+  }
+
+  /* 4. Mobile filter toggle button */
+  .facets-toggle__button {
+    border: 0.5px solid #141517;
+    border-radius: 999px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: #192534;
+    padding: 4px 8px;
+  }
+
+  .filter-count-bubble__background {
+    background: #426894;
+  }
+
+  /* Grid density toggle overrides — remove theme bg and use fixed SVG colors */
+  .column-picker {
+    background-color: transparent !important;
+    padding: 0;
+  }
+
+  .column-picker svg path {
+    fill: #AEB2B8;
+  }
+
+  .column-options__option-input:checked ~ .column-picker svg path {
+    fill: #426894;
+  }
+
+  /* 5. Mobile active filter pills */
+  .facets-remove__pill {
+    background: #426894;
+    color: #FDFCFC;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    border-radius: 999px;
+  }
+
+  /* 6. Mobile product count */
+  .products-count-wrapper {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: #192534;
+  }
+
+  /* 7. Mobile sort pill */
+  .facets-toggle .sorting-filter__select-wrapper {
+    border: 1px solid #AEB2B8;
+    border-radius: 999px;
+    padding: 4px 12px;
+    max-width: 100px;
+  }
+
+  .ls-mobile-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .facets-toggle .sorting-filter__select {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 100%;
+  }
+
+  /* =============================================
+     Filter Drawer — Figma overrides
+     ============================================= */
+
+  /* 1. Drawer header */
+  .facets--drawer .facets__title-wrapper {
+    background-color: #F2F0EE;
+    padding: 24px;
+  }
+
+  .facets--drawer .facets-drawer__title {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 28.6px;
+    color: #192534;
+    text-transform: uppercase;
+  }
+
+  .facets--drawer .facets-drawer__close {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: 32px;
+    height: 32px;
+  }
+
+  .facets--drawer .facets-drawer__close svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* 2. Filter body area */
+  .facets--drawer .facets__form-wrapper {
+    background-color: #FAFAFA;
+  }
+
+  .facets--drawer .facets__filters-wrapper {
+    padding: 16px 24px;
+  }
+
+  /* 3. Filter group headers (accordion summaries) */
+  .facets--drawer .facets__summary {
+    border-bottom: 1px solid #E4E1DD;
+    padding: 12px 0;
+  }
+
+  .facets--drawer .facets__label {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 22px;
+    color: #192534;
+  }
+
+  /* 4. Filter inputs spacing */
+  .facets--drawer .facets__inputs-wrapper {
+    margin-block-start: 24px;
+  }
+
+  /* 5. Checkbox styling */
+  .facets--drawer .checkbox__input + .checkbox__label .icon-checkmark {
+    width: 24px;
+    height: 24px;
+    border: 1.5px solid #C4BBAB;
+    border-radius: 4px;
+    background: #FDFCFC;
+  }
+
+  /* Checked state — filled box with white checkmark */
+  .facets--drawer .checkbox__input:checked + .checkbox__label .icon-checkmark {
+    border-color: #426894;
+    background: #426894;
+    color: #FDFCFC;
+  }
+
+  .facets--drawer .checkbox__label-text {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    color: #192534;
+  }
+
+  /* Disabled filter checkboxes — greyed out and fully blocked (0 results) */
+  .facets--drawer .checkbox:has(.checkbox__input:disabled) {
+    opacity: 0.4;
+    pointer-events: none !important;
+  }
+
+  .facets--drawer .checkbox__input:disabled,
+  .facets--drawer .checkbox__input:disabled + .checkbox__label,
+  .facets--drawer .checkbox__input:disabled + .checkbox__label * {
+    pointer-events: none !important;
+  }
+
+  /* 5. Drawer bottom — active filters + actions */
+  .facets--drawer .ls-drawer-bottom {
+    position: sticky;
+    bottom: 0;
+    background: #FDFCFC;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 24px;
+    box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.1), 0 -2px 4px -2px rgba(0,0,0,0.1);
+    z-index: var(--layer-raised, 1);
+  }
+
+  /* Top separator line */
+  .facets--drawer .ls-drawer-bottom::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #E6D8BC;
+  }
+
+  /* "Active Filters:" section */
+  .facets--drawer .ls-drawer-active-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-bottom: 12px;
+  }
+
+  .ls-drawer-active-filters__label {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.5;
+    letter-spacing: -0.16px;
+    color: #192534;
+  }
+
+  /* Pills row inside drawer bottom */
+  .facets--drawer .ls-drawer-active-filters .facets-remove {
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 0;
+  }
+
+  /* Individual pills */
+  .facets--drawer .ls-drawer-active-filters .facets-remove__pill {
+    background: #426894;
+    color: #FDFCFC;
+    font-size: 16px;
+    line-height: 1.5;
+    letter-spacing: -0.16px;
+    border-radius: 999px;
+    padding: 4px 8px 4px 16px;
+    gap: 8px;
+  }
+
+  /* Pill close icon — replace theme 7×8 stroke X with Figma 11×11 filled white X */
+  .facets--drawer .ls-drawer-active-filters .facets-remove__pill .svg-wrapper {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .facets--drawer .ls-drawer-active-filters .facets-remove__pill .svg-wrapper svg {
+    display: none;
+  }
+
+  .facets--drawer .ls-drawer-active-filters .facets-remove__pill .svg-wrapper::after {
+    content: '';
+    display: block;
+    width: 11px;
+    height: 11px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 11 11' fill='none'%3E%3Cpath d='M9.77778 0L5.33333 4.44445L0.888889 0L0 0.888889L4.44445 5.33333L0 9.77778L0.888889 10.6667L5.33333 6.22222L9.77778 10.6667L10.6667 9.77778L6.22222 5.33333L10.6667 0.888889L9.77778 0Z' fill='%23FDFCFC'/%3E%3C/svg%3E");
+    background-size: 11px 11px;
+    background-repeat: no-repeat;
+  }
+
+  /* Action buttons — wrapper handles sticky/padding now */
+  .facets--drawer .ls-drawer-bottom .facets__actions {
+    display: flex;
+    position: static;
+    padding: 0;
+    gap: 10px;
+    background-image: none;
+    background-color: transparent;
+    margin-top: 0;
+  }
+
+  /* Remove facet-remove-component from layout so both buttons are direct flex children */
+  .facets--drawer .facets__actions > facet-remove-component {
+    display: contents !important;
+  }
+
+  /* Both buttons 50/50 width */
+  .facets--drawer .facets__clear-all,
+  .facets--drawer .facets__clear-all.active,
+  .facets--drawer .facets__see-results {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+  }
+
+  /* Clear All button */
+  .facets--drawer .facets__clear-all,
+  .facets--drawer .facets__clear-all.active {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    opacity: 1 !important;
+    transform: none !important;
+    border: 0.5px solid #192534;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 16.8px;
+    color: #192534;
+    background: transparent;
+  }
+
+  /* Show Items button */
+  .facets--drawer .facets__see-results {
+    background-color: #C8A45D;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 16.8px;
+    color: #FDFCFC;
+  }
+
+  /* Hide active-filters section when no filters active */
+  .facets--drawer .ls-drawer-active-filters:not(:has(.facets-remove__pill)) {
+    display: none;
+  }
+
+  /* 7. Remove default drawer inline padding on filter panels */
+  .facets--drawer .facets__panel {
+    padding: 0;
+  }
+
+  /* 8. Remove separator lines between filter groups */
+  :is(.facets--drawer, .facets--vertical) :is(.facets__item, .sorting-filter)::before {
+    content: none !important;
+    display: none !important;
+  }
+
+  /* 9. Drawer chevron sizing */
+  .facets--drawer .icon-caret {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  /* 10. Drawer sort — show accordion, hide native select */
+  .facets--drawer .sorting-filter__container {
+    display: none !important;
+  }
+
+  .facets--drawer .sorting-filter .facets__panel {
+    display: block !important;
+  }
+
+  /* Sort accordion — match filter group padding */
+  .facets--drawer .sorting-filter .facets__panel {
+    padding: 0 24px 16px !important;
+  }
+
+  /* Force sort content visible regardless of details[open] state */
+  .facets--drawer .sorting-filter .facets__panel > floating-panel-component {
+    display: block !important;
+  }
+
+  /* Sort options styled as checkboxes — force visible even when details closes after AJAX */
+  .facets--drawer .sorting-filter__options {
+    display: flex !important;
+    flex-direction: column !important;
+    position: static !important;
+    box-shadow: none !important;
+    border: none !important;
+    background-color: transparent !important;
+    padding: 0 !important;
+    gap: 22px !important;
+    max-height: none !important;
+    overflow-y: visible !important;
+    block-size: auto !important;
+    opacity: 1 !important;
+  }
+
+  .facets--drawer .sorting-filter__options label {
+    display: block;
+    margin-bottom: 22px;
+  }
+
+  .facets--drawer .sorting-filter__options label:last-child {
+    margin-bottom: 0;
+  }
+
+  .facets--drawer .sorting-filter__option {
+    grid-template-columns: 24px 1fr;
+    gap: 12px;
+    min-width: 0;
+    padding: 0;
+    align-items: center;
+  }
+
+  .facets--drawer .sorting-filter__option:hover {
+    background-color: transparent;
+  }
+
+  /* Checkmark box — match filter checkboxes */
+  .facets--drawer .sorting-filter__checkmark {
+    visibility: visible;
+    width: 24px;
+    height: 24px;
+    border: 1.5px solid #C4BBAB;
+    border-radius: 4px;
+    background: #FDFCFC;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .facets--drawer .sorting-filter__checkmark svg {
+    width: 14px;
+    height: 14px;
+    opacity: 0;
+    color: #192534;
+  }
+
+  .facets--drawer .sorting-filter__input:checked ~ .sorting-filter__checkmark {
+    border-color: #426894;
+    background: #426894;
+  }
+
+  .facets--drawer .sorting-filter__input:checked ~ .sorting-filter__checkmark svg {
+    opacity: 1;
+    color: #FDFCFC;
+  }
+
+  /* Sort option label text — match filter checkbox text */
+  .facets--drawer .sorting-filter__label {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    color: #192534;
+  }
+
+  .facets--drawer .sorting-filter__input:checked ~ .sorting-filter__label {
+    font-weight: 700;
+  }
+
+  /* Sort inputs wrapper spacing — match filter groups */
+  .facets--drawer .sorting-filter .facets__panel .sorting-filter__options {
+    margin-block-start: 24px;
   }
 {% endstylesheet %}
 
@@ -302,6 +1383,121 @@
       "step": 1,
       "unit": "px",
       "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Promo cards"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_promo_cards",
+      "label": "Enable promo cards",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Promo card 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "promo_1_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "promo_1_eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "promo_1_title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "promo_1_description",
+      "label": "Description"
+    },
+    {
+      "type": "text",
+      "id": "promo_1_cta_text",
+      "label": "CTA text",
+      "default": "SHOP NOW"
+    },
+    {
+      "type": "url",
+      "id": "promo_1_cta_link",
+      "label": "CTA link"
+    },
+    {
+      "type": "header",
+      "content": "Promo card 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "promo_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "promo_2_eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "promo_2_title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "promo_2_description",
+      "label": "Description"
+    },
+    {
+      "type": "text",
+      "id": "promo_2_cta_text",
+      "label": "CTA text",
+      "default": "SHOP NOW"
+    },
+    {
+      "type": "url",
+      "id": "promo_2_cta_link",
+      "label": "CTA link"
+    },
+    {
+      "type": "header",
+      "content": "Promo card 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "promo_3_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "promo_3_eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "promo_3_title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "promo_3_description",
+      "label": "Description"
+    },
+    {
+      "type": "text",
+      "id": "promo_3_cta_text",
+      "label": "CTA text",
+      "default": "SHOP NOW"
+    },
+    {
+      "type": "url",
+      "id": "promo_3_cta_link",
+      "label": "CTA link"
     }
   ],
   "presets": []

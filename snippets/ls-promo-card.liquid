@@ -1,0 +1,46 @@
+{%- doc -%}
+  Renders a promo card ("AuthorityTile") for the collection product grid.
+
+  @param {image} image - Background image
+  @param {string} eyebrow - Small uppercase label
+  @param {string} title - Main heading
+  @param {string} description - Body text
+  @param {string} cta_text - Call-to-action label
+  @param {string} cta_link - Call-to-action URL
+{%- enddoc -%}
+
+<a href="{{ cta_link | default: '#' }}" class="ls-promo-card{% if image == blank %} ls-promo-card--no-image{% endif %}" aria-label="{{ title | escape }}">
+  {%- if image != blank -%}
+    <img
+      src="{{ image | image_url: width: 606 }}"
+      srcset="
+        {{ image | image_url: width: 303 }} 303w,
+        {{ image | image_url: width: 606 }} 606w,
+        {{ image | image_url: width: 900 }} 900w
+      "
+      sizes="(min-width: 750px) 303px, 100vw"
+      alt="{{ title | escape }}"
+      loading="lazy"
+      width="{{ image.width }}"
+      height="{{ image.height }}"
+      class="ls-promo-card__image"
+    >
+  {%- endif -%}
+
+  <div class="ls-promo-card__overlay"></div>
+
+  <div class="ls-promo-card__content">
+    {%- if eyebrow != blank -%}
+      <span class="ls-promo-card__eyebrow">{{ eyebrow }}</span>
+    {%- endif -%}
+    {%- if title != blank -%}
+      <p class="ls-promo-card__title">{{ title }}</p>
+    {%- endif -%}
+    {%- if description != blank -%}
+      <p class="ls-promo-card__description">{{ description }}</p>
+    {%- endif -%}
+    {%- if cta_text != blank -%}
+      <span class="ls-promo-card__cta">{{ cta_text }} ›</span>
+    {%- endif -%}
+  </div>
+</a>
