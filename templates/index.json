@@ -82,6 +82,7 @@
       ],
       "settings": {
         "heading": "How It Works",
+        "show_step_numbers": true,
         "padding_top": 0,
         "padding_bottom": 80,
         "mobile_padding_top": 0,
@@ -97,7 +98,7 @@
             "image": "shopify://shop_images/Rectangle_26.png",
             "title": "Commemorative Coins",
             "subtitle": "",
-            "link": "",
+            "link": "shopify://collections/commemorative-coins",
             "size": "large"
           }
         },
@@ -107,7 +108,7 @@
             "image": "shopify://shop_images/Rectangle_26_1.png",
             "title": "Shadow Boxes",
             "subtitle": "",
-            "link": "",
+            "link": "shopify://collections/action-sports-photos",
             "size": "medium"
           }
         },
@@ -115,7 +116,7 @@
           "type": "collection_card",
           "settings": {
             "image": "shopify://shop_images/Rectangle_26_2.png",
-            "title": "Desktop Plaques & Night Lights",
+            "title": "Desktop Plaques",
             "subtitle": "",
             "link": "",
             "size": "medium"
@@ -137,7 +138,7 @@
             "image": "shopify://shop_images/Rectangle_26_4.png",
             "title": "Photo Puzzles",
             "subtitle": "",
-            "link": "",
+            "link": "shopify://collections/puzzle-photo-art",
             "size": "medium"
           }
         },
@@ -147,7 +148,7 @@
             "image": "shopify://shop_images/Rectangle_26_5.png",
             "title": "Night Lights",
             "subtitle": "Kids & Baby",
-            "link": "",
+            "link": "shopify://collections/night-lights-photo-art",
             "size": "small"
           }
         },
@@ -157,7 +158,7 @@
             "image": "shopify://shop_images/Rectangle_26_6.png",
             "title": "School Years",
             "subtitle": "Photo Frame",
-            "link": "",
+            "link": "shopify://collections/sports-plaques",
             "size": "small"
           }
         },
@@ -167,7 +168,7 @@
             "image": "shopify://shop_images/Rectangle_26_7.png",
             "title": "Crystal Blocks",
             "subtitle": "",
-            "link": "",
+            "link": "shopify://collections/crystal-clear-photo-collection",
             "size": "small"
           }
         },
@@ -177,7 +178,7 @@
             "image": "shopify://shop_images/Rectangle_26_8.png",
             "title": "Record Prints",
             "subtitle": "",
-            "link": "",
+            "link": "shopify://products/retro-vinyl",
             "size": "small"
           }
         }
