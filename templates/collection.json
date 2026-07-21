@@ -1,1 +1,322 @@
-{"sections":{"section":{"type":"section","blocks":{"text_tqQTNE":{"type":"text","name":"Title","settings":{"text":"<p>{{ closest.collection.title }}<\/p>","width":"fit-content","max_width":"normal","alignment":"left","type_preset":"h2","font":"var(--font-primary--family)","font_size":"","line_height":"normal","letter_spacing":"normal","case":"none","wrap":"pretty","color":"","background":false,"background_color":"#00000026","corner_radius":0,"padding-block-start":0,"padding-block-end":0,"padding-inline-start":0,"padding-inline-end":0},"blocks":{}},"text_twGGkJ":{"type":"text","name":"Description","settings":{"text":"{{ closest.collection.description }}","width":"fit-content","max_width":"normal","alignment":"left","type_preset":"rte","font":"var(--font-primary--family)","font_size":"","line_height":"normal","letter_spacing":"normal","case":"none","wrap":"pretty","color":"","background":false,"background_color":"#00000026","corner_radius":0,"padding-block-start":0,"padding-block-end":0,"padding-inline-start":0,"padding-inline-end":0},"blocks":{}}},"block_order":["text_tqQTNE","text_twGGkJ"],"name":"Collection heading","settings":{"content_direction":"column","vertical_on_mobile":true,"horizontal_alignment":"flex-start","vertical_alignment":"center","align_baseline":false,"horizontal_alignment_flex_direction_column":"flex-start","vertical_alignment_flex_direction_column":"center","gap":12,"section_width":"page-width","section_height":"","section_height_custom":50,"color_scheme":"scheme-1","background_media":"none","video_position":"cover","background_image_position":"cover","border":"none","border_width":1,"border_opacity":100,"border_radius":0,"toggle_overlay":false,"overlay_color":"#00000026","overlay_style":"solid","gradient_direction":"to top","padding-block-start":48,"padding-block-end":48}},"main":{"type":"main-collection","blocks":{"filters":{"type":"filters","static":true,"settings":{"enable_filtering":true,"filter_style":"horizontal","filter_width":"centered","text_label_case":"default","show_swatch_label":false,"show_filter_label":false,"enable_sorting":true,"enable_grid_density":true,"inherit_color_scheme":true,"color_scheme":"","padding-block-start":8,"padding-block-end":8,"padding-inline-start":0,"padding-inline-end":0,"facets_margin_bottom":8,"facets_margin_right":20},"blocks":{}},"product-card":{"type":"_product-card","static":true,"settings":{"product_card_gap":4,"inherit_color_scheme":true,"color_scheme":"","border":"none","border_width":1,"border_opacity":100,"border_radius":0,"padding-block-start":0,"padding-block-end":0,"padding-inline-start":0,"padding-inline-end":0},"blocks":{"card-gallery":{"type":"_product-card-gallery","settings":{"image_ratio":"adapt","border":"none","border_width":1,"border_opacity":100,"border_radius":0,"padding-block-start":0,"padding-block-end":0,"padding-inline-start":0,"padding-inline-end":0},"blocks":{}},"product_title_4nY4eT":{"type":"product-title","name":"t:names.product_title","settings":{"width":"100%","max_width":"normal","alignment":"left","type_preset":"rte","font":"var(--font-body--family)","font_size":"1rem","line_height":"normal","letter_spacing":"normal","case":"none","wrap":"pretty","color":"var(--color-foreground)","background":false,"background_color":"#00000026","corner_radius":0,"padding-block-start":4,"padding-block-end":0,"padding-inline-start":0,"padding-inline-end":0},"blocks":{}},"price_EzJzMm":{"type":"price","settings":{"show_sale_price_first":true,"show_installments":false,"show_tax_info":false,"type_preset":"h6","width":"100%","alignment":"left","font":"var(--font-body--family)","font_size":"1rem","line_height":"normal","letter_spacing":"normal","case":"none","color":"var(--color-foreground)","padding-block-start":0,"padding-block-end":0,"padding-inline-start":0,"padding-inline-end":0},"blocks":{}}},"block_order":["card-gallery","product_title_4nY4eT","price_EzJzMm"]}},"settings":{"layout_type":"grid","product_card_size":"medium","mobile_product_card_size":"small","product_grid_width":"centered","full_width_on_mobile":true,"columns_gap_horizontal":16,"columns_gap_vertical":24,"padding-inline-start":0,"padding-inline-end":0,"color_scheme":"scheme-1","padding-block-start":0,"padding-block-end":32}},"collection_list_XNzRLF":{"type":"collection-list","blocks":{"group_W6R33M":{"type":"group","name":"t:names.header","settings":{"link":"","open_in_new_tab":false,"content_direction":"column","vertical_on_mobile":true,"horizontal_alignment":"flex-start","vertical_alignment":"center","align_baseline":false,"horizontal_alignment_flex_direction_column":"flex-start","vertical_alignment_flex_direction_column":"center","gap":12,"width":"fill","custom_width":100,"width_mobile":"fill","custom_width_mobile":100,"height":"fit","custom_height":100,"inherit_color_scheme":true,"color_scheme":"","background_media":"none","video_position":"cover","background_image_position":"cover","border":"none","border_width":1,"border_opacity":100,"border_radius":0,"placeholder":"","toggle_overlay":false,"overlay_color":"#00000026","overlay_style":"solid","gradient_direction":"to top","padding-block-start":0,"padding-block-end":0,"padding-inline-start":0,"padding-inline-end":0},"blocks":{"text_M6MVCz":{"type":"text","name":"t:names.text","settings":{"text":"<h3>Shop by collection<\/h3>","width":"fit-content","max_width":"normal","alignment":"left","type_preset":"rte","font":"var(--font-body--family)","font_size":"1rem","line_height":"normal","letter_spacing":"normal","case":"none","wrap":"pretty","color":"var(--color-foreground)","background":false,"background_color":"#00000026","corner_radius":0,"padding-block-start":0,"padding-block-end":16,"padding-inline-start":0,"padding-inline-end":0},"blocks":{}}},"block_order":["text_M6MVCz"]},"static-collection-card":{"type":"_collection-card","name":"t:names.collection_card","static":true,"settings":{"placement":"on_image","horizontal_alignment":"flex-start","vertical_alignment":"flex-start","collection_card_gap":8,"inherit_color_scheme":true,"color_scheme":"","border":"none","border_width":1,"border_opacity":100,"border_radius":0},"blocks":{"collection_title_bGBKFJ":{"type":"collection-title","name":"t:names.collection_title","settings":{"width":"fit-content","max_width":"normal","alignment":"left","type_preset":"rte","font":"var(--font-body--family)","font_size":"1rem","line_height":"normal","letter_spacing":"normal","case":"none","wrap":"pretty","color":"var(--color-foreground)","background":true,"background_color":"#ffffff","corner_radius":0,"padding-block-start":4,"padding-block-end":4,"padding-inline-start":8,"padding-inline-end":8},"blocks":{}},"button_FbhgFD":{"type":"button","name":"t:names.button","settings":{"label":"Action Sports","link":"shopify:\/\/collections\/all","open_in_new_tab":false,"style_class":"button","width":"fit-content","custom_width":100,"width_mobile":"fit-content","custom_width_mobile":100},"blocks":{}},"collection-card-image":{"type":"_collection-card-image","name":"t:names.collection_card_image","static":true,"settings":{"image_ratio":"adapt","toggle_overlay":false,"overlay_color":"#00000026","overlay_style":"solid","gradient_direction":"to top","border":"none","border_width":1,"border_opacity":100,"border_radius":0},"blocks":{}}},"block_order":["collection_title_bGBKFJ","button_FbhgFD"]}},"block_order":["group_W6R33M"],"name":"t:names.collections_grid","settings":{"collection_list":[],"layout_type":"grid","carousel_on_mobile":false,"columns":3,"mobile_columns":"2","mobile_card_size":"60cqw","columns_gap":8,"bento_gap":8,"rows_gap":8,"max_collections":4,"icons_style":"arrow","icons_shape":"none","section_width":"page-width","gap":12,"color_scheme":"","padding-block-start":48,"padding-block-end":48}}},"order":["section","main","collection_list_XNzRLF"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "ls_collection_title": {
+      "type": "ls-collection-title",
+      "settings": {
+        "padding_top": 0,
+        "padding_bottom": 48
+      }
+    },
+    "main": {
+      "type": "main-collection",
+      "blocks": {
+        "filters": {
+          "type": "filters",
+          "static": true,
+          "settings": {
+            "enable_filtering": true,
+            "filter_style": "horizontal",
+            "filter_width": "centered",
+            "text_label_case": "default",
+            "show_swatch_label": false,
+            "show_filter_label": false,
+            "enable_sorting": true,
+            "enable_grid_density": true,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "padding-block-start": 8,
+            "padding-block-end": 8,
+            "padding-inline-start": 32,
+            "padding-inline-end": 32,
+            "facets_margin_bottom": 8,
+            "facets_margin_right": 20
+          },
+          "blocks": {}
+        },
+        "product-card": {
+          "type": "_product-card",
+          "static": true,
+          "settings": {
+            "product_card_gap": 4,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "card-gallery": {
+              "type": "_product-card-gallery",
+              "settings": {
+                "image_ratio": "square",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "product_title_4nY4eT": {
+              "type": "product-title",
+              "name": "t:names.product_title",
+              "settings": {
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "var(--color-foreground)",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 4,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "price_EzJzMm": {
+              "type": "price",
+              "settings": {
+                "show_sale_price_first": true,
+                "show_installments": false,
+                "show_tax_info": false,
+                "type_preset": "h6",
+                "width": "100%",
+                "alignment": "left",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "color": "var(--color-foreground)",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "card-gallery",
+            "product_title_4nY4eT",
+            "price_EzJzMm"
+          ]
+        }
+      },
+      "settings": {
+        "layout_type": "grid",
+        "product_card_size": "medium",
+        "mobile_product_card_size": "small",
+        "product_grid_width": "centered",
+        "full_width_on_mobile": true,
+        "columns_gap_horizontal": 28,
+        "columns_gap_vertical": 24,
+        "padding-inline-start": 32,
+        "padding-inline-end": 32,
+        "color_scheme": "scheme-1",
+        "padding-block-start": 0,
+        "padding-block-end": 32,
+        "enable_promo_cards": true,
+        "promo_1_image": "shopify://shop_images/AuthorityTile_3.png",
+        "promo_1_eyebrow": "The Gift Edit",
+        "promo_1_title": "We help you with the choosing",
+        "promo_1_description": "Gift-worthy by definition.",
+        "promo_1_cta_text": "SHOP PHOTO PUZZLE",
+        "promo_1_cta_link": "",
+        "promo_2_image": "shopify://shop_images/AuthorityTile_4.png",
+        "promo_2_eyebrow": "The Gift Edit",
+        "promo_2_title": "We help you with the choosing",
+        "promo_2_description": "Gift-worthy by definition.",
+        "promo_2_cta_text": "SHOP NOW",
+        "promo_2_cta_link": "",
+        "promo_3_eyebrow": "",
+        "promo_3_title": "",
+        "promo_3_description": "",
+        "promo_3_cta_text": "SHOP NOW",
+        "promo_3_cta_link": ""
+      }
+    },
+    "ls_how_it_works_jiT7qi": {
+      "type": "ls-how-it-works",
+      "blocks": {
+        "step_UThKJ6": {
+          "type": "step",
+          "settings": {
+            "image": "shopify://shop_images/ChatGPT_Image_Jun_29_2026_12_59_43_AM_2_1_Vectorized_Vectorized_1.svg",
+            "title": "UV-Printedin 1,440 Vivid Colors",
+            "text": "Every photo printed with fine detail and color accuracy that holds up for decades."
+          }
+        },
+        "step_4f8zBW": {
+          "type": "step",
+          "settings": {
+            "image": "shopify://shop_images/ChatGPT_Image_Jun_29_2026_12_59_43_AM_2_1_Vectorized_Vectorized.svg",
+            "title": "Assembled by Handin Our Workshop",
+            "text": "Not outsourced. Not automated. Each keepsake assembled by our team, one order at a time."
+          }
+        },
+        "step_ydR4ef": {
+          "type": "step",
+          "settings": {
+            "image": "shopify://shop_images/ChatGPT_Image_Jun_29_2026_12_59_44_AM_3_1_Vectorized.svg",
+            "title": "Made to Lasta Lifetime",
+            "text": "Premium materials chosen for longevity, coin stock, acrylic, wood, canvas, and metal."
+          }
+        }
+      },
+      "block_order": [
+        "step_UThKJ6",
+        "step_4f8zBW",
+        "step_ydR4ef"
+      ],
+      "settings": {
+        "heading": "Not mass-produced. Made by hand",
+        "show_step_numbers": false,
+        "padding_top": 0,
+        "padding_bottom": 80,
+        "mobile_padding_top": 0,
+        "mobile_padding_bottom": 60
+      }
+    },
+    "ls_reviews_7iatPc": {
+      "type": "ls-reviews",
+      "blocks": {
+        "review_NTqtBH": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Judy Saphiro, Google Reviews",
+            "review_text": "I ordered a commemorative coin for my son's mission and it arrived beautifully packaged. The detail is incredible — you can tell it was made by hand. He was so moved when he opened it.",
+            "stars": 5,
+            "author_short": "Judy S.",
+            "occasion": "Missionary Gift"
+          }
+        },
+        "review_cMt8dX": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Maria Thompson, Google Reviews",
+            "review_text": "We gave this as a wedding gift and the couple couldn't stop talking about it. The quality is outstanding and it arrived faster than expected.",
+            "stars": 5,
+            "author_short": "Maria T.",
+            "occasion": "Wedding Gift"
+          }
+        },
+        "review_4VeCcA": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "David Chen, Google Reviews",
+            "review_text": "Perfect keepsake for our family reunion. The photo quality on the coin is remarkable — every detail came through perfectly. Will definitely order again.",
+            "stars": 5,
+            "author_short": "David C.",
+            "occasion": "Family Reunion"
+          }
+        }
+      },
+      "block_order": [
+        "review_NTqtBH",
+        "review_cMt8dX",
+        "review_4VeCcA"
+      ],
+      "settings": {
+        "heading": "What families are saying",
+        "subtext": "Handcrafted in the USA. Loved by families worldwide.",
+        "button_label": "Shop Most Gifted",
+        "button_link": "",
+        "padding_top": 0,
+        "padding_bottom": 80,
+        "mobile_padding_top": 0,
+        "mobile_padding_bottom": 60
+      }
+    },
+    "ls_faq_zxptxh": {
+      "type": "ls-faq",
+      "blocks": {
+        "faq_zcVB7U": {
+          "type": "faq",
+          "settings": {
+            "question": "How long does shipping take?",
+            "answer": "Most orders ship within 3–5 business days. Custom and personalized items may take a bit longer as they are handcrafted to order."
+          }
+        },
+        "faq_aP473B": {
+          "type": "faq",
+          "settings": {
+            "question": "What type of photo should I upload?",
+            "answer": "For the best results, use a high-resolution photo with good lighting. Close-up portraits and well-lit images produce the sharpest details on our keepsakes."
+          }
+        },
+        "faq_8mmUwQ": {
+          "type": "faq",
+          "settings": {
+            "question": "What if I'm unhappy with my order?",
+            "answer": "We want you to love your keepsake. If something isn't right, reach out within 60 days and we'll make it right with a replacement or full refund."
+          }
+        }
+      },
+      "block_order": [
+        "faq_zcVB7U",
+        "faq_aP473B",
+        "faq_8mmUwQ"
+      ],
+      "settings": {
+        "heading": "Common Questions",
+        "link_label": "See all FAQs →",
+        "link_url": "",
+        "padding_top": 80,
+        "padding_bottom": 80,
+        "mobile_padding_top": 0,
+        "mobile_padding_bottom": 60
+      }
+    },
+    "ls_handcrafted_A4BNdy": {
+      "type": "ls-handcrafted",
+      "settings": {
+        "image": "shopify://shop_images/barnsbury-inside-mobile-2_900b9772-c8d5-41e2-a710-9012410959b9_jpg.png",
+        "image_mobile": "shopify://shop_images/barnsbury-inside-mobile-2_900b9772-c8d5-41e2-a710-9012410959b9.jpg_1.png",
+        "color_scheme": "scheme-ls-hero",
+        "heading": "Get 10% off your first keepsake",
+        "subtext": "Plus gift ideas, new arrivals, and occasions worth remembering.",
+        "input_placeholder": "Enter your email address",
+        "button_label": "Get 10% Off",
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "mobile_padding_top": 0,
+        "mobile_padding_bottom": 0
+      }
+    }
+  },
+  "order": [
+    "ls_collection_title",
+    "main",
+    "ls_how_it_works_jiT7qi",
+    "ls_reviews_7iatPc",
+    "ls_faq_zxptxh",
+    "ls_handcrafted_A4BNdy"
+  ]
+}

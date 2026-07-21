@@ -46,7 +46,21 @@
     {% endif %}
   >
     <summary class="facets__summary">
-      <span class="facets__label">{{ filter.label }}</span>
+      <span class="facets__label">
+        {{ filter.label }}
+        {% if active_value_count > 0 and filter_style == 'horizontal' %}
+          <facet-clear-component class="facets__inline-clear">
+            <button
+              type="button"
+              class="facets__inline-clear-btn"
+              on:click="/clearFilter"
+              on:keydown="/clearFilter"
+            >
+              Clear
+            </button>
+          </facet-clear-component>
+        {% endif %}
+      </span>
 
       <div class="facets__status-wrapper">
         {% if is_swatch %}
@@ -92,7 +106,13 @@
           </facet-status-component>
         {% endif %}
         <span class="svg-wrapper icon-caret icon-animated">
-          {{- 'icon-caret.svg' | inline_asset_content -}}
+          {%- if in_drawer -%}
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M2.67578 11.8945L3.57422 12.793L10 6.36719L16.4258 12.793L17.3242 11.8945L10.4492 5.01953L10 4.58984L9.55078 5.01953L2.67578 11.8945Z" fill="#192534"/>
+            </svg>
+          {%- else -%}
+            {{- 'icon-caret.svg' | inline_asset_content -}}
+          {%- endif -%}
         </span>
       </div>
     </summary>

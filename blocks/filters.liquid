@@ -290,30 +290,35 @@
     {% endif %}
 
     <div class="facets-mobile-wrapper facets-controls-wrapper">
-      {% if block_settings.enable_filtering == false and block_settings.enable_sorting %}
-        <facets-form-component
-          section-id="{{ section.id }}"
-          id="FacetFiltersForm--{{ section.id }}-mobile-sorting-only"
-        >
-          <form
-            action="{{ results_url }}"
+      <span class="ls-mobile-product-count">
+        {{- results.products.size }} / {{ products_count }} products
+      </span>
+      <div class="ls-mobile-controls">
+        {% if block_settings.enable_sorting %}
+          <facets-form-component
+            section-id="{{ section.id }}"
             id="FacetFiltersForm--{{ section.id }}-mobile-sorting-only"
-            ref="facetsForm"
           >
-            {% render 'sorting',
-              results: results,
-              sort_by: sort_by,
-              filter_style: block_settings.filter_style,
-              sort_position: 'mobile',
-              should_use_select_on_mobile: should_use_select_on_mobile,
-              section_id: section.id
-            %}
-          </form>
-        </facets-form-component>
-      {% endif %}
-      {% if block_settings.enable_grid_density %}
-        {% render 'grid-density-controls', viewport: 'mobile' %}
-      {% endif %}
+            <form
+              action="{{ results_url }}"
+              id="FacetFiltersForm--{{ section.id }}-mobile-sorting-only"
+              ref="facetsForm"
+            >
+              {% render 'sorting',
+                results: results,
+                sort_by: sort_by,
+                filter_style: block_settings.filter_style,
+                sort_position: 'mobile',
+                should_use_select_on_mobile: should_use_select_on_mobile,
+                section_id: section.id
+              %}
+            </form>
+          </facets-form-component>
+        {% endif %}
+        {% if block_settings.enable_grid_density %}
+          {% render 'grid-density-controls', viewport: 'mobile' %}
+        {% endif %}
+      </div>
     </div>
   </div>
 {% else %}
@@ -349,7 +354,7 @@
             style="--color-shadow: rgb(var(--color-foreground-rgb) / var(--opacity-10-25));"
           >
             <h2 class="facets-drawer__title h3">
-              {{ 'blocks.filter' | t }}
+              Filters
 
               {% if total_active_values > 0 %}
                 <span
@@ -367,24 +372,16 @@
               class="button facets-drawer__close button-unstyled close-button"
               on:click="dialog-component/closeDialog"
               type="button"
+              aria-label="{{ 'actions.close' | t }}"
             >
-              <span
-                class="svg-wrapper svg-wrapper--small"
-                title="{{ 'actions.close' | t }}"
-              >
-                {{ 'icon-close.svg' | inline_asset_content }}
-              </span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <path d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 0 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z" fill="#FEFCFB"/>
+                <path d="M10 10L22 22M22 10L10 22" stroke="#192534" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
             </button>
           </div>
 
           {% if block_settings.enable_filtering %}
-            {% render 'filter-remove-buttons',
-              filters: filters,
-              results_url: results_url,
-              show_filter_label: block_settings.show_filter_label,
-              should_show_clear_all: false
-            %}
-
             <div class="facets__filters-wrapper">
               {% assign total_active_values = 0 %}
               {% assign is_active = false %}
@@ -404,7 +401,7 @@
                         assign is_active = true
                       endif
 
-                      render 'price-filter', filter: filter, filter_style: 'vertical', should_render_clear: false, autofocus: should_autofocus
+                      render 'price-filter', filter: filter, filter_style: 'vertical', should_render_clear: false, autofocus: should_autofocus, in_drawer: true
                     -%}
                   {% else %}
                     {% liquid
@@ -428,21 +425,53 @@
               filter_style: block_settings.filter_style,
               suffix: 'overflow',
               should_use_select_on_mobile: should_use_select_on_mobile,
-              section_id: section.id
+              section_id: section.id,
+              in_drawer: true
             %}
           {% endif %}
         </form>
       </facets-form-component>
 
-      {% render 'facets-actions',
-        results_url: results_url,
-        is_active: is_active,
-        products_count: products_count,
-        form_component: form_component,
-        should_show_clear_all: true
-      %}
+      <div class="ls-drawer-bottom">
+        <div class="ls-drawer-active-filters">
+          <span class="ls-drawer-active-filters__label">Active Filters:</span>
+          {% render 'filter-remove-buttons',
+            filters: filters,
+            results_url: results_url,
+            show_filter_label: block_settings.show_filter_label,
+            should_show_clear_all: false
+          %}
+        </div>
+        {% render 'facets-actions',
+          results_url: results_url,
+          is_active: is_active,
+          products_count: products_count,
+          form_component: form_component,
+          should_show_clear_all: true,
+          in_drawer: true
+        %}
+      </div>
     </dialog>
   </dialog-component>
+
+  <script>
+    // Block clicks on disabled filter checkboxes — theme JS bypasses disabled attribute
+    (function() {
+      var drawer = document.getElementById('filters-drawer');
+      if (!drawer) return;
+      drawer.addEventListener('click', function(e) {
+        var label = e.target.closest('.checkbox__label');
+        if (!label) return;
+        var checkbox = label.closest('.checkbox');
+        if (!checkbox) return;
+        var input = checkbox.querySelector('.checkbox__input');
+        if (input && input.disabled) {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+        }
+      }, true);
+    })();
+  </script>
 {% endif %}
 
 {% stylesheet %}
@@ -480,6 +509,10 @@
     align-items: center;
     gap: var(--gap-sm);
     justify-content: flex-end;
+
+    @media screen and (max-width: 749px) {
+      gap: 0;
+    }
   }
 
   .facets-mobile-wrapper:has(> :nth-child(2)) {
@@ -893,15 +926,6 @@
     }
   }
 
-  :is(.facets--drawer, .facets--vertical) :is(.facets__item, .sorting-filter)::before {
-    content: '';
-    display: block;
-    height: 0;
-    width: calc(100% - var(--drawer-padding) * 2);
-    border-top: var(--style-border-width) solid var(--color-border);
-    margin: 0 auto;
-  }
-
   @media screen and (min-width: 750px) {
     .facets:not(.facets--drawer) :is(.facets__item, .sorting-filter)::before {
       width: 100%;
@@ -1052,6 +1076,17 @@
     @media screen and (min-width: 750px) {
       z-index: var(--facets-open-z-index);
     }
+  }
+
+  /* LS: Mobile filter bar enhancements */
+  .facets-toggle {
+    background-color: var(--color-background);
+  }
+
+  .ls-mobile-product-count {
+    font-size: var(--font-paragraph--size);
+    color: var(--color-foreground-muted);
+    white-space: nowrap;
   }
 {% endstylesheet %}
 

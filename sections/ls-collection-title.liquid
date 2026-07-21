@@ -1,0 +1,200 @@
+<style>
+  .ls-collection-title__breadcrumb {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    padding-left: 32px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 1;
+    color: #B9AA99;
+  }
+
+  .ls-collection-title__breadcrumb a {
+    color: #B9AA99;
+    text-decoration: none;
+  }
+
+  .ls-collection-title__breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  .ls-collection-title__breadcrumb .separator {
+    margin: 0 6px;
+  }
+
+  .ls-collection-title__content {
+    padding-left: 32px;
+    max-width: 733px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+  }
+
+  .ls-collection-title__heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 44px;
+    line-height: 48.4px;
+    color: #121212;
+    margin: 0;
+  }
+
+  .ls-collection-title__desc {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    color: #121212;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin: 0;
+  }
+
+  .ls-collection-title__desc.is-expanded {
+    -webkit-line-clamp: unset;
+  }
+
+  .ls-collection-title__toggle {
+    display: none;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 1;
+    letter-spacing: -0.13px;
+    color: #231f1c;
+    text-decoration: underline;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .ls-collection-title__toggle.is-visible {
+    display: inline-flex;
+  }
+
+  .ls-collection-title__toggle .chevron {
+    width: 12px;
+    height: 12px;
+    transition: transform 0.3s ease;
+  }
+
+  .ls-collection-title__toggle[aria-expanded="true"] .chevron {
+    transform: rotate(180deg);
+  }
+
+  @media (max-width: 749px) {
+    .ls-collection-title__breadcrumb {
+      padding-left: 0;
+    }
+
+    .ls-collection-title__content {
+      padding-left: 0;
+    }
+
+    .ls-collection-title__heading {
+      font-size: 28px;
+      line-height: 33.6px;
+    }
+  }
+</style>
+
+<div class="section">
+  <nav class="ls-collection-title__breadcrumb" aria-label="Breadcrumb" style="grid-column: 2;">
+    <a href="/">Home</a>
+    <span class="separator">/</span>
+    <span aria-current="page">{{ collection.title }}</span>
+  </nav>
+
+  <div class="ls-collection-title__content" style="grid-column: 2;">
+    <h1 class="ls-collection-title__heading">{{ collection.title }}</h1>
+
+    {%- if collection.description != blank -%}
+      <div class="ls-collection-title__desc" id="collection-desc-{{ section.id }}">
+        {{ collection.description }}
+      </div>
+      <button
+        class="ls-collection-title__toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="collection-desc-{{ section.id }}"
+        data-toggle-target="collection-desc-{{ section.id }}"
+      >
+        <span class="toggle-label">LEARN MORE</span>
+        <svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" fill="none">
+          <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    {%- endif -%}
+  </div>
+</div>
+
+<script>
+  (function () {
+    var section = document.getElementById('shopify-section-{{ section.id }}');
+    if (!section) return;
+
+    var desc = section.querySelector('.ls-collection-title__desc');
+    var toggle = section.querySelector('.ls-collection-title__toggle');
+    if (!desc || !toggle) return;
+
+    function checkOverflow() {
+      if (desc.scrollHeight > desc.clientHeight) {
+        toggle.classList.add('is-visible');
+      } else {
+        toggle.classList.remove('is-visible');
+      }
+    }
+
+    checkOverflow();
+    window.addEventListener('resize', checkOverflow);
+
+    toggle.addEventListener('click', function () {
+      var expanded = desc.classList.toggle('is-expanded');
+      toggle.setAttribute('aria-expanded', expanded);
+      toggle.querySelector('.toggle-label').textContent = expanded ? 'SHOW LESS' : 'LEARN MORE';
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "LS Collection Title",
+  "tag": "section",
+  "class": "ls-collection-title-section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "LS Collection Title"
+    }
+  ]
+}
+{% endschema %}
