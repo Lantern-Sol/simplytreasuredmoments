@@ -118,7 +118,7 @@
             "image": "shopify://shop_images/Rectangle_26_2.png",
             "title": "Desktop Plaques",
             "subtitle": "",
-            "link": "",
+            "link": "shopify://collections/desktop-plaques",
             "size": "medium"
           }
         },
@@ -128,7 +128,7 @@
             "image": "shopify://shop_images/Rectangle_26_3.png",
             "title": "Print Media",
             "subtitle": "Canvas, Metal, Wood",
-            "link": "",
+            "link": "shopify://collections/print-media",
             "size": "medium"
           }
         },
