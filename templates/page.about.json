@@ -150,7 +150,7 @@
         "heading": "Every Keepsake, Made By Hand",
         "body_text": "From engraved photo frames and custom acrylic night lights to collectible coins and wooden keepsakes — every product is designed, printed, and assembled in our Utah workshop.",
         "button_label": "Shop All Keepsakes",
-        "button_link": "",
+        "button_link": "shopify://collections",
         "padding_top": 0,
         "padding_bottom": 80,
         "mobile_padding_top": 0,
