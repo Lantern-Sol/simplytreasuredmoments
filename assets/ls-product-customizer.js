@@ -436,13 +436,6 @@
       var self = this;
 
       function submitFormData(formData) {
-        /* Collect cart-drawer section IDs so Shopify returns updated HTML */
-        var cartSections = [];
-        document.querySelectorAll('cart-items-component').forEach(function (el) {
-          if (el.dataset.sectionId) cartSections.push(el.dataset.sectionId);
-        });
-        if (cartSections.length) formData.append('sections', cartSections.join(','));
-
         fetch('/cart/add.js', {
           method: 'POST',
           body: formData
@@ -452,28 +445,29 @@
           if (data.status) {
             alert(data.description || data.message || 'Could not add to cart.');
             self._updateCTA();
-          } else {
-            self.cta.textContent = 'Added to Cart!';
+            return;
+          }
 
-            /* Dispatch theme-compatible cart:update with sections + itemCount */
-            var qty = parseInt(formData.get('quantity'), 10) || 1;
+          self.cta.textContent = 'Added to Cart!';
+
+          /* Fetch fresh cart to get item_count, then trigger theme cart drawer */
+          fetch('/cart.js').then(function (r) { return r.json(); }).then(function (cart) {
             document.dispatchEvent(new CustomEvent('cart:update', {
               bubbles: true,
               detail: {
-                resource: {},
+                resource: cart,
                 sourceId: self.formId,
                 data: {
-                  source: 'product-form-component',
-                  itemCount: qty,
-                  sections: data.sections || {}
+                  itemCount: cart.item_count,
+                  sections: {}
                 }
               }
             }));
+          });
 
-            setTimeout(function () {
-              self._updateCTA();
-            }, 1200);
-          }
+          setTimeout(function () {
+            self._updateCTA();
+          }, 1200);
         })
         .catch(function () {
           alert('Something went wrong. Please try again.');
