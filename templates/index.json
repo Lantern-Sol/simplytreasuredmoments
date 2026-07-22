@@ -357,7 +357,7 @@
       "settings": {
         "heading": "Common Questions",
         "link_label": "See all FAQs →",
-        "link_url": "",
+        "link_url": "shopify://pages/frequently-asked-questions",
         "padding_top": 80,
         "padding_bottom": 80,
         "mobile_padding_top": 0,
