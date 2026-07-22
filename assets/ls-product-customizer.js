@@ -436,6 +436,13 @@
       var self = this;
 
       function submitFormData(formData) {
+        /* Collect cart-drawer section IDs so Shopify returns updated HTML */
+        var cartSections = [];
+        document.querySelectorAll('cart-items-component').forEach(function (el) {
+          if (el.dataset.sectionId) cartSections.push(el.dataset.sectionId);
+        });
+        if (cartSections.length) formData.append('sections', cartSections.join(','));
+
         fetch('/cart/add.js', {
           method: 'POST',
           body: formData
@@ -447,7 +454,22 @@
             self._updateCTA();
           } else {
             self.cta.textContent = 'Added to Cart!';
-            document.dispatchEvent(new CustomEvent('cart:update', { bubbles: true }));
+
+            /* Dispatch theme-compatible cart:update with sections + itemCount */
+            var qty = parseInt(formData.get('quantity'), 10) || 1;
+            document.dispatchEvent(new CustomEvent('cart:update', {
+              bubbles: true,
+              detail: {
+                resource: {},
+                sourceId: self.formId,
+                data: {
+                  source: 'product-form-component',
+                  itemCount: qty,
+                  sections: data.sections || {}
+                }
+              }
+            }));
+
             setTimeout(function () {
               self._updateCTA();
             }, 1200);
