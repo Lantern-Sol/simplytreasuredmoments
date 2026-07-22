@@ -447,10 +447,10 @@
             self._updateCTA();
           } else {
             self.cta.textContent = 'Added to Cart!';
-            document.dispatchEvent(new CustomEvent('cart:refresh'));
+            document.dispatchEvent(new CustomEvent('cart:update', { bubbles: true }));
             setTimeout(function () {
-              window.location.href = '/cart';
-            }, 800);
+              self._updateCTA();
+            }, 1200);
           }
         })
         .catch(function () {
