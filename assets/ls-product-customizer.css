@@ -644,6 +644,13 @@
   flex-shrink: 0;
 }
 
+/* --- Product media column spacing --- */
+@media screen and (min-width: 750px) {
+  .product-information__media {
+    padding-top: 24px;
+  }
+}
+
 /* --- Relocated Preview (moved into product media column) --- */
 .ls-preview--relocated {
   position: sticky;
