@@ -876,6 +876,91 @@
 
 /* Coin: front/back canvas visibility handled via .ls-preview__canvas rules above */
 
+/* --- Coin SVG Text Overlay --- */
+.ls-preview__coin-text {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.ls-preview__coin-text text {
+  fill: #000;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-style: italic;
+  font-weight: 700;
+  text-anchor: middle;
+}
+
+/* Draggable center text on coin photo */
+.ls-coin-center-text {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  top: 55%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-style: italic;
+  font-weight: 700;
+  color: #000;
+  font-size: 20px;
+  pointer-events: auto;
+  text-shadow:
+    -1px -1px 0 rgba(255,255,255,0.6),
+     1px -1px 0 rgba(255,255,255,0.6),
+    -1px  1px 0 rgba(255,255,255,0.6),
+     1px  1px 0 rgba(255,255,255,0.6),
+     0    0  4px rgba(255,255,255,0.8);
+  cursor: grab;
+  touch-action: none;
+  white-space: nowrap;
+  user-select: none;
+  line-height: 1.3;
+}
+
+.ls-coin-center-text:active {
+  cursor: grabbing;
+}
+
+.ls-coin-center-text:empty {
+  display: none;
+}
+
+.ls-coin-center-text:hover:not(:empty) {
+  outline: 1px dashed rgba(200, 164, 93, 0.7);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* Coin center text face visibility */
+.ls-coin-center-text[data-face="back"] {
+  display: none;
+}
+
+.ls-preview[data-preview-face="back"] .ls-coin-center-text[data-face="front"] {
+  display: none;
+}
+
+.ls-preview[data-preview-face="back"] .ls-coin-center-text[data-face="back"] {
+  display: block;
+}
+
+/* Coin text face visibility */
+.ls-preview__coin-text[data-face="back"] {
+  display: none;
+}
+
+.ls-preview[data-preview-face="back"] .ls-preview__coin-text[data-face="front"] {
+  display: none;
+}
+
+.ls-preview[data-preview-face="back"] .ls-preview__coin-text[data-face="back"] {
+  display: block;
+}
+
 /* --- Desktop Plaque Base --- */
 .ls-preview__base {
   width: 70%;

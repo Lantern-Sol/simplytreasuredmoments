@@ -80,6 +80,37 @@
       {%- if frame_overlay != blank -%}
         <img class="ls-preview__overlay" src="{{ frame_overlay }}" alt="" loading="lazy" draggable="false">
       {%- endif -%}
+
+      {%- comment -%} Coin SVG text overlay — curved text on rim band {%- endcomment -%}
+      {%- if type == 'coin' -%}
+        <svg class="ls-preview__coin-text" viewBox="0 0 360 360" data-face="front">
+          <defs>
+            <path id="coinTopArc-{{ section.id }}" d="M 14,180 A 166,166 0 0,1 346,180" fill="none" />
+            <path id="coinBottomArc-{{ section.id }}" d="M 14,180 A 166,166 0 0,0 346,180" fill="none" />
+          </defs>
+          <text font-size="22" letter-spacing="2" dy="6">
+            <textPath href="#coinTopArc-{{ section.id }}" startOffset="50%" class="ls-coin-text__top"></textPath>
+          </text>
+          <text font-size="20" letter-spacing="1.5" dy="4">
+            <textPath href="#coinBottomArc-{{ section.id }}" startOffset="50%" class="ls-coin-text__bottom"></textPath>
+          </text>
+        </svg>
+        <svg class="ls-preview__coin-text" viewBox="0 0 360 360" data-face="back" style="display:none;">
+          <defs>
+            <path id="coinTopArcBack-{{ section.id }}" d="M 14,180 A 166,166 0 0,1 346,180" fill="none" />
+            <path id="coinBottomArcBack-{{ section.id }}" d="M 14,180 A 166,166 0 0,0 346,180" fill="none" />
+          </defs>
+          <text font-size="22" letter-spacing="2" dy="6">
+            <textPath href="#coinTopArcBack-{{ section.id }}" startOffset="50%" class="ls-coin-text__top"></textPath>
+          </text>
+          <text font-size="20" letter-spacing="1.5" dy="4">
+            <textPath href="#coinBottomArcBack-{{ section.id }}" startOffset="50%" class="ls-coin-text__bottom"></textPath>
+          </text>
+        </svg>
+        {%- comment -%} Draggable center text on the photo {%- endcomment -%}
+        <div class="ls-coin-center-text" data-face="front"></div>
+        <div class="ls-coin-center-text" data-face="back" style="display:none;"></div>
+      {%- endif -%}
     </div>
 
     {%- comment -%} Mobile/touch controls — visible once a photo is uploaded {%- endcomment -%}

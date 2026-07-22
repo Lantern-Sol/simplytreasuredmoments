@@ -698,7 +698,7 @@
     'coin': {
       aspect: 1,
       clipShape: 'circle',
-      clipRadius: 0.44,
+      clipRadius: 0.42,
       photoWindow: null
     },
     'missionary-plaque': {
@@ -777,6 +777,7 @@
       this._waitForFabric();
       this._bindOptionChanges();
       this._bindCoinToggle();
+      this._bindCoinTextInputs();
     }
 
     /** Wait for fabric.js to load (it's deferred), then initialize canvases */
@@ -1424,11 +1425,200 @@
       }
     }
 
+    /** Coin text overlay — listen for text inputs and update SVG text */
+    _bindCoinTextInputs() {
+      if (this.type !== 'coin') return;
+      var self = this;
+
+      // SVG text elements for front and back faces
+      var frontSvg = qs('.ls-preview__coin-text[data-face="front"]', this.previewEl);
+      var backSvg = qs('.ls-preview__coin-text[data-face="back"]', this.previewEl);
+      if (!frontSvg) return;
+
+      // Draggable center text divs (HTML, not SVG)
+      var frontCenter = qs('.ls-coin-center-text[data-face="front"]', this.previewEl);
+      var backCenter = qs('.ls-coin-center-text[data-face="back"]', this.previewEl);
+
+      this._coinTextEls = {
+        front: {
+          top: qs('.ls-coin-text__top', frontSvg),
+          bottom: qs('.ls-coin-text__bottom', frontSvg),
+          center: frontCenter
+        },
+        back: backSvg ? {
+          top: qs('.ls-coin-text__top', backSvg),
+          bottom: qs('.ls-coin-text__bottom', backSvg),
+          center: backCenter
+        } : null
+      };
+
+      // Make center text divs draggable
+      if (frontCenter) this._makeDraggable(frontCenter);
+      if (backCenter) this._makeDraggable(backCenter);
+
+      // Mapping: property name → { face, position }
+      // Varies by coin type, so we listen to all text/textarea inputs and map dynamically
+      var searchRoot = document.querySelector('.ls-customizer-relocated') || this.root;
+
+      // Use MutationObserver to catch conditionally revealed inputs
+      var bindInputs = function () {
+        var textInputs = qsa('input[type="text"], textarea', searchRoot);
+        textInputs.forEach(function (input) {
+          if (input._lsCoinBound) return;
+          input._lsCoinBound = true;
+          input.addEventListener('input', function () {
+            self._updateCoinText();
+          });
+        });
+      };
+
+      // Bind existing inputs
+      bindInputs();
+
+      // Re-bind when conditional steps are revealed
+      var observer = new MutationObserver(function () {
+        bindInputs();
+      });
+      observer.observe(searchRoot, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class'] });
+
+      // Also listen to coin type / sub-conditional changes to update text and toggle
+      var condInputs = qsa('[data-coin-type], [data-temple-mode], [data-sports-mode]', searchRoot);
+      condInputs.forEach(function (input) {
+        input.addEventListener('change', function () {
+          setTimeout(function () {
+            self._updateCoinText();
+            self._updateCoinToggle();
+          }, 100);
+        });
+      });
+
+      // Initial check
+      setTimeout(function () { self._updateCoinToggle(); }, 200);
+    }
+
+    /** Read all visible text inputs and map them to coin SVG text positions */
+    _updateCoinText() {
+      if (!this._coinTextEls) return;
+
+      var searchRoot = document.querySelector('.ls-customizer-relocated') || this.root;
+
+      // Collect all visible text inputs with their property names and values
+      var textInputs = qsa('input[type="text"], textarea', searchRoot);
+      var fields = [];
+      textInputs.forEach(function (input) {
+        // Skip inputs inside inactive conditional blocks
+        var cond = input.closest('.ls-conditional');
+        if (cond && !cond.classList.contains('is-active')) return;
+        // Also check parent conditionals (nested conditionals like temple → personalized)
+        var parentCond = cond ? cond.parentElement.closest('.ls-conditional') : null;
+        if (parentCond && !parentCond.classList.contains('is-active')) return;
+
+        var name = (input.name || '').replace('properties[', '').replace(']', '');
+        if (name && input.value.trim()) {
+          fields.push({ name: name.toLowerCase(), value: input.value.trim() });
+        }
+      });
+
+      // Determine which fields go where based on naming patterns
+      var front = this._coinTextEls.front;
+      var back = this._coinTextEls.back;
+
+      // Reset all text
+      if (front.top) front.top.textContent = '';
+      if (front.bottom) front.bottom.textContent = '';
+      if (front.center) front.center.textContent = '';
+      if (back) {
+        if (back.top) back.top.textContent = '';
+        if (back.bottom) back.bottom.textContent = '';
+        if (back.center) back.center.textContent = '';
+      }
+
+      // Map fields to positions based on property name patterns
+      var frontTexts = [];
+      var backTexts = [];
+
+      fields.forEach(function (f) {
+        var n = f.name;
+        if (n.indexOf('back') !== -1) {
+          backTexts.push(f.value);
+        } else {
+          frontTexts.push(f.value);
+        }
+      });
+
+      // Front face: first → top arc (rim), last → bottom arc (rim), middle → center (on photo)
+      if (frontTexts.length === 1) {
+        if (front.top) front.top.textContent = frontTexts[0];
+      } else if (frontTexts.length === 2) {
+        if (front.top) front.top.textContent = frontTexts[0];
+        if (front.bottom) front.bottom.textContent = frontTexts[1];
+      } else if (frontTexts.length >= 3) {
+        if (front.top) front.top.textContent = frontTexts[0];
+        if (front.bottom) front.bottom.textContent = frontTexts[frontTexts.length - 1];
+        if (front.center) front.center.textContent = frontTexts.slice(1, -1).join(' · ');
+      }
+
+      // Back face: same layout
+      if (back) {
+        if (backTexts.length === 1) {
+          if (back.top) back.top.textContent = backTexts[0];
+        } else if (backTexts.length === 2) {
+          if (back.top) back.top.textContent = backTexts[0];
+          if (back.bottom) back.bottom.textContent = backTexts[1];
+        } else if (backTexts.length >= 3) {
+          if (back.top) back.top.textContent = backTexts[0];
+          if (back.bottom) back.bottom.textContent = backTexts[backTexts.length - 1];
+          if (back.center) back.center.textContent = backTexts.slice(1, -1).join(' · ');
+        }
+      }
+    }
+
+    /** Make an element draggable within the preview frame */
+    _makeDraggable(el) {
+      var offsetX = 0, offsetY = 0;
+      var startX, startY, startOX, startOY;
+
+      function onStart(e) {
+        e.preventDefault();
+        var point = e.touches ? e.touches[0] : e;
+        startX = point.clientX;
+        startY = point.clientY;
+        startOX = offsetX;
+        startOY = offsetY;
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onEnd);
+        document.addEventListener('touchmove', onMove, { passive: false });
+        document.addEventListener('touchend', onEnd);
+      }
+
+      function onMove(e) {
+        e.preventDefault();
+        var point = e.touches ? e.touches[0] : e;
+        offsetX = startOX + (point.clientX - startX);
+        offsetY = startOY + (point.clientY - startY);
+        el.style.transform = 'translate(calc(-50% + ' + offsetX + 'px), calc(-50% + ' + offsetY + 'px))';
+      }
+
+      function onEnd() {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onEnd);
+        document.removeEventListener('touchmove', onMove);
+        document.removeEventListener('touchend', onEnd);
+      }
+
+      el.addEventListener('mousedown', onStart);
+      el.addEventListener('touchstart', onStart, { passive: false });
+    }
+
     /** Coin front/back toggle */
     _bindCoinToggle() {
       if (this.type !== 'coin') return;
       var self = this;
+      this._coinToggleEl = qs('.ls-preview__coin-toggle', this.previewEl);
       var toggleBtns = qsa('.ls-preview__coin-btn', this.previewEl);
+
+      // Hide toggle by default — shown only when back fields are visible
+      if (this._coinToggleEl) this._coinToggleEl.style.display = 'none';
 
       toggleBtns.forEach(function (btn) {
         btn.addEventListener('click', function () {
@@ -1439,6 +1629,36 @@
           self.previewEl.setAttribute('data-preview-face', face);
         });
       });
+    }
+
+    /** Show/hide coin toggle based on whether active coin type has back fields */
+    _updateCoinToggle() {
+      if (!this._coinToggleEl) return;
+      var searchRoot = document.querySelector('.ls-customizer-relocated') || this.root;
+      var hasBack = false;
+
+      var inputs = qsa('input[type="text"], textarea, input[type="file"]', searchRoot);
+      inputs.forEach(function (input) {
+        var cond = input.closest('.ls-conditional');
+        if (cond && !cond.classList.contains('is-active')) return;
+        var parentCond = cond ? cond.parentElement.closest('.ls-conditional') : null;
+        if (parentCond && !parentCond.classList.contains('is-active')) return;
+
+        var name = (input.name || '').toLowerCase();
+        if (name.indexOf('back') !== -1) hasBack = true;
+      });
+
+      this._coinToggleEl.style.display = hasBack ? '' : 'none';
+
+      // If toggle hidden and was on back face, reset to front
+      if (!hasBack) {
+        this._activeFace = 'front';
+        this.previewEl.removeAttribute('data-preview-face');
+        var toggleBtns = qsa('.ls-preview__coin-btn', this.previewEl);
+        toggleBtns.forEach(function (btn) {
+          btn.classList.toggle('is-active', btn.dataset.face === 'front');
+        });
+      }
     }
   }
 
