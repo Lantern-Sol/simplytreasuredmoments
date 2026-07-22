@@ -464,11 +464,6 @@
               }
             }));
 
-            /* Open cart drawer directly (theme setting may have auto-open off) */
-            var drawer = document.querySelector('cart-drawer-component');
-            if (drawer && typeof drawer.showDialog === 'function') {
-              drawer.showDialog();
-            }
           });
 
           setTimeout(function () {
