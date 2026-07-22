@@ -357,13 +357,28 @@
         // Activate the coin type conditional
         this._activateConditional('coin-type', coinType);
       }
+
+      // Default to Missionary if no coin_type URL param
+      if (!coinType && this.customizerType === 'coin') {
+        var defaultType = 'missionary';
+        var defaultRadio = qs('input[data-coin-type="' + defaultType + '"]', this.root);
+        if (defaultRadio) {
+          defaultRadio.checked = true;
+          var step = defaultRadio.closest('.ls-step');
+          if (step) {
+            var selectionEl = qs('.ls-step__selection', step);
+            if (selectionEl) selectionEl.textContent = defaultRadio.value;
+          }
+        }
+        this._activateConditional('coin-type', defaultType);
+      }
     }
 
     /* ---- Generic conditional branching ---- */
 
     _bindConditionals() {
       // Find all inputs that have conditional data attributes
-      var condGroups = ['coin-type', 'temple-mode', 'sports-mode'];
+      var condGroups = ['coin-type', 'temple-mode', 'sports-mode', 'shadow-box-occasion', 'desktop-plaque-occasion', 'puzzle-shape', 'print-media-material'];
       condGroups.forEach(function (group) {
         var camel = toCamel(group);
         var inputs = qsa('[data-' + group + ']', this.root);
@@ -558,23 +573,27 @@
   /** Maps option labels to CSS custom property values */
   var OPTION_MAPS = {
     frameColor: {
-      'Black':       '#1a1a1a',
-      'White':       '#f5f5f5',
-      'Walnut':      '#5C4033',
-      'Natural Oak': '#C4A882',
-      'Cherry':      '#7B3F00',
-      'Classic Black': '#1a1a1a'
+      'Black':        '#1a1a1a',
+      'White':        '#f5f5f5',
+      'Walnut':       '#5C4033',
+      'Natural Oak':  '#C4A882',
+      'Natural Wood': '#C4A882',
+      'Cherry':       '#7B3F00',
+      'Classic Black':'#1a1a1a',
+      'None':         'transparent'
     },
     shape: {
-      'Heart':     "path('M 50 85 C 25 65, 0 45, 0 25 C 0 5, 20 0, 35 0 C 42 0, 50 8, 50 15 C 50 8, 58 0, 65 0 C 80 0, 100 5, 100 25 C 100 45, 75 65, 50 85 Z')",
-      'Rectangle': 'inset(0 round 4px)',
-      'Oval':      'ellipse(45% 50%)',
-      'Circle':    'circle(50%)',
-      'Star':      'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)',
-      'Arch':      'polygon(0% 100%, 0% 30%, 5% 18%, 15% 8%, 25% 3%, 35% 0.5%, 50% 0%, 65% 0.5%, 75% 3%, 85% 8%, 95% 18%, 100% 30%, 100% 100%)',
-      'Diamond':   'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)',
-      'Classic':   'inset(0 round 4px)',
-      'Modern':    'inset(0 round 4px)'
+      'Heart':       "path('M 50 85 C 25 65, 0 45, 0 25 C 0 5, 20 0, 35 0 C 42 0, 50 8, 50 15 C 50 8, 58 0, 65 0 C 80 0, 100 5, 100 25 C 100 45, 75 65, 50 85 Z')",
+      'Rectangle':   'inset(0 round 4px)',
+      'Rectangular': 'inset(0 round 4px)',
+      'Oval':        'ellipse(45% 50%)',
+      'Circle':      'circle(50%)',
+      'Round':       'circle(50%)',
+      'Star':        'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)',
+      'Arch':        'polygon(0% 100%, 0% 30%, 5% 18%, 15% 8%, 25% 3%, 35% 0.5%, 50% 0%, 65% 0.5%, 75% 3%, 85% 8%, 95% 18%, 100% 30%, 100% 100%)',
+      'Diamond':     'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)',
+      'Classic':     'inset(0 round 4px)',
+      'Modern':      'inset(0 round 4px)'
     },
     finish: {
       'Gold':   'radial-gradient(circle, #D4AF37 0%, #B8860B 50%, #DAA520 100%)',
@@ -587,14 +606,28 @@
       'No Base':          'transparent',
       'Walnut':           '#5C4033',
       'Maple':            '#C4A882',
+      'Beech':            '#D2B48C',
       'Cherry':           '#7B3F00',
       'Black':            '#1a1a1a'
     },
     material: {
       'Canvas': '#d4cfc8',
       'Metal':  'linear-gradient(135deg, #b0b0b0, #d8d8d8, #a0a0a0)',
-      'Acrylic': '#e8e4df',
+      'Maple':  '#C4A882',
+      'Walnut': '#5C4033',
       'Wood':   '#A0845C'
+    },
+    style: {
+      '3 Panel Set':  'inset(0 round 4px)',
+      'Brush Stroke': 'inset(0 round 4px)',
+      'Silhouette':   'inset(0 round 4px)',
+      'Line Drawing': 'inset(0 round 4px)',
+      'Full Color':   'inset(0 round 4px)'
+    },
+    letterStyle: {
+      'Flat':   'none',
+      'Raised': 'none',
+      '3D':     'none'
     }
   };
 
@@ -609,7 +642,15 @@
     'Wood Base':             { prop: '--ls-base-color',  map: 'woodBase' },
     'Colors':                { prop: '--ls-accent-color', map: null },
     'Text Color':            { prop: '--ls-accent-color', map: null },
-    'Material':              { prop: '--ls-frame-color', map: 'material' }
+    'Material':              { prop: '--ls-frame-color', map: 'material' },
+    'Art Style':             { prop: '--ls-art-style',    map: 'style' },
+    'Color Style':           { prop: '--ls-color-style',  map: 'style' },
+    'Letter Style':          { prop: '--ls-letter-style', map: 'letterStyle' },
+    'Wood Type':             { prop: '--ls-base-color',   map: 'woodBase' },
+    'Lighting':              { prop: '--ls-lighting',     map: null },
+    'Frame':                 { prop: '--ls-frame-color',  map: 'frameColor' },
+    'Template':              { prop: '--ls-template',     map: null },
+    'Canvas Style':          { prop: '--ls-shape',        map: 'style' }
   };
 
   /* ------------------------------------------------------------------
@@ -715,6 +756,7 @@
       this._activeFace = 'front';
 
       this._relocatePreview();
+      this._bindCloseButton();
       this._waitForFabric();
       this._bindOptionChanges();
       this._bindCoinToggle();
@@ -877,6 +919,16 @@
       this.previewEl.style.display = 'none';
     }
 
+    _bindCloseButton() {
+      var self = this;
+      var closeBtn = qs('.ls-preview__close', this.previewEl);
+      if (!closeBtn) return;
+
+      closeBtn.addEventListener('click', function () {
+        self._hidePreview();
+      });
+    }
+
     _showPreview() {
       if (!this.previewEl.classList.contains('ls-preview--relocated')) {
         // On mobile, just show controls
@@ -886,13 +938,42 @@
       this.previewEl.style.display = '';
       if (this._gallery) this._gallery.style.display = 'none';
       if (this.controlsEl) this.controlsEl.classList.add('is-visible');
+      // Remove return button if it exists
+      if (this._returnBtn) {
+        this._returnBtn.remove();
+        this._returnBtn = null;
+      }
     }
 
     _hidePreview() {
       if (this.controlsEl) this.controlsEl.classList.remove('is-visible');
       if (!this.previewEl.classList.contains('ls-preview--relocated')) return;
       this.previewEl.style.display = 'none';
-      if (this._gallery) this._gallery.style.display = '';
+      if (this._gallery) {
+        this._gallery.style.display = '';
+        // Show "Back to Preview" button on top of gallery if a photo has been uploaded
+        if (this.photoImage || this.backPhotoImage) {
+          this._showReturnButton();
+        }
+      }
+    }
+
+    _showReturnButton() {
+      if (this._returnBtn) return; // already exists
+      var self = this;
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'ls-preview__return';
+      btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 12H3m0 0l4-4m-4 4l4 4"/><path d="M9 21h9a3 3 0 003-3V6a3 3 0 00-3-3H9"/></svg> Back to Preview';
+      btn.addEventListener('click', function () {
+        self._showPreview();
+        if (self._returnBtn) {
+          self._returnBtn.remove();
+          self._returnBtn = null;
+        }
+      });
+      this._mediaCol.insertBefore(btn, this._gallery);
+      this._returnBtn = btn;
     }
 
     /** Get the active canvas (front or back for coins) */

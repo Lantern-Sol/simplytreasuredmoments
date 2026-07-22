@@ -584,6 +584,66 @@
   font-style: italic;
 }
 
+/* --- Preview Close Button --- */
+.ls-preview__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid #e5e1dc;
+  border-radius: 6px;
+  background: #fff;
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6A5D4D;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  z-index: 10;
+}
+
+.ls-preview__close:hover {
+  background: #f5f2ee;
+  border-color: #c8a45d;
+}
+
+.ls-preview__close svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* --- Preview Return Button (shows on gallery when preview is closed) --- */
+.ls-preview__return {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 16px;
+  margin-bottom: 12px;
+  border: 1px solid #c8a45d;
+  border-radius: 6px;
+  background: #fdf8ee;
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #c8a45d;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.ls-preview__return:hover {
+  background: #faf3e0;
+}
+
+.ls-preview__return svg {
+  flex-shrink: 0;
+}
+
 /* --- Relocated Preview (moved into product media column) --- */
 .ls-preview--relocated {
   position: sticky;
@@ -633,6 +693,11 @@
   --ls-finish-gradient: radial-gradient(circle, #D4AF37 0%, #B8860B 50%, #DAA520 100%);
   --ls-glow-color: rgba(255, 255, 200, 0.5);
   --ls-accent-color: #1a1a2e;
+  --ls-art-style: none;
+  --ls-color-style: none;
+  --ls-letter-style: none;
+  --ls-lighting: none;
+  --ls-template: none;
 }
 
 /* --- Container --- */
@@ -657,7 +722,7 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 320px;
+  max-width: 100%;
   aspect-ratio: 1;
 }
 
@@ -809,7 +874,6 @@
 
 [data-preview-type="print-media"] .ls-preview__frame {
   aspect-ratio: 1662 / 1293;
-  max-width: 380px;
 }
 
 [data-preview-type="shadow-box"] .ls-preview__frame {
@@ -826,7 +890,7 @@
 
 [data-preview-type="coin"] .ls-preview__frame {
   aspect-ratio: 1;
-  max-width: 260px;
+  max-width: 70%;
 }
 
 [data-preview-type="missionary-plaque"] .ls-preview__frame {
@@ -855,7 +919,7 @@
 
 [data-preview-type="vinyl-record"] .ls-preview__frame {
   aspect-ratio: 1;
-  max-width: 280px;
+  max-width: 80%;
 }
 
 [data-preview-type="school-frame"] .ls-preview__frame {
@@ -941,15 +1005,15 @@
   }
 
   .ls-preview__frame {
-    max-width: 220px;
+    max-width: 80%;
   }
 
   [data-preview-type="coin"] .ls-preview__frame {
-    max-width: 180px;
+    max-width: 60%;
   }
 
   [data-preview-type="vinyl-record"] .ls-preview__frame {
-    max-width: 200px;
+    max-width: 70%;
   }
 
   .ls-preview__controls {

@@ -36,6 +36,10 @@
   </form>
   {%- comment -%} Live Preview {%- endcomment -%}
   <div class="ls-preview" data-preview-type="{{ type }}">
+    <button type="button" class="ls-preview__close" aria-label="Close preview">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18L18 6M6 6l12 12"/></svg>
+      <span>View Product Photos</span>
+    </button>
     {%- if type == 'coin' -%}
       <div class="ls-preview__coin-toggle">
         <button type="button" class="ls-preview__coin-btn is-active" data-face="front">Front</button>
@@ -119,28 +123,53 @@
     {%- when 'print-media' -%}
       {%- render 'ls-customizer-step',
         step_number: 1,
-        title: 'Choose Your Material & Frame',
+        title: 'Choose Your Material',
         input_type: 'swatch',
-        property: 'Material & Frame',
-        options: 'Canvas Print,Metal Print,Wood Print,Acrylic Print',
+        property: 'Material',
+        options: 'Canvas,Metal,Wood',
         required: true,
-        form_id: product_form_id
+        form_id: product_form_id,
+        conditional_key: 'print-media-material'
       -%}
-      {%- render 'ls-customizer-step',
-        step_number: 2,
-        title: 'Select Orientation & Size',
-        input_type: 'button-group',
-        property: 'Orientation & Size',
-        options: 'Landscape 8×10,Landscape 11×14,Landscape 16×20,Portrait 8×10,Portrait 11×14,Portrait 16×20,Square 10×10,Square 12×12',
-        required: true,
-        form_id: product_form_id
-      -%}
+      <div class="ls-conditional" data-print-media-material="canvas">
+        {%- render 'ls-customizer-step',
+          step_number: 2,
+          title: 'Choose Your Frame',
+          input_type: 'button-group',
+          property: 'Frame',
+          options: 'Black,White,Natural Wood,None',
+          required: true,
+          form_id: product_form_id
+        -%}
+      </div>
+      <div class="ls-conditional" data-print-media-material="metal">
+        {%- render 'ls-customizer-step',
+          step_number: 2,
+          title: 'Choose Your Frame',
+          input_type: 'button-group',
+          property: 'Frame',
+          options: 'Black,White,Natural Wood,None',
+          required: true,
+          form_id: product_form_id
+        -%}
+      </div>
+      <div class="ls-conditional" data-print-media-material="wood">
+        {%- render 'ls-customizer-step',
+          step_number: 2,
+          title: 'Choose Your Frame',
+          input_type: 'button-group',
+          property: 'Frame',
+          options: 'Black,White,Natural Wood,None',
+          required: true,
+          form_id: product_form_id
+        -%}
+      </div>
       {%- render 'ls-customizer-step',
         step_number: 3,
-        title: 'Choose Texture',
+        title: 'Select Size',
         input_type: 'button-group',
-        property: 'Texture',
-        options: 'Matte,Glossy,Satin',
+        property: 'Size',
+        options: 'Small 8"×10",Medium 11"×14",Large 12"×16"',
         required: true,
         form_id: product_form_id
       -%}
@@ -160,12 +189,57 @@
         title: 'Select Occasion',
         input_type: 'button-group',
         property: 'Occasion',
-        options: 'Missionary,Wedding,Baby,Graduation,Memorial,Anniversary,Birthday,Other',
+        options: 'Family,Faith & Mission,Temple,Sports',
         required: true,
-        form_id: product_form_id
+        form_id: product_form_id,
+        conditional_key: 'shadow-box-occasion'
       -%}
+      <div class="ls-conditional" data-shadow-box-occasion="family">
+        {%- render 'ls-customizer-step',
+          step_number: 2,
+          title: 'Add Your Details',
+          input_type: 'text-fields',
+          property: 'Details',
+          text_fields: 'Name or Title|50,Date|30,Personal Message|200',
+          required: true,
+          form_id: product_form_id
+        -%}
+      </div>
+      <div class="ls-conditional" data-shadow-box-occasion="faith-mission">
+        {%- render 'ls-customizer-step',
+          step_number: 2,
+          title: 'Add Missionary Details',
+          input_type: 'text-fields',
+          property: 'Missionary Details',
+          text_fields: 'Missionary Name|50,Mission Name|50,Mission Dates|30',
+          required: true,
+          form_id: product_form_id
+        -%}
+      </div>
+      <div class="ls-conditional" data-shadow-box-occasion="temple">
+        {%- render 'ls-customizer-step',
+          step_number: 2,
+          title: 'Choose Your Temple',
+          input_type: 'dropdown',
+          property: 'Temple',
+          options: 'Salt Lake City,Provo City Center,Payson,Mount Timpanogos,Draper,Oquirrh Mountain,Jordan River,Bountiful,Ogden,Logan,St. George,Manti,Cedar City,Laie,Mesa,Gilbert,Oakland,San Diego,Portland,Seattle,Denver,Washington D.C.,Nauvoo,Other',
+          required: true,
+          form_id: product_form_id
+        -%}
+      </div>
+      <div class="ls-conditional" data-shadow-box-occasion="sports">
+        {%- render 'ls-customizer-step',
+          step_number: 2,
+          title: 'Add Player Details',
+          input_type: 'text-fields',
+          property: 'Player Details',
+          text_fields: 'Player/Team Name|50,Sport|30,Season/Year|20',
+          required: true,
+          form_id: product_form_id
+        -%}
+      </div>
       {%- render 'ls-customizer-step',
-        step_number: 2,
+        step_number: 3,
         title: 'Select Orientation & Size',
         input_type: 'button-group',
         property: 'Orientation & Size',
@@ -174,7 +248,7 @@
         form_id: product_form_id
       -%}
       {%- render 'ls-customizer-step',
-        step_number: 3,
+        step_number: 4,
         title: 'Choose Frame Color',
         input_type: 'swatch',
         property: 'Frame Color',
@@ -183,16 +257,16 @@
         form_id: product_form_id
       -%}
       {%- render 'ls-customizer-step',
-        step_number: 4,
+        step_number: 5,
         title: 'Add Your Text',
         input_type: 'text-fields',
         property: 'Text',
-        text_fields: 'Name or Title|50,Date or Subtitle|30,Personal Message|200',
+        text_fields: 'Line 1|40,Line 2|40',
         required: true,
         form_id: product_form_id
       -%}
       {%- render 'ls-customizer-step',
-        step_number: 5,
+        step_number: 6,
         title: 'Upload Your Photo',
         input_type: 'file',
         property: 'Photo',
@@ -236,39 +310,82 @@
         title: 'Select Occasion',
         input_type: 'button-group',
         property: 'Occasion',
-        options: 'Missionary,Wedding,Baby,Graduation,Memorial,Anniversary,Birthday,Other',
+        options: 'General,Missionary,Temple',
         required: true,
-        form_id: product_form_id
+        form_id: product_form_id,
+        conditional_key: 'desktop-plaque-occasion'
       -%}
-      {%- render 'ls-customizer-step',
-        step_number: 2,
-        title: 'Choose Style',
-        input_type: 'swatch',
-        property: 'Style',
-        options: 'Rectangle,Heart,Oval,Arch',
-        required: true,
-        form_id: product_form_id
-      -%}
+      <div class="ls-conditional" data-desktop-plaque-occasion="general">
+        {%- render 'ls-customizer-step',
+          step_number: 2,
+          title: 'Choose Template',
+          input_type: 'button-group',
+          property: 'Template',
+          options: '1,2,3,4,5,6,7,8,9,10',
+          required: true,
+          form_id: product_form_id
+        -%}
+      </div>
+      <div class="ls-conditional" data-desktop-plaque-occasion="missionary">
+        {%- render 'ls-customizer-step',
+          step_number: 2,
+          title: 'Add Missionary Details',
+          input_type: 'text-fields',
+          property: 'Missionary Details',
+          text_fields: 'Missionary Name|50,Mission Name|50,Mission Dates|30',
+          required: true,
+          form_id: product_form_id
+        -%}
+      </div>
+      <div class="ls-conditional" data-desktop-plaque-occasion="temple">
+        {%- render 'ls-customizer-step',
+          step_number: 2,
+          title: 'Choose Your Temple',
+          input_type: 'dropdown',
+          property: 'Temple',
+          options: 'Salt Lake City,Provo City Center,Payson,Mount Timpanogos,Draper,Oquirrh Mountain,Jordan River,Bountiful,Ogden,Logan,St. George,Manti,Cedar City,Laie,Mesa,Gilbert,Oakland,San Diego,Portland,Seattle,Denver,Washington D.C.,Nauvoo,Other',
+          required: true,
+          form_id: product_form_id
+        -%}
+      </div>
       {%- render 'ls-customizer-step',
         step_number: 3,
-        title: 'Wood Base & Lighting',
-        input_type: 'swatch',
-        property: 'Wood Base & Lighting',
-        options: 'Walnut with LED,Maple with LED,Black with LED,No Base',
+        title: 'Choose Art Style',
+        input_type: 'button-group',
+        property: 'Art Style',
+        options: 'Silhouette,Line Drawing',
         required: true,
         form_id: product_form_id
       -%}
       {%- render 'ls-customizer-step',
         step_number: 4,
-        title: 'Add Your Text',
-        input_type: 'text-fields',
-        property: 'Text',
-        text_fields: 'Name or Title|50,Date or Subtitle|30,Personal Message|200',
+        title: 'Choose Wood Type',
+        input_type: 'swatch',
+        property: 'Wood Type',
+        options: 'Walnut,Beech',
         required: true,
         form_id: product_form_id
       -%}
       {%- render 'ls-customizer-step',
         step_number: 5,
+        title: 'Choose Lighting',
+        input_type: 'button-group',
+        property: 'Lighting',
+        options: 'None,White,7-Color',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 6,
+        title: 'Add Your Text',
+        input_type: 'text-fields',
+        property: 'Text',
+        text_fields: 'Line 1|40,Line 2|40',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 7,
         title: 'Upload Your Photo(s)',
         input_type: 'file',
         property: 'Photo',
@@ -572,9 +689,9 @@
       {%- render 'ls-customizer-step',
         step_number: 1,
         title: 'Choose Canvas Style',
-        input_type: 'swatch',
+        input_type: 'button-group',
         property: 'Canvas Style',
-        options: 'Watercolor,Photo Realistic,Minimalist,Sunset',
+        options: '3 Panel Set,Brush Stroke',
         required: true,
         form_id: product_form_id
       -%}
@@ -612,12 +729,21 @@
         title: 'Choose Material',
         input_type: 'swatch',
         property: 'Material',
-        options: 'Canvas,Metal,Acrylic,Wood',
+        options: 'Maple,Walnut,Metal',
         required: true,
         form_id: product_form_id
       -%}
       {%- render 'ls-customizer-step',
         step_number: 2,
+        title: 'Choose Color Style',
+        input_type: 'button-group',
+        property: 'Color Style',
+        options: 'Full Color,Silhouette',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 3,
         title: 'Select Size',
         input_type: 'button-group',
         property: 'Size',
@@ -626,7 +752,7 @@
         form_id: product_form_id
       -%}
       {%- render 'ls-customizer-step',
-        step_number: 3,
+        step_number: 4,
         title: 'Upload Your Photo',
         input_type: 'file',
         property: 'Photo',
@@ -634,7 +760,7 @@
         form_id: product_form_id
       -%}
       {%- render 'ls-customizer-step',
-        step_number: 4,
+        step_number: 5,
         title: 'Add Your Text',
         input_type: 'text-fields',
         property: 'Text',
@@ -688,19 +814,33 @@
         title: 'Choose Shape',
         input_type: 'button-group',
         property: 'Shape',
-        options: 'Heart,Rectangle,Circle,Star',
+        options: 'Rectangular,Round',
         required: true,
-        form_id: product_form_id
+        form_id: product_form_id,
+        conditional_key: 'puzzle-shape'
       -%}
-      {%- render 'ls-customizer-step',
-        step_number: 2,
-        title: 'Select Size',
-        input_type: 'button-group',
-        property: 'Size',
-        options: 'Small,Medium,Large',
-        required: true,
-        form_id: product_form_id
-      -%}
+      <div class="ls-conditional" data-puzzle-shape="rectangular">
+        {%- render 'ls-customizer-step',
+          step_number: 2,
+          title: 'Select Size',
+          input_type: 'button-group',
+          property: 'Size',
+          options: '5"×7" (15 pieces),8"×10" (48 pieces),11"×14" (108 pieces),12"×16" (140 pieces)',
+          required: true,
+          form_id: product_form_id
+        -%}
+      </div>
+      <div class="ls-conditional" data-puzzle-shape="round">
+        {%- render 'ls-customizer-step',
+          step_number: 2,
+          title: 'Select Size',
+          input_type: 'button-group',
+          property: 'Size',
+          options: '5" diameter (37 pieces),8" diameter (61 pieces),12" diameter (91 pieces)',
+          required: true,
+          form_id: product_form_id
+        -%}
+      </div>
       {%- render 'ls-customizer-step',
         step_number: 3,
         title: 'Upload Your Photo',
@@ -855,15 +995,33 @@
     {%- when 'acrylic-block' -%}
       {%- render 'ls-customizer-step',
         step_number: 1,
-        title: 'Choose Shape',
+        title: 'Choose Letter Style',
         input_type: 'button-group',
-        property: 'Shape',
-        options: 'Heart,Rectangle,Circle,Diamond',
+        property: 'Letter Style',
+        options: 'Flat,Raised,3D',
         required: true,
         form_id: product_form_id
       -%}
       {%- render 'ls-customizer-step',
         step_number: 2,
+        title: 'Choose Wood Type',
+        input_type: 'button-group',
+        property: 'Wood Type',
+        options: 'Maple,Walnut',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 3,
+        title: 'Add Your Text',
+        input_type: 'text-fields',
+        property: 'Text',
+        text_fields: 'Line 1|15,Line 2|15',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 4,
         title: 'Upload Your Photo',
         input_type: 'file',
         property: 'Photo',
@@ -889,15 +1047,15 @@
   {%- comment -%} Trust Badges {%- endcomment -%}
   <div class="ls-trust-badges">
     <span class="ls-trust-badge">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 17 16" fill="none"><path d="M15.9036 2.59839C15.842 2.58159 15.7804 2.56513 15.7186 2.54902C14.4964 2.22984 13.242 2.05015 11.9794 2.01338C11.7782 2.00554 11.5768 2.00109 11.3753 2.00005C10.8362 1.99861 10.2975 2.02932 9.76198 2.09202C9.38695 2.12946 9.01125 2.17913 8.63487 2.24102L6.19872 2.64189C4.28217 2.95816 2.32544 2.94175 0.414467 2.59339C0.376046 2.5864 0.336559 2.58794 0.298798 2.59789C0.261037 2.60785 0.225922 2.62597 0.195936 2.65099C0.16595 2.676 0.141824 2.7073 0.125264 2.74267C0.108703 2.77803 0.100112 2.8166 0.100098 2.85566V13.4557C0.100097 13.5182 0.122016 13.5787 0.162032 13.6266C0.202047 13.6746 0.257622 13.7069 0.319066 13.7181C1.35083 13.906 2.39742 14.0007 3.44616 14.0008C4.3973 14.0007 5.34683 13.9229 6.28532 13.7682L8.72147 13.3675C11.0504 12.9843 13.3593 13.0845 15.5841 13.6651C15.6441 13.6807 15.7038 13.6967 15.7634 13.713C15.803 13.7238 15.8445 13.7253 15.8847 13.7174C15.9249 13.7095 15.9628 13.6925 15.9953 13.6676C16.0279 13.6427 16.0543 13.6106 16.0725 13.5739C16.0906 13.5372 16.1001 13.4967 16.1001 13.4557V2.85566C16.1001 2.79715 16.0809 2.74027 16.0453 2.69378C16.0098 2.64729 15.96 2.61377 15.9036 2.59839ZM0.633435 3.17226C2.39839 3.46079 4.19724 3.47597 5.96681 3.21726V7.94513C4.19771 8.21167 2.3975 8.19559 0.633435 7.8975V3.17226ZM15.5669 13.1101C13.3164 12.5451 10.9851 12.4545 8.63487 12.8411L6.19872 13.2419C4.3558 13.546 2.47522 13.5426 0.633435 13.2317V12.1721C1.5633 12.3241 2.50395 12.4006 3.44616 12.4008C4.3973 12.4007 5.34683 12.3229 6.28532 12.1682L9.12534 11.701C9.91696 11.5697 10.7186 11.508 11.521 11.5168C12.8866 11.5348 14.2451 11.7175 15.5669 12.0611V13.1101ZM15.5669 11.5101C14.2456 11.178 12.89 11.0013 11.5277 10.9835C10.694 10.9742 9.86109 11.0382 9.03857 11.1747L6.19872 11.6419C4.3558 11.946 2.47522 11.9426 0.633435 11.6317V10.3904C2.50508 10.6964 4.41412 10.6951 6.28532 10.3863L9.13001 9.91831C9.87125 9.79442 10.6215 9.73263 11.3731 9.73361C12.7883 9.7397 14.1972 9.92284 15.5669 10.2788V11.5101ZM15.5669 9.72858C14.1962 9.38383 12.7887 9.20641 11.3753 9.20021C10.594 9.19931 9.81404 9.26346 9.04341 9.39198L6.19872 9.86011C4.35578 10.1641 2.47521 10.1606 0.633435 9.84961V8.4387C1.5633 8.59076 2.50395 8.66727 3.44616 8.66747C4.3973 8.6673 5.34683 8.5895 6.28532 8.43487L6.28622 8.43467L9.12517 7.96763C9.91678 7.83611 10.7184 7.77448 11.5208 7.78343C12.8865 7.80136 14.245 7.98409 15.5669 8.32767V9.72858ZM15.5669 7.7767C14.2456 7.44458 12.89 7.26783 11.5277 7.25002C10.694 7.24092 9.86111 7.30492 9.03857 7.44129L6.50015 7.85896V6.61755L9.13017 6.18492C9.87133 6.0608 10.6216 5.99897 11.3731 6.00008C12.7883 6.00622 14.1972 6.18938 15.5669 6.54532V7.7767ZM15.5669 5.99518C14.1962 5.65042 12.7887 5.47298 11.3753 5.46674C10.594 5.46557 9.81401 5.52973 9.04341 5.65855L6.50015 6.07702V4.93277L9.12517 4.50094C9.91677 4.36937 10.7184 4.30773 11.5208 4.31673C12.8865 4.33466 14.245 4.5174 15.5669 4.86097V5.99518ZM15.5669 4.31C14.2456 3.97788 12.89 3.80113 11.5277 3.78333C10.694 3.77419 9.8611 3.83819 9.03857 3.9746L6.50015 4.39227V3.15086L9.13017 2.71822C9.35821 2.68069 9.58521 2.64949 9.81101 2.62325C10.5236 2.55161 11.2401 2.52592 11.956 2.54635C13.1752 2.59342 14.3859 2.77188 15.5669 3.07862V4.31Z" fill="currentColor" stroke="currentColor" stroke-width="0.2"/><path d="M1.6749 3.72095L1.53143 4.06458L1.16699 4.14122L1.44949 4.38389L1.40973 4.75416L1.7278 4.56045L2.0677 4.71266L1.98177 4.35032L2.23157 4.07412L1.8604 4.04385L1.6749 3.72095Z" fill="currentColor"/><path d="M3.01181 4.85425L3.32988 4.66055L3.66975 4.81279L3.58382 4.45042L3.83362 4.17421L3.46245 4.14395L3.27695 3.82104L3.13348 4.16468L2.76904 4.24131L3.05155 4.48398L3.01181 4.85425Z" fill="currentColor"/><path d="M1.6749 5.13354L1.53143 5.47721L1.16699 5.55385L1.44949 5.79648L1.40973 6.16675L1.7278 5.97309L2.0677 6.12529L1.98177 5.76292L2.23157 5.48675L1.8604 5.45648L1.6749 5.13354Z" fill="currentColor"/><path d="M3.01181 6.3335L3.32988 6.13983L3.66975 6.29203L3.58382 5.92966L3.83362 5.6535L3.46245 5.62323L3.27695 5.30029L3.13348 5.64396L2.76904 5.7206L3.05155 5.96323L3.01181 6.3335Z" fill="currentColor"/><path d="M1.8604 6.88983L1.6749 6.56689L1.53143 6.91056L1.16699 6.9872L1.44949 7.22983L1.40973 7.6001L1.7278 7.40644L2.0677 7.55864L1.98177 7.19627L2.23157 6.9201L1.8604 6.88983Z" fill="currentColor"/><path d="M3.32988 7.67304L3.66975 7.82524L3.58382 7.46287L3.83362 7.1867L3.46245 7.15643L3.27695 6.8335L3.13348 7.17717L2.76904 7.2538L3.05155 7.49643L3.01181 7.8667L3.32988 7.67304Z" fill="currentColor"/><path d="M4.8746 3.72095L4.73114 4.06458L4.3667 4.14122L4.6492 4.38389L4.60943 4.75416L4.9275 4.56045L5.26741 4.71266L5.18147 4.35032L5.43127 4.07412L5.06011 4.04385L4.8746 3.72095Z" fill="currentColor"/><path d="M4.8746 5.13354L4.73114 5.47721L4.3667 5.55385L4.6492 5.79648L4.60943 6.16675L4.9275 5.97309L5.26741 6.12529L5.18147 5.76292L5.43127 5.48675L5.06011 5.45648L4.8746 5.13354Z" fill="currentColor"/><path d="M5.06011 6.88983L4.8746 6.56689L4.73114 6.91056L4.3667 6.9872L4.6492 7.22983L4.60943 7.6001L4.9275 7.40644L5.26741 7.55864L5.18147 7.19627L5.43127 6.9201L5.06011 6.88983Z" fill="currentColor"/></svg>
       Handcrafted in USA
     </span>
     <span class="ls-trust-badge">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15" fill="none"><path d="M12.5 3.75L5.625 10.625L2.5 7.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>
       Satisfaction Guaranteed
     </span>
     <span class="ls-trust-badge">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none"><path d="M10.2217 2.66699C12.2495 2.66701 13.8945 4.32484 13.8945 6.36621C13.8944 8.40748 12.2494 10.0654 10.2217 10.0654L3.73341 10.083L6.45021 12.7979C6.57184 12.9204 6.57182 13.1187 6.45021 13.2412C6.32833 13.3637 6.13052 13.3638 6.0088 13.2412L2.75782 9.9668C2.6988 9.90729 2.66627 9.8262 2.667 9.74219C2.66779 9.65818 2.70169 9.57792 2.76173 9.51953C2.85014 9.43353 3.66886 8.63424 4.46583 7.85547L6.03712 6.31934C6.16065 6.19888 6.35759 6.20208 6.47755 6.32617C6.59755 6.4504 6.59513 6.64878 6.47169 6.76953L4.9004 8.30469C4.32556 8.86645 3.71694 9.44281 3.40138 9.75098L3.73341 9.43066L10.2217 9.4375C11.9041 9.43748 13.2713 8.06171 13.2715 6.36621C13.2715 4.67059 11.9042 3.29397 10.2217 3.29395H9.47462C9.30242 3.29393 9.16314 3.15369 9.1631 2.98047C9.1631 2.80721 9.30239 2.66701 9.47462 2.66699H10.2217Z" fill="currentColor"/><path d="M10.2217 2.66699L10.2217 2.56699H10.2217V2.66699ZM13.8945 6.36621L13.9945 6.36622V6.36621H13.8945ZM10.2217 10.0654L10.2217 9.96543L10.2214 9.96543L10.2217 10.0654ZM3.73341 10.083L3.73314 9.98301L3.49252 9.98366L3.66273 10.1537L3.73341 10.083ZM6.45021 12.7979L6.52117 12.7274L6.52089 12.7271L6.45021 12.7979ZM6.45021 13.2412L6.52108 13.3118L6.52116 13.3117L6.45021 13.2412ZM6.0088 13.2412L5.93784 13.3117L5.93785 13.3117L6.0088 13.2412ZM2.75782 9.9668L2.68683 10.0372L2.68686 10.0373L2.75782 9.9668ZM2.667 9.74219L2.56701 9.74125L2.56701 9.74132L2.667 9.74219ZM2.76173 9.51953L2.83145 9.59122L2.83146 9.59121L2.76173 9.51953ZM4.46583 7.85547L4.53572 7.92699L4.53574 7.92697L4.46583 7.85547ZM6.03712 6.31934L5.96731 6.24774L5.96722 6.24783L6.03712 6.31934ZM6.47755 6.32617L6.54948 6.2567L6.54945 6.25667L6.47755 6.32617ZM6.47169 6.76953L6.54158 6.84106L6.54162 6.84102L6.47169 6.76953ZM4.9004 8.30469L4.83052 8.23316L4.83051 8.23317L4.9004 8.30469ZM3.40138 9.75098L3.33151 9.67943L3.47081 9.82295L3.40138 9.75098ZM3.73341 9.43066L3.73352 9.33066L3.69308 9.33062L3.66398 9.35869L3.73341 9.43066ZM10.2217 9.4375L10.2216 9.5375H10.2217L10.2217 9.4375ZM13.2715 6.36621L13.3715 6.36622V6.36621H13.2715ZM10.2217 3.29395L10.2217 3.19395H10.2217V3.29395ZM9.47462 3.29395L9.47461 3.39395H9.47462V3.29395ZM9.1631 2.98047H9.0631V2.98049L9.1631 2.98047ZM9.47462 2.66699V2.56699H9.47461L9.47462 2.66699ZM10.2217 2.66699L10.2217 2.76699C12.1936 2.76701 13.7945 4.37938 13.7945 6.36621H13.8945H13.9945C13.9945 4.2703 12.3054 2.56701 10.2217 2.56699L10.2217 2.66699ZM13.8945 6.36621L13.7945 6.3662C13.7944 8.35295 12.1934 9.96541 10.2217 9.96543L10.2217 10.0654L10.2217 10.1654C12.3053 10.1654 13.9944 8.46201 13.9945 6.36622L13.8945 6.36621ZM10.2217 10.0654L10.2214 9.96543L3.73314 9.98301L3.73341 10.083L3.73368 10.183L10.222 10.1654L10.2217 10.0654ZM3.73341 10.083L3.66273 10.1537L6.37952 12.8686L6.45021 12.7979L6.52089 12.7271L3.8041 10.0123L3.73341 10.083ZM6.45021 12.7979L6.37924 12.8683C6.46217 12.9518 6.46214 13.0873 6.37925 13.1707L6.45021 13.2412L6.52116 13.3117C6.68151 13.1502 6.68152 12.8889 6.52117 12.7274L6.45021 12.7979ZM6.45021 13.2412L6.37933 13.1707C6.29647 13.2539 6.1623 13.2539 6.07975 13.1707L6.0088 13.2412L5.93785 13.3117C6.09874 13.4737 6.36018 13.4734 6.52108 13.3118L6.45021 13.2412ZM6.0088 13.2412L6.07977 13.1708L2.82879 9.89634L2.75782 9.9668L2.68686 10.0373L5.93784 13.3117L6.0088 13.2412ZM2.75782 9.9668L2.82882 9.89637C2.78887 9.8561 2.7665 9.8008 2.767 9.74306L2.667 9.74219L2.56701 9.74132C2.56605 9.8516 2.60872 9.95849 2.68683 10.0372L2.75782 9.9668ZM2.667 9.74219L2.767 9.74313C2.76754 9.68539 2.79083 9.63073 2.83145 9.59122L2.76173 9.51953L2.69201 9.44784C2.61256 9.52512 2.56805 9.63097 2.56701 9.74125L2.667 9.74219ZM2.76173 9.51953L2.83146 9.59121C2.91997 9.50511 3.73879 8.70572 4.53572 7.92699L4.46583 7.85547L4.39594 7.78395C3.59893 8.56276 2.78032 9.36195 2.692 9.44785L2.76173 9.51953ZM4.46583 7.85547L4.53574 7.92697L6.10703 6.39084L6.03712 6.31934L5.96722 6.24783L4.39593 7.78396L4.46583 7.85547ZM6.03712 6.31934L6.10694 6.39093C6.19067 6.30928 6.32406 6.31128 6.40566 6.39568L6.47755 6.32617L6.54945 6.25667C6.39111 6.09288 6.13063 6.08848 5.96731 6.24774L6.03712 6.31934ZM6.47755 6.32617L6.40563 6.39565C6.48759 6.4805 6.48573 6.61591 6.40176 6.69805L6.47169 6.76953L6.54162 6.84102C6.70453 6.68165 6.70751 6.4203 6.54948 6.2567L6.47755 6.32617ZM6.47169 6.76953L6.40181 6.698L4.83052 8.23316L4.9004 8.30469L4.97029 8.37622L6.54158 6.84106L6.47169 6.76953ZM4.9004 8.30469L4.83051 8.23317C4.54344 8.51371 4.24785 8.79797 3.98442 9.05078C3.72122 9.30336 3.4897 9.52495 3.33151 9.67943L3.40138 9.75098L3.47125 9.82252C3.62862 9.66884 3.85918 9.44816 4.1229 9.19508C4.38638 8.94223 4.68253 8.65743 4.97029 8.37621L4.9004 8.30469ZM3.40138 9.75098L3.47081 9.82295L3.80284 9.50263L3.73341 9.43066L3.66398 9.35869L3.33195 9.67901L3.40138 9.75098ZM3.73341 9.43066L3.73331 9.53066L10.2216 9.5375L10.2217 9.4375L10.2218 9.3375L3.73352 9.33066L3.73341 9.43066ZM10.2217 9.4375L10.2217 9.5375C11.9599 9.53748 13.3713 8.11629 13.3715 6.36622L13.2715 6.36621L13.1715 6.3662C13.1713 8.00712 11.8482 9.33748 10.2217 9.3375L10.2217 9.4375ZM13.2715 6.36621H13.3715C13.3715 4.61604 11.9601 3.19397 10.2217 3.19395L10.2217 3.29395L10.2217 3.39395C11.8483 3.39396 13.1715 4.72514 13.1715 6.36621H13.2715ZM10.2217 3.29395V3.19395H9.47462V3.29395V3.39395H10.2217V3.29395ZM9.47462 3.29395L9.47463 3.19395C9.35826 3.19394 9.26313 3.09907 9.2631 2.98044L9.1631 2.98047L9.0631 2.98049C9.06315 3.20831 9.24657 3.39393 9.47461 3.39395L9.47462 3.29395ZM9.1631 2.98047H9.2631C9.2631 2.86185 9.35822 2.767 9.47463 2.76699L9.47462 2.66699L9.47461 2.56699C9.24657 2.56701 9.0631 2.75258 9.0631 2.98047H9.1631ZM9.47462 2.66699V2.76699H10.2217V2.66699V2.56699H9.47462V2.66699Z" fill="currentColor"/></svg>
       60 Days Free Returns
     </span>
   </div>
