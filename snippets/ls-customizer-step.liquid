@@ -233,18 +233,28 @@
       {%- when 'color-picker' -%}
         <div class="ls-color-grid">
           {%- for option in options_arr -%}
-            {%- assign color = option | strip -%}
+            {%- assign color_raw = option | strip -%}
             {%- assign input_id = 'ls-color-' | append: step_number | append: '-' | append: forloop.index -%}
-            <label class="ls-color-option">
+            {%- comment -%} Support "Name:HexCode" or plain hex {%- endcomment -%}
+            {%- if color_raw contains ':' -%}
+              {%- assign color_parts = color_raw | split: ':' -%}
+              {%- assign color_name = color_parts[0] | strip -%}
+              {%- assign color_hex = color_parts[1] | strip -%}
+            {%- else -%}
+              {%- assign color_name = color_raw -%}
+              {%- assign color_hex = color_raw -%}
+            {%- endif -%}
+            <label class="ls-color-option" title="{{ color_name }}">
               <input
                 type="radio"
                 name="{{ prop_name }}"
-                value="{{ color }}"
+                value="{{ color_name }}"
                 id="{{ input_id }}"
                 form="{{ form_id }}"
                 {% if required %}required data-required{% endif %}
               >
-              <span class="ls-color-option__swatch" style="background: {{ color }};"></span>
+              <span class="ls-color-option__swatch" style="background: #{{ color_hex | remove: '#' }};"></span>
+              <span class="ls-color-option__label">{{ color_name }}</span>
             </label>
           {%- endfor -%}
         </div>

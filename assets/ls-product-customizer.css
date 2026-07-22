@@ -530,12 +530,18 @@
 .ls-color-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
 }
 
 .ls-color-option {
   position: relative;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 48px;
+  text-align: center;
 }
 
 .ls-color-option input {
@@ -552,11 +558,23 @@
   border: 2px solid transparent;
   transition: border-color 0.2s;
   box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+  flex-shrink: 0;
 }
 
 .ls-color-option input:checked + .ls-color-option__swatch {
   border-color: #c8a45d;
   box-shadow: 0 0 0 2px #fff, 0 0 0 4px #c8a45d;
+}
+
+.ls-color-option__label {
+  font-size: 0.625rem;
+  line-height: 1.2;
+  color: var(--color-foreground);
+  word-break: break-word;
+}
+
+.ls-color-option input:checked ~ .ls-color-option__label {
+  font-weight: 600;
 }
 
 /* --- Live Preview Label --- */

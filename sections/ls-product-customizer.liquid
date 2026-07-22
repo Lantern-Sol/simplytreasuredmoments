@@ -901,15 +901,24 @@
     {%- when 'school-frame' -%}
       {%- render 'ls-customizer-step',
         step_number: 1,
-        title: 'Choose Frame Style',
-        input_type: 'swatch',
-        property: 'Frame Style',
-        options: 'Classic Black,White,Walnut,Natural Oak',
+        title: 'Choose Name Color',
+        input_type: 'color-picker',
+        property: 'Name Color',
+        options: 'Black:#1F191B,White:#FFFFFF,Slate Blue:#7E9DAF,Spring Green:#73E58C,Lilac Purple:#C8A2CB,Coral:#CF6977,Almond:#E5DBC5,Terra Cotta:#E35336,Forest Green:#228B22,Red:#D00000,Yellow:#FFD400,Orange:#FFA500,Green:#1B4D3E,Blue:#000080',
         required: true,
         form_id: product_form_id
       -%}
       {%- render 'ls-customizer-step',
         step_number: 2,
+        title: 'Choose Stain Color',
+        input_type: 'color-picker',
+        property: 'Stain Color',
+        options: 'Amaretto:#874435,Expresso:#1D1712,Honey:#876B49,Mission Oak:#5B422B,Weathered Gray:#615E5B',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 3,
         title: 'Select Size',
         input_type: 'button-group',
         property: 'Size',
@@ -918,7 +927,7 @@
         form_id: product_form_id
       -%}
       {%- render 'ls-customizer-step',
-        step_number: 3,
+        step_number: 4,
         title: 'Upload Your Photo(s)',
         input_type: 'file',
         property: 'Photos',
@@ -926,7 +935,7 @@
         form_id: product_form_id
       -%}
       {%- render 'ls-customizer-step',
-        step_number: 4,
+        step_number: 5,
         title: 'Add Your Text',
         input_type: 'text-fields',
         property: 'Text',
@@ -935,7 +944,7 @@
         form_id: product_form_id
       -%}
       {%- render 'ls-customizer-step',
-        step_number: 5,
+        step_number: 6,
         title: 'Select Year Range',
         input_type: 'text-fields',
         property: 'Year Range',
@@ -986,7 +995,7 @@
         title: 'Choose Colors',
         input_type: 'color-picker',
         property: 'Colors',
-        options: '#1a1a2e,#e94560,#0f3460,#16213e,#533483,#e94560,#00b4d8,#f77f00,#2d6a4f,#d4a373,#bc6c25,#606c38',
+        options: 'Black:#1F191B,White:#FFFFFF,Red:#F72121,Light Blue:#0061B2,Cranberry:#9D1322,Gray:#384653,Dark Blue:#0143A1,Expresso:#47403A,Green:#013E37,Purple:#241848,Orange:#FF7A0B,Yellow:#FDF001',
         required: true,
         form_id: product_form_id
       -%}
