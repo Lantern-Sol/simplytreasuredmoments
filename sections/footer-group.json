@@ -42,10 +42,12 @@
         "menu_company"
       ],
       "settings": {
-        "logo": "shopify://shop_images/87bc6714a99b0700ba7c9c619aefa839f54c8f43.png",
+        "logo": "shopify://shop_images/Simply_Treasured_Moments_logo_OL_1.png",
         "facebook_url": "https://www.facebook.com/",
         "instagram_url": "https://www.instagram.com/",
         "pinterest_url": "https://www.pinterest.com/",
+        "privacy_url": "",
+        "terms_url": "",
         "copyright_text": "© 2026 Treasured Moments Photos"
       }
     }
