@@ -31,160 +31,152 @@
           "type": "faq",
           "settings": {
             "category": "orders",
-            "question": "How do I place a custom order?",
-            "answer": "Simply choose your product, upload your photo, and add any custom text. Our team will review your order and begin handcrafting your keepsake."
+            "question": "How do I place a personalized order?",
+            "answer": "Choose your product, select the available options, add your custom text, and upload your photo. We will review your order before creating your keepsake."
           }
         },
         "orders_2": {
           "type": "faq",
           "settings": {
             "category": "orders",
-            "question": "Can I customize the text on my keepsake?",
-            "answer": "Yes! Most of our products allow you to add custom text such as names, dates, or short messages. You'll see the customization options on each product page."
+            "question": "Can I add custom text?",
+            "answer": "Yes. Most products can include names, dates, short messages, or other personalized wording. Available options are listed on each product page."
           }
         },
         "orders_3": {
           "type": "faq",
           "settings": {
             "category": "orders",
-            "question": "What type of photo should I upload?",
-            "answer": "For the best results, use a high-resolution photo with good lighting. Close-up portraits and well-lit images produce the sharpest details on our keepsakes."
+            "question": "Can I order without personalization?",
+            "answer": "Many products can be ordered without personalized text. Check the product page for available options."
           }
         },
         "orders_4": {
           "type": "faq",
           "settings": {
             "category": "orders",
-            "question": "Can I see a preview before my order is made?",
-            "answer": "We provide a digital proof for certain products before production begins. You'll receive it via email for your approval."
+            "question": "What kind of photo should I upload?",
+            "answer": "Choose a clear, high-resolution photo with good lighting. Close-up subjects and well-lit images usually produce the best results. We may refuse images that are copyrighted, licensed, inappropriate, offensive, or otherwise unsuitable for reproduction."
           }
         },
         "orders_5": {
           "type": "faq",
           "settings": {
             "category": "orders",
-            "question": "Can I cancel or change my order after it's placed?",
-            "answer": "We begin processing orders quickly. If you need to make a change, contact us within 2 hours of placing your order and we'll do our best to accommodate."
+            "question": "What photo files do you accept?",
+            "answer": "We accept JPG, PNG, and HEIC files. For the best print quality, we recommend images that are at least 2000 × 2000 pixels and 300 DPI."
           }
         },
         "orders_6": {
           "type": "faq",
           "settings": {
             "category": "orders",
-            "question": "Do you offer bulk or wholesale orders?",
-            "answer": "Yes, we offer bulk pricing for events, corporate gifts, and resellers. Please reach out to our team with your requirements for a custom quote."
+            "question": "What if my photo is low quality?",
+            "answer": "We will review your photo before production. If it does not meet our quality standards, we will contact you and help you select a better image."
           }
         },
         "orders_7": {
           "type": "faq",
           "settings": {
             "category": "orders",
-            "question": "What file formats do you accept for photos?",
-            "answer": "We accept JPG, PNG, and HEIC files. For best quality, upload images that are at least 1000x1000 pixels."
+            "question": "Will I receive a proof?",
+            "answer": "Yes. We will email you a digital proof for approval before production begins."
           }
         },
         "orders_8": {
           "type": "faq",
           "settings": {
             "category": "orders",
-            "question": "Can I order a product without personalization?",
-            "answer": "Some of our products are available without customization. Check the product page for available options."
+            "question": "Can I change or cancel my order?",
+            "answer": "We begin processing orders quickly. Contact us within two hours of placing your order, and we will do our best to make the requested change or cancellation."
           }
         },
         "orders_9": {
           "type": "faq",
           "settings": {
             "category": "orders",
-            "question": "How do I track my order?",
-            "answer": "Once your order ships, you'll receive a confirmation email with a tracking number. You can also check your order status in your account dashboard."
+            "question": "Do you offer bulk pricing?",
+            "answer": "Yes. Bulk and wholesale pricing may be available for events, corporate gifts, organizations, and resellers. Contact us for a custom quote."
           }
         },
         "orders_10": {
           "type": "faq",
           "settings": {
             "category": "orders",
-            "question": "Is there a minimum order quantity?",
-            "answer": "No minimum! You can order a single personalized keepsake or as many as you'd like."
+            "question": "How do I track my order?",
+            "answer": "Once your order ships, you will receive an email with your tracking number. Registered customers can also view order information in their account."
           }
         },
         "orders_11": {
           "type": "faq",
           "settings": {
             "category": "orders",
-            "question": "Do you offer rush orders?",
-            "answer": "We offer expedited processing for an additional fee. Select the rush option at checkout or contact us for availability."
+            "question": "Is there a minimum order?",
+            "answer": "No. You may order one keepsake or multiple items."
           }
         },
         "orders_12": {
           "type": "faq",
           "settings": {
             "category": "orders",
-            "question": "Can I add a gift message to my order?",
-            "answer": "Yes! During checkout you can include a personalized gift message that will be printed on a card and included with your order."
+            "question": "Do you offer rush service?",
+            "answer": "Expedited production may be available for an additional fee. Contact us before ordering to confirm availability."
           }
         },
         "orders_13": {
           "type": "faq",
           "settings": {
             "category": "orders",
-            "question": "What happens if I upload a low-quality photo?",
-            "answer": "Our team will review your photo and reach out if it doesn't meet our quality standards. We'll work with you to find the best image for your keepsake."
+            "question": "Can I include a gift message?",
+            "answer": "Yes. Add your message during checkout, and we will include it on a gift card with your order."
           }
         },
         "orders_14": {
           "type": "faq",
           "settings": {
             "category": "orders",
-            "question": "Do you offer gift wrapping?",
-            "answer": "We offer beautiful gift-ready packaging on select items. Look for the gift wrap option at checkout."
+            "question": "Can I reorder a previous design?",
+            "answer": "Yes. Contact us with your previous order number, and we can help recreate the design or apply it to another product."
           }
         },
         "orders_15": {
           "type": "faq",
           "settings": {
             "category": "orders",
-            "question": "Can I reorder a previous design?",
-            "answer": "Yes! If you've ordered before, contact us with your previous order number and we can recreate it or use the same design for a new product."
-          }
-        },
-        "orders_16": {
-          "type": "faq",
-          "settings": {
-            "category": "orders",
-            "question": "How do I apply a discount code?",
-            "answer": "Enter your discount code in the promo field at checkout. The discount will be applied to your order total before payment."
+            "question": "How do I use a discount code?",
+            "answer": "Enter your code in the discount or promo code field at checkout. The discount will be applied before payment."
           }
         },
         "shipping_1": {
           "type": "faq",
           "settings": {
             "category": "shipping",
-            "question": "How long does shipping take?",
-            "answer": "Most orders ship within 3–5 business days. Custom and personalized items may take a bit longer as they are handcrafted to order."
+            "question": "How long does production take?",
+            "answer": "Production typically takes 3–5 business days after you approve your digital proof."
           }
         },
         "shipping_2": {
           "type": "faq",
           "settings": {
             "category": "shipping",
-            "question": "Do you ship internationally?",
-            "answer": "Yes, we ship to most countries worldwide. International shipping typically takes 7–14 business days depending on your location."
+            "question": "How long does shipping take?",
+            "answer": "Standard shipping within the United States typically takes 3–5 business days after production is complete."
           }
         },
         "shipping_3": {
           "type": "faq",
           "settings": {
             "category": "shipping",
-            "question": "How long does production take?",
-            "answer": "Production time varies by product. Most custom items take 2–4 business days to create before shipping. You'll see estimated timelines on each product page."
+            "question": "How much is shipping?",
+            "answer": "Standard shipping is free on U.S. orders over $75. Shipping costs for other orders are calculated at checkout."
           }
         },
         "shipping_4": {
           "type": "faq",
           "settings": {
             "category": "shipping",
-            "question": "Is shipping free?",
-            "answer": "We offer free standard shipping on orders over $50 within the United States. International and expedited shipping rates are calculated at checkout."
+            "question": "Do you ship internationally?",
+            "answer": "Yes. We ship to most countries. International delivery usually takes 7–14 business days, depending on the destination and customs processing."
           }
         },
         "shipping_5": {
@@ -192,23 +184,23 @@
           "settings": {
             "category": "shipping",
             "question": "What if my package is lost or damaged?",
-            "answer": "If your package is lost or arrives damaged, contact us immediately. We'll file a claim and send a replacement at no extra cost."
+            "answer": "Contact us as soon as possible. We will review the issue, file a shipping claim when necessary, and arrange a replacement at no additional cost."
           }
         },
         "products_1": {
           "type": "faq",
           "settings": {
             "category": "products",
-            "question": "What materials are your keepsakes made from?",
-            "answer": "Our products are crafted from premium materials including high-grade acrylic, natural wood, and museum-quality photo paper. Each material is chosen for durability and beauty."
+            "question": "What materials do you use?",
+            "answer": "Our keepsakes are made from premium materials such as high-grade acrylic, natural wood, metal, and quality canvas. Materials vary by product and are selected for their beauty and durability."
           }
         },
         "products_2": {
           "type": "faq",
           "settings": {
             "category": "products",
-            "question": "How do I care for my keepsake?",
-            "answer": "Gently dust with a soft, dry cloth. Avoid direct sunlight for extended periods to preserve colors. Acrylic items can be cleaned with a microfiber cloth."
+            "question": "How do I clean my keepsake?",
+            "answer": "Gently dust it with a soft, dry cloth. Use a clean microfiber cloth on acrylic surfaces. Avoid harsh chemicals, abrasive cleaners, and extended exposure to direct sunlight."
           }
         },
         "products_3": {
@@ -216,7 +208,7 @@
           "settings": {
             "category": "products",
             "question": "Are your products eco-friendly?",
-            "answer": "We prioritize sustainable materials and processes wherever possible. Our packaging is recyclable and we're continuously working to reduce our environmental footprint."
+            "answer": "Our UV inks are GREENGUARD Gold certified for low chemical emissions. We also use recyclable packaging and continue to look for ways to reduce waste and improve our processes."
           }
         },
         "products_4": {
@@ -224,7 +216,7 @@
           "settings": {
             "category": "products",
             "question": "What sizes are available?",
-            "answer": "Sizes vary by product. Each product page lists all available size options with detailed dimensions to help you choose the perfect fit."
+            "answer": "Sizes vary by product. Available dimensions are listed on each product page."
           }
         },
         "returns_1": {
@@ -232,55 +224,55 @@
           "settings": {
             "category": "returns",
             "question": "What is your return policy?",
-            "answer": "We offer a 60-day satisfaction guarantee. If you're not happy with your purchase, contact us and we'll arrange a replacement or full refund."
+            "answer": "We offer a 30-day satisfaction guarantee. Contact us within 30 days of receiving your order, and we will work with you to provide a replacement or refund."
           }
         },
         "returns_2": {
           "type": "faq",
           "settings": {
             "category": "returns",
-            "question": "What if I'm unhappy with my order?",
-            "answer": "We want you to love your keepsake. If something isn't right, reach out within 60 days and we'll make it right with a replacement or full refund."
+            "question": "What if I am unsatisfied with my order?",
+            "answer": "Please contact us within 30 days. We want you to love your keepsake and will work with you to make things right."
           }
         },
         "returns_3": {
           "type": "faq",
           "settings": {
             "category": "returns",
-            "question": "Can I exchange my item for a different product?",
-            "answer": "Yes, we accept exchanges within 60 days. Contact our support team to arrange the exchange and we'll guide you through the process."
+            "question": "Can I exchange a personalized item?",
+            "answer": "Because our products are handcrafted to your specifications, personalized items cannot be exchanged for a different product. Please contact us if your order is damaged, defective, or incorrect."
           }
         },
         "returns_4": {
           "type": "faq",
           "settings": {
             "category": "returns",
-            "question": "How long do refunds take to process?",
-            "answer": "Once we receive your return, refunds are processed within 3–5 business days. It may take an additional 5–10 days for your bank to reflect the credit."
+            "question": "How long do refunds take?",
+            "answer": "Approved refunds are processed within 3–5 business days. Your bank or card provider may take an additional 5–10 business days to post the credit."
           }
         },
-        "selling_1": {
+        "affiliate_1": {
           "type": "faq",
           "settings": {
-            "category": "selling",
-            "question": "Can I resell your products?",
-            "answer": "We offer a wholesale program for authorized resellers. Contact our team to learn about partnership opportunities and wholesale pricing."
+            "category": "affiliate",
+            "question": "Who can become an affiliate?",
+            "answer": "Our affiliate program is a good fit for school, sports, wedding, and family photographers; travel agents and cruise planners; coaches, teams, clubs, and dance studios; schools and parent organizations; memorial and celebration-of-life professionals; and bloggers, gift guides, and social media creators."
           }
         },
-        "selling_2": {
+        "affiliate_2": {
           "type": "faq",
           "settings": {
-            "category": "selling",
-            "question": "Do you offer white-label products?",
-            "answer": "Yes, we offer white-label solutions for businesses. Reach out to discuss custom branding and packaging options for your brand."
+            "category": "affiliate",
+            "question": "Will I receive a unique affiliate link?",
+            "answer": "Yes. Once approved, you will receive a unique referral link that tracks customers and qualifying purchases sent through your link."
           }
         },
-        "selling_3": {
+        "affiliate_3": {
           "type": "faq",
           "settings": {
-            "category": "selling",
-            "question": "Can I sell on marketplaces like Etsy with your products?",
-            "answer": "Our wholesale partners are welcome to sell on third-party marketplaces. Contact us for details about our marketplace seller program."
+            "category": "affiliate",
+            "question": "How are commissions tracked?",
+            "answer": "Affiliate activity is tracked automatically through your unique referral link. Your affiliate dashboard may include referral link clicks, referred orders, total sales, pending commissions, approved commissions, and payment history."
           }
         },
         "process_1": {
@@ -288,31 +280,31 @@
           "settings": {
             "category": "process",
             "question": "How are your keepsakes made?",
-            "answer": "Each keepsake is individually handcrafted by our team. We use professional-grade printing technology combined with skilled hand-finishing to ensure every piece meets our quality standards."
+            "answer": "Each keepsake is individually produced using professional UV-printing technology and carefully hand-finished by our team."
           }
         },
         "process_2": {
           "type": "faq",
           "settings": {
             "category": "process",
-            "question": "Do you do quality checks before shipping?",
-            "answer": "Every single item goes through a multi-point quality inspection before it's packaged and shipped. We check print quality, color accuracy, and finishing details."
+            "question": "Do you inspect each order?",
+            "answer": "Yes. Every item is inspected before shipping. We check the print quality, color, personalization, construction, and finishing details."
           }
         },
         "process_3": {
           "type": "faq",
           "settings": {
             "category": "process",
-            "question": "What printing technology do you use?",
-            "answer": "We use UV-cured printing and dye-sublimation depending on the product. Both methods produce vivid, long-lasting colors that won't fade over time."
+            "question": "What printing process do you use?",
+            "answer": "We use professional UV-cured inks that produce vivid, durable color. Our UV inks are GREENGUARD Gold certified for low chemical emissions."
           }
         },
         "account_1": {
           "type": "faq",
           "settings": {
             "category": "account",
-            "question": "Do I need an account to place an order?",
-            "answer": "No, you can checkout as a guest. However, creating an account lets you track orders, save designs, and reorder more easily."
+            "question": "Do I need an account to order?",
+            "answer": "No. You may check out as a guest. Creating an account makes it easier to view orders, track shipments, and reorder previous designs."
           }
         },
         "account_2": {
@@ -320,15 +312,15 @@
           "settings": {
             "category": "account",
             "question": "How do I reset my password?",
-            "answer": "Click 'Forgot Password' on the login page and enter your email. You'll receive a reset link within a few minutes."
+            "answer": "Select \"Forgot Password\" on the login page and enter your email address. You will receive an email with instructions for resetting your password."
           }
         },
         "account_3": {
           "type": "faq",
           "settings": {
             "category": "account",
-            "question": "Can I view my order history?",
-            "answer": "Yes! Log into your account and visit the 'Orders' section to see all your past purchases, tracking info, and reorder options."
+            "question": "Can I see my previous orders?",
+            "answer": "Yes. Sign in and visit the \"Orders\" section to view past purchases, order information, tracking details, and available reorder options."
           }
         }
       },
@@ -348,7 +340,6 @@
         "orders_13",
         "orders_14",
         "orders_15",
-        "orders_16",
         "shipping_1",
         "shipping_2",
         "shipping_3",
@@ -362,9 +353,9 @@
         "returns_2",
         "returns_3",
         "returns_4",
-        "selling_1",
-        "selling_2",
-        "selling_3",
+        "affiliate_1",
+        "affiliate_2",
+        "affiliate_3",
         "process_1",
         "process_2",
         "process_3",
