@@ -330,29 +330,45 @@
         "faq_1": {
           "type": "faq",
           "settings": {
-            "question": "How long does shipping take?",
-            "answer": "Most orders ship within 3–5 business days. Custom and personalized items may take a bit longer as they are handcrafted to order."
+            "question": "How do I place a personalized order?",
+            "answer": "Choose your product, select the available options, add your custom text, and upload your photo. We will review your order before creating your keepsake."
           }
         },
         "faq_2": {
           "type": "faq",
           "settings": {
-            "question": "What type of photo should I upload?",
-            "answer": "For the best results, use a high-resolution photo with good lighting. Close-up portraits and well-lit images produce the sharpest details on our keepsakes."
+            "question": "What photo files do you accept?",
+            "answer": "We accept JPG, PNG, and HEIC files. For the best print quality, we recommend images that are at least 2000 × 2000 pixels and 300 DPI."
           }
         },
         "faq_3": {
           "type": "faq",
           "settings": {
-            "question": "What if I'm unhappy with my order?",
-            "answer": "We want you to love your keepsake. If something isn't right, reach out within 60 days and we'll make it right with a replacement or full refund."
+            "question": "Will I receive a proof?",
+            "answer": "Yes. We will email you a digital proof for approval before production begins."
+          }
+        },
+        "faq_TxPbir": {
+          "type": "faq",
+          "settings": {
+            "question": "How long does production take?",
+            "answer": "Production typically takes 3–5 business days after you approve your digital proof."
+          }
+        },
+        "faq_gEGigW": {
+          "type": "faq",
+          "settings": {
+            "question": "Do you offer rush service?",
+            "answer": "Expedited production may be available for an additional fee. Contact us before ordering to confirm availability."
           }
         }
       },
       "block_order": [
         "faq_1",
         "faq_2",
-        "faq_3"
+        "faq_3",
+        "faq_TxPbir",
+        "faq_gEGigW"
       ],
       "settings": {
         "heading": "Common Questions",
