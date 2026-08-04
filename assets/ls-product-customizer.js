@@ -406,12 +406,34 @@
             step.removeAttribute('data-completed');
             step.removeAttribute('open');
           });
+          // Reset file inputs inside deactivated conditionals
+          qsa('input[type="file"]', el).forEach(function (input) {
+            input.value = '';
+            var uploadEl = input.closest('.ls-file-upload');
+            if (uploadEl) {
+              var preview = qs('.ls-file-upload__preview', uploadEl);
+              var dropzone = qs('.ls-file-upload__dropzone', uploadEl);
+              var thumb = qs('.ls-file-upload__thumb', uploadEl);
+              if (preview) preview.classList.remove('is-visible');
+              if (dropzone) dropzone.style.display = '';
+              if (thumb) thumb.src = '';
+            }
+          });
           // Also deactivate any nested sub-conditionals
           qsa('.ls-conditional', el).forEach(function (nested) {
             nested.classList.remove('is-active');
           });
         }
       });
+
+      // Clear canvases when switching coin type
+      if (group === 'coin-type') {
+        var preview = this.root._lsPreview;
+        if (preview) {
+          preview._removePhoto('front');
+          preview._removePhoto('back');
+        }
+      }
 
       // Renumber, recalculate progress and CTA
       this._renumberSteps();
@@ -825,10 +847,11 @@
       canvasEl.width = width;
       canvasEl.height = height;
 
+      var bgColor = this.type === 'coin' ? 'transparent' : '#e5e1dc';
       var canvas = new fabric.Canvas(canvasEl, {
         width: width,
         height: height,
-        backgroundColor: '#e5e1dc',
+        backgroundColor: bgColor,
         selection: false,
         allowTouchScrolling: true,
         controlsAboveOverlay: false
@@ -1389,18 +1412,24 @@
         }
       }
 
-      // Update coin rim gradient
-      if (this.canvas && this.canvas._lsCoinRim && propName === 'Finish') {
+      // Update coin rim gradient (both front and back)
+      if (propName === 'Finish') {
         var colors = value === 'Silver'
           ? [{ offset: 0, color: '#C0C0C0' }, { offset: 0.5, color: '#A8A8A8' }, { offset: 1, color: '#D3D3D3' }]
           : [{ offset: 0, color: '#D4AF37' }, { offset: 0.5, color: '#B8860B' }, { offset: 1, color: '#DAA520' }];
-        var grad = new fabric.Gradient({
-          type: 'radial',
-          coords: { x1: this.canvas.width / 2, y1: this.canvas.height / 2, r1: 0, x2: this.canvas.width / 2, y2: this.canvas.height / 2, r2: this.canvas.width / 2 },
-          colorStops: colors
-        });
-        this.canvas._lsCoinRim.set('fill', grad);
-        this.canvas.renderAll();
+        var coinCanvases = [this.canvas, this.backCanvas];
+        for (var ci = 0; ci < coinCanvases.length; ci++) {
+          var cc = coinCanvases[ci];
+          if (cc && cc._lsCoinRim) {
+            var grad = new fabric.Gradient({
+              type: 'radial',
+              coords: { x1: cc.width / 2, y1: cc.height / 2, r1: 0, x2: cc.width / 2, y2: cc.height / 2, r2: cc.width / 2 },
+              colorStops: colors
+            });
+            cc._lsCoinRim.set('fill', grad);
+            cc.renderAll();
+          }
+        }
       }
 
       // Update clip path when shape changes
@@ -1610,56 +1639,9 @@
       el.addEventListener('touchstart', onStart, { passive: false });
     }
 
-    /** Coin front/back toggle */
-    _bindCoinToggle() {
-      if (this.type !== 'coin') return;
-      var self = this;
-      this._coinToggleEl = qs('.ls-preview__coin-toggle', this.previewEl);
-      var toggleBtns = qsa('.ls-preview__coin-btn', this.previewEl);
-
-      // Hide toggle by default — shown only when back fields are visible
-      if (this._coinToggleEl) this._coinToggleEl.style.display = 'none';
-
-      toggleBtns.forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          toggleBtns.forEach(function (b) { b.classList.remove('is-active'); });
-          btn.classList.add('is-active');
-          var face = btn.dataset.face;
-          self._activeFace = face;
-          self.previewEl.setAttribute('data-preview-face', face);
-        });
-      });
-    }
-
-    /** Show/hide coin toggle based on whether active coin type has back fields */
-    _updateCoinToggle() {
-      if (!this._coinToggleEl) return;
-      var searchRoot = document.querySelector('.ls-customizer-relocated') || this.root;
-      var hasBack = false;
-
-      var inputs = qsa('input[type="text"], textarea, input[type="file"]', searchRoot);
-      inputs.forEach(function (input) {
-        var cond = input.closest('.ls-conditional');
-        if (cond && !cond.classList.contains('is-active')) return;
-        var parentCond = cond ? cond.parentElement.closest('.ls-conditional') : null;
-        if (parentCond && !parentCond.classList.contains('is-active')) return;
-
-        var name = (input.name || '').toLowerCase();
-        if (name.indexOf('back') !== -1) hasBack = true;
-      });
-
-      this._coinToggleEl.style.display = hasBack ? '' : 'none';
-
-      // If toggle hidden and was on back face, reset to front
-      if (!hasBack) {
-        this._activeFace = 'front';
-        this.previewEl.removeAttribute('data-preview-face');
-        var toggleBtns = qsa('.ls-preview__coin-btn', this.previewEl);
-        toggleBtns.forEach(function (btn) {
-          btn.classList.toggle('is-active', btn.dataset.face === 'front');
-        });
-      }
-    }
+    /** Coin toggle removed — front/back are side-by-side */
+    _bindCoinToggle() {}
+    _updateCoinToggle() {}
   }
 
   /* ------------------------------------------------------------------
