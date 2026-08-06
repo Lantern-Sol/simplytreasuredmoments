@@ -263,7 +263,7 @@
             "image": "shopify://shop_images/Missionary_coin_front_back.png",
             "title": "Faith & Mission",
             "subtitle": "Temples, missions & devotion",
-            "link": ""
+            "link": "shopify://collections/faith-and-mission-collection"
           }
         },
         "occasion_2": {
@@ -272,7 +272,7 @@
             "image": "shopify://shop_images/Walnutwoodfamily.png",
             "title": "Family & Milestones",
             "subtitle": "Birthdays, weddings & more",
-            "link": ""
+            "link": "shopify://collections/family-and-milestone-collection"
           }
         },
         "occasion_3": {
@@ -281,7 +281,7 @@
             "image": "shopify://shop_images/Sports_Shadow_box.png",
             "title": "Sports & School",
             "subtitle": "Teams, trophies & pride",
-            "link": ""
+            "link": "shopify://collections/sports-plaques"
           }
         },
         "occasion_4": {
@@ -290,7 +290,7 @@
             "image": "shopify://shop_images/TDesktopDraper.png",
             "title": "Travel & Adventure",
             "subtitle": "Places, trips & memories",
-            "link": ""
+            "link": "shopify://collections/travel-and-adventure-collection"
           }
         }
       },
@@ -303,7 +303,7 @@
       "settings": {
         "heading": "Shop by Occasion",
         "button_label": "View All",
-        "button_link": "",
+        "button_link": "shopify://collections/all",
         "padding_top": 0,
         "padding_bottom": 80,
         "mobile_padding_top": 0,
