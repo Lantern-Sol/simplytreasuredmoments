@@ -127,7 +127,7 @@
           "settings": {
             "image": "shopify://shop_images/3PanelCanvas-norway.png",
             "title": "Pannel Canvas",
-            "subtitle": "Canvas, Metal, Wood",
+            "subtitle": "",
             "link": "shopify://collections/print-media",
             "size": "medium"
           }
@@ -165,7 +165,7 @@
         "card_8": {
           "type": "collection_card",
           "settings": {
-            "image": "shopify://shop_images/Rectangle_26_7.png",
+            "image": "shopify://shop_images/Crystal_square.png",
             "title": "Crystal Blocks",
             "subtitle": "",
             "link": "shopify://collections/crystal-clear-photo-collection",
