@@ -145,9 +145,9 @@
         "card_6": {
           "type": "collection_card",
           "settings": {
-            "image": "shopify://shop_images/Rectangle_26_5.png",
+            "image": "shopify://shop_images/TNightLightDraper.png",
             "title": "Night Lights",
-            "subtitle": "Kids & Baby",
+            "subtitle": "",
             "link": "shopify://collections/night-lights-photo-art",
             "size": "small"
           }
@@ -155,9 +155,9 @@
         "card_7": {
           "type": "collection_card",
           "settings": {
-            "image": "shopify://shop_images/Rectangle_26_6.png",
+            "image": "shopify://shop_images/SchoolYearFrame.png",
             "title": "School Years",
-            "subtitle": "Photo Frame",
+            "subtitle": "",
             "link": "shopify://collections/sports-plaques",
             "size": "small"
           }
