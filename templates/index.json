@@ -35,7 +35,7 @@
     "ls_featured_collection": {
       "type": "ls-featured-collection",
       "settings": {
-        "collection": "all",
+        "collection": "best-sellers",
         "heading": "Trending Gifts",
         "button_label": "View All",
         "button_link": "shopify://collections/all",
