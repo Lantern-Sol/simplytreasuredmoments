@@ -126,7 +126,7 @@
           "type": "collection_card",
           "settings": {
             "image": "shopify://shop_images/3PanelCanvas-norway.png",
-            "title": "Print Media",
+            "title": "Pannel Canvas",
             "subtitle": "Canvas, Metal, Wood",
             "link": "shopify://collections/print-media",
             "size": "medium"
@@ -176,7 +176,7 @@
           "type": "collection_card",
           "settings": {
             "image": "shopify://shop_images/RecordVinylPhoto.png",
-            "title": "Record Prints",
+            "title": "Record Vinyl",
             "subtitle": "",
             "link": "shopify://products/retro-vinyl",
             "size": "small"
