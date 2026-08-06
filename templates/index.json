@@ -260,7 +260,7 @@
         "occasion_1": {
           "type": "occasion_card",
           "settings": {
-            "image": "shopify://shop_images/image.png",
+            "image": "shopify://shop_images/Missionary_coin_front_back.png",
             "title": "Faith & Mission",
             "subtitle": "Temples, missions & devotion",
             "link": ""
@@ -269,7 +269,7 @@
         "occasion_2": {
           "type": "occasion_card",
           "settings": {
-            "image": "shopify://shop_images/image_517f7cb4-5c63-408e-adff-47db9db2991f.png",
+            "image": "shopify://shop_images/Walnutwoodfamily.png",
             "title": "Family & Milestones",
             "subtitle": "Birthdays, weddings & more",
             "link": ""
@@ -278,7 +278,7 @@
         "occasion_3": {
           "type": "occasion_card",
           "settings": {
-            "image": "shopify://shop_images/image_6d35de23-ce30-4493-87ed-629e0221d04f.png",
+            "image": "shopify://shop_images/Sports_Shadow_box.png",
             "title": "Sports & School",
             "subtitle": "Teams, trophies & pride",
             "link": ""
@@ -287,7 +287,7 @@
         "occasion_4": {
           "type": "occasion_card",
           "settings": {
-            "image": "shopify://shop_images/image_916b34fd-783f-46a7-8567-5d35bdd16aea.png",
+            "image": "shopify://shop_images/TDesktopDraper.png",
             "title": "Travel & Adventure",
             "subtitle": "Places, trips & memories",
             "link": ""
