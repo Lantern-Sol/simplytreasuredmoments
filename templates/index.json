@@ -105,7 +105,7 @@
         "card_2": {
           "type": "collection_card",
           "settings": {
-            "image": "shopify://shop_images/Rectangle_26_1.png",
+            "image": "shopify://shop_images/Sports_Shadow_box.png",
             "title": "Shadow Boxes",
             "subtitle": "",
             "link": "shopify://collections/action-sports-photos",
@@ -115,7 +115,7 @@
         "card_3": {
           "type": "collection_card",
           "settings": {
-            "image": "shopify://shop_images/Rectangle_26_2.png",
+            "image": "shopify://shop_images/Missionary_Desktop_3.png",
             "title": "Desktop Plaques",
             "subtitle": "",
             "link": "shopify://collections/desktop-plaques",
@@ -125,7 +125,7 @@
         "card_4": {
           "type": "collection_card",
           "settings": {
-            "image": "shopify://shop_images/Rectangle_26_3.png",
+            "image": "shopify://shop_images/3PanelCanvas-norway.png",
             "title": "Print Media",
             "subtitle": "Canvas, Metal, Wood",
             "link": "shopify://collections/print-media",
@@ -135,7 +135,7 @@
         "card_5": {
           "type": "collection_card",
           "settings": {
-            "image": "shopify://shop_images/Rectangle_26_4.png",
+            "image": "shopify://shop_images/Puzzle-Familyrectangle.png",
             "title": "Photo Puzzles",
             "subtitle": "",
             "link": "shopify://collections/puzzle-photo-art",
@@ -175,7 +175,7 @@
         "card_9": {
           "type": "collection_card",
           "settings": {
-            "image": "shopify://shop_images/Rectangle_26_8.png",
+            "image": "shopify://shop_images/RecordVinylPhoto.png",
             "title": "Record Prints",
             "subtitle": "",
             "link": "shopify://products/retro-vinyl",
