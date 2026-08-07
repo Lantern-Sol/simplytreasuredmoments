@@ -19,7 +19,7 @@
         "heading": "A memory worth keeping. Handcrafted in every detail.",
         "subtext": "Commemorative coins crafted by hand in the USA, for missions, temples, family legacies, and every milestone worth remembering.",
         "button_label": "Shop Coins Collection",
-        "button_link": "shopify://collections/all",
+        "button_link": "shopify://collections/commemorative-coins",
         "trust_1_label": "Free Shipping",
         "trust_1_line2": "Orders +$99",
         "trust_2_label": "60-Day Free",
@@ -35,7 +35,7 @@
     "ls_featured_collection": {
       "type": "ls-featured-collection",
       "settings": {
-        "collection": "all",
+        "collection": "best-sellers",
         "heading": "Trending Gifts",
         "button_label": "View All",
         "button_link": "shopify://collections/all",
@@ -105,7 +105,7 @@
         "card_2": {
           "type": "collection_card",
           "settings": {
-            "image": "shopify://shop_images/Rectangle_26_1.png",
+            "image": "shopify://shop_images/Sports_Shadow_box.png",
             "title": "Shadow Boxes",
             "subtitle": "",
             "link": "shopify://collections/action-sports-photos",
@@ -115,7 +115,7 @@
         "card_3": {
           "type": "collection_card",
           "settings": {
-            "image": "shopify://shop_images/Rectangle_26_2.png",
+            "image": "shopify://shop_images/Missionary_Desktop_3.png",
             "title": "Desktop Plaques",
             "subtitle": "",
             "link": "shopify://collections/desktop-plaques",
@@ -125,17 +125,17 @@
         "card_4": {
           "type": "collection_card",
           "settings": {
-            "image": "shopify://shop_images/Rectangle_26_3.png",
-            "title": "Print Media",
-            "subtitle": "Canvas, Metal, Wood",
-            "link": "shopify://collections/print-media",
+            "image": "shopify://shop_images/3PanelCanvas-norway.png",
+            "title": "Pannel Canvas",
+            "subtitle": "",
+            "link": "shopify://collections/canvas-photo-art",
             "size": "medium"
           }
         },
         "card_5": {
           "type": "collection_card",
           "settings": {
-            "image": "shopify://shop_images/Rectangle_26_4.png",
+            "image": "shopify://shop_images/Puzzle-Familyrectangle.png",
             "title": "Photo Puzzles",
             "subtitle": "",
             "link": "shopify://collections/puzzle-photo-art",
@@ -145,9 +145,9 @@
         "card_6": {
           "type": "collection_card",
           "settings": {
-            "image": "shopify://shop_images/Rectangle_26_5.png",
+            "image": "shopify://shop_images/TNightLightDraper.png",
             "title": "Night Lights",
-            "subtitle": "Kids & Baby",
+            "subtitle": "",
             "link": "shopify://collections/night-lights-photo-art",
             "size": "small"
           }
@@ -155,9 +155,9 @@
         "card_7": {
           "type": "collection_card",
           "settings": {
-            "image": "shopify://shop_images/Rectangle_26_6.png",
+            "image": "shopify://shop_images/SchoolYearFrame.png",
             "title": "School Years",
-            "subtitle": "Photo Frame",
+            "subtitle": "",
             "link": "shopify://collections/sports-plaques",
             "size": "small"
           }
@@ -165,7 +165,7 @@
         "card_8": {
           "type": "collection_card",
           "settings": {
-            "image": "shopify://shop_images/Rectangle_26_7.png",
+            "image": "shopify://shop_images/Crystal_square.png",
             "title": "Crystal Blocks",
             "subtitle": "",
             "link": "shopify://collections/crystal-clear-photo-collection",
@@ -175,8 +175,8 @@
         "card_9": {
           "type": "collection_card",
           "settings": {
-            "image": "shopify://shop_images/Rectangle_26_8.png",
-            "title": "Record Prints",
+            "image": "shopify://shop_images/RecordVinylPhoto.png",
+            "title": "Record Vinyl",
             "subtitle": "",
             "link": "shopify://products/retro-vinyl",
             "size": "small"
@@ -260,37 +260,37 @@
         "occasion_1": {
           "type": "occasion_card",
           "settings": {
-            "image": "shopify://shop_images/image.png",
+            "image": "shopify://shop_images/Missionary_coin_front_back.png",
             "title": "Faith & Mission",
             "subtitle": "Temples, missions & devotion",
-            "link": ""
+            "link": "shopify://collections/faith-and-mission-collection"
           }
         },
         "occasion_2": {
           "type": "occasion_card",
           "settings": {
-            "image": "shopify://shop_images/image_517f7cb4-5c63-408e-adff-47db9db2991f.png",
+            "image": "shopify://shop_images/Walnutwoodfamily.png",
             "title": "Family & Milestones",
             "subtitle": "Birthdays, weddings & more",
-            "link": ""
+            "link": "shopify://collections/family-and-milestone-collection"
           }
         },
         "occasion_3": {
           "type": "occasion_card",
           "settings": {
-            "image": "shopify://shop_images/image_6d35de23-ce30-4493-87ed-629e0221d04f.png",
+            "image": "shopify://shop_images/Sports_Shadow_box.png",
             "title": "Sports & School",
             "subtitle": "Teams, trophies & pride",
-            "link": ""
+            "link": "shopify://collections/sports-plaques"
           }
         },
         "occasion_4": {
           "type": "occasion_card",
           "settings": {
-            "image": "shopify://shop_images/image_916b34fd-783f-46a7-8567-5d35bdd16aea.png",
+            "image": "shopify://shop_images/TDesktopDraper.png",
             "title": "Travel & Adventure",
             "subtitle": "Places, trips & memories",
-            "link": ""
+            "link": "shopify://collections/travel-and-adventure-collection"
           }
         }
       },
@@ -303,7 +303,7 @@
       "settings": {
         "heading": "Shop by Occasion",
         "button_label": "View All",
-        "button_link": "",
+        "button_link": "shopify://collections/all",
         "padding_top": 0,
         "padding_bottom": 80,
         "mobile_padding_top": 0,
@@ -317,7 +317,7 @@
         "heading": "Handcrafted In The USA. One Keepsake At A Time.",
         "subtext": "Every keepsake is UV-printed with 1,440 vivid colors and assembled by hand in our USA workshop—so each piece carries the weight and warmth of something truly made with care.",
         "button_label": "Our Story",
-        "button_link": "",
+        "button_link": "shopify://pages/about-us",
         "padding_top": 0,
         "padding_bottom": 80,
         "mobile_padding_top": 0,
@@ -330,34 +330,50 @@
         "faq_1": {
           "type": "faq",
           "settings": {
-            "question": "How long does shipping take?",
-            "answer": "Most orders ship within 3–5 business days. Custom and personalized items may take a bit longer as they are handcrafted to order."
+            "question": "How do I place a personalized order?",
+            "answer": "Choose your product, select the available options, add your custom text, and upload your photo. We will review your order before creating your keepsake."
           }
         },
         "faq_2": {
           "type": "faq",
           "settings": {
-            "question": "What type of photo should I upload?",
-            "answer": "For the best results, use a high-resolution photo with good lighting. Close-up portraits and well-lit images produce the sharpest details on our keepsakes."
+            "question": "What photo files do you accept?",
+            "answer": "We accept JPG, PNG, and HEIC files. For the best print quality, we recommend images that are at least 2000 × 2000 pixels and 300 DPI."
           }
         },
         "faq_3": {
           "type": "faq",
           "settings": {
-            "question": "What if I'm unhappy with my order?",
-            "answer": "We want you to love your keepsake. If something isn't right, reach out within 60 days and we'll make it right with a replacement or full refund."
+            "question": "Will I receive a proof?",
+            "answer": "Yes. We will email you a digital proof for approval before production begins."
+          }
+        },
+        "faq_TxPbir": {
+          "type": "faq",
+          "settings": {
+            "question": "How long does production take?",
+            "answer": "Production typically takes 3–5 business days after you approve your digital proof."
+          }
+        },
+        "faq_gEGigW": {
+          "type": "faq",
+          "settings": {
+            "question": "Do you offer rush service?",
+            "answer": "Expedited production may be available for an additional fee. Contact us before ordering to confirm availability."
           }
         }
       },
       "block_order": [
         "faq_1",
         "faq_2",
-        "faq_3"
+        "faq_3",
+        "faq_TxPbir",
+        "faq_gEGigW"
       ],
       "settings": {
         "heading": "Common Questions",
         "link_label": "See all FAQs →",
-        "link_url": "",
+        "link_url": "shopify://pages/frequently-asked-questions",
         "padding_top": 80,
         "padding_bottom": 80,
         "mobile_padding_top": 0,
@@ -370,7 +386,7 @@
         "image": "shopify://shop_images/barnsbury-inside-mobile-2_900b9772-c8d5-41e2-a710-9012410959b9_jpg.png",
         "image_mobile": "shopify://shop_images/barnsbury-inside-mobile-2_900b9772-c8d5-41e2-a710-9012410959b9.jpg_1.png",
         "color_scheme": "scheme-ls-hero",
-        "heading": "Get 10% off your first keepsake",
+        "heading": "Get 10% Off Your First Keepsake",
         "subtext": "Plus gift ideas, new arrivals, and occasions worth remembering.",
         "input_placeholder": "Enter your email address",
         "button_label": "Get 10% Off",

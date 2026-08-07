@@ -42,13 +42,13 @@
         "menu_company"
       ],
       "settings": {
-        "logo": "shopify://shop_images/Simply_Treasured_Moments_logo_OL_1_645f0c87-b025-4c05-b9a8-6a3a887d0848.png",
-        "facebook_url": "https://www.facebook.com/",
-        "instagram_url": "https://www.instagram.com/",
-        "pinterest_url": "https://www.pinterest.com/",
+        "logo": "shopify://shop_images/Simply_Treasured_Moments_logo_OL_1.png",
+        "facebook_url": "",
+        "instagram_url": "",
+        "pinterest_url": "",
         "privacy_url": "",
         "terms_url": "",
-        "copyright_text": "© 2026 Treasured Moments Photos"
+        "copyright_text": "© 2026 Simply Treasured Moments"
       }
     }
   },

@@ -9,8 +9,8 @@
  */
 {
   "current": {
-    "logo": "shopify://shop_images/Simply_Treasured_Moments_logo_OL_1_9018ed33-8eb2-4985-b4d0-23656a895d89.png",
-    "favicon": "shopify://shop_images/Simply_Treasured_Moments_logo_OL_1_f558e680-566f-4b57-a817-24e0b915d908.png",
+    "logo": "shopify://shop_images/Simply_Treasured_Moments_logo_OL_1_79595f6e-1b99-4adc-a2ae-d02552987cdc.png",
+    "favicon": "shopify://shop_images/Simply_Treasured_Moments_logo_OL_1_34f54145-5281-47fd-9135-25a81b3131ae.png",
     "type_body_font": "poppins_n4",
     "type_subheading_font": "lato_n4",
     "type_heading_font": "playfair_display_n4",
@@ -79,9 +79,19 @@
     "variant_button_width": "equal-width-buttons",
     "content_for_index": [],
     "blocks": {
+      "855628211100114053": {
+        "type": "shopify://apps/klaviyo-email-marketing-sms/blocks/klaviyo-onsite-embed/2632fe16-c075-4321-a88b-50b567f42507",
+        "disabled": false,
+        "settings": {}
+      },
+      "4113930173634242220": {
+        "type": "shopify://apps/referral-program-shopjar/blocks/app-shopjar/bf205236-47cf-42ff-acf9-5de1b0804e4d",
+        "disabled": false,
+        "settings": {}
+      },
       "4981902369724952902": {
         "type": "shopify://apps/vo-product-options/blocks/embed-block/430cbd7b-bd20-4c16-ba41-db6f4c645164",
-        "disabled": true,
+        "disabled": false,
         "settings": {}
       }
     },
