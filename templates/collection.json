@@ -142,7 +142,7 @@
         "color_scheme": "scheme-1",
         "padding-block-start": 0,
         "padding-block-end": 32,
-        "enable_promo_cards": true,
+        "enable_promo_cards": false,
         "promo_1_image": "shopify://shop_images/AuthorityTile_3.png",
         "promo_1_eyebrow": "The Gift Edit",
         "promo_1_title": "We help you with the choosing",
