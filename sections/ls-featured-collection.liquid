@@ -76,26 +76,6 @@
     padding-top: 0.625rem;
   }
 
-  .ls-fc__card-rating {
-    display: flex;
-    align-items: center;
-    gap: 0.1875rem;
-    margin-bottom: 0.375rem;
-  }
-
-  .ls-fc__card-rating svg {
-    width: 0.625rem;
-    height: 0.625rem;
-    flex-shrink: 0;
-  }
-
-  .ls-fc__card-rating-count {
-    font-family: 'Nunito Sans', sans-serif;
-    font-weight: 500;
-    font-size: 0.625rem;
-    color: #192534;
-    margin-left: 0.125rem;
-  }
 
   .ls-fc__card-title {
     font-family: 'Nunito Sans', sans-serif;
@@ -201,14 +181,6 @@
             </div>
 
             <div class="ls-fc__card-info">
-              <div class="ls-fc__card-rating">
-                {%- for i in (1..5) -%}
-                  <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 13 13" fill="none">
-                    <path d="M12.324 5.09717L8.19165 4.66077L6.5 0.866455L4.80835 4.66077L0.676025 5.09717L3.76257 7.87903L2.90088 11.9431L6.5 9.86743L10.0991 11.9431L9.23743 7.87903L12.324 5.09717Z" fill="#B9AA99"/>
-                  </svg>
-                {%- endfor -%}
-                <span class="ls-fc__card-rating-count">({{ product.metafields.reviews.rating_count | default: 0 }})</span>
-              </div>
 
               <p class="ls-fc__card-title">{{ product.title }}</p>
               <p class="ls-fc__card-price">{{ product.price | money }}</p>

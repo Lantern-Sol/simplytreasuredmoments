@@ -84,6 +84,13 @@
         "disabled": false,
         "settings": {}
       },
+      "316487575649303945": {
+        "type": "shopify://apps/easify-options/blocks/app-embed-block/d2288b18-c1ba-42f5-b3b3-26c75c8820bf",
+        "disabled": true,
+        "settings": {
+          "theme_app_version": "none"
+        }
+      },
       "4113930173634242220": {
         "type": "shopify://apps/referral-program-shopjar/blocks/app-shopjar/bf205236-47cf-42ff-acf9-5de1b0804e4d",
         "disabled": false,
