@@ -769,48 +769,94 @@
     {%- when 'temple-wall-art' -%}
       {%- render 'ls-customizer-step',
         step_number: 1,
-        title: 'Choose Material',
-        input_type: 'swatch',
-        property: 'Material',
-        options: 'Maple,Walnut,Metal',
+        title: 'Select Size',
+        input_type: 'button-group',
+        property: 'Size',
+        options: 'Small 8×10,Medium 11×14,Large 12×16',
         required: true,
         form_id: product_form_id
       -%}
       {%- render 'ls-customizer-step',
         step_number: 2,
-        title: 'Choose Color Style',
-        input_type: 'button-group',
-        property: 'Color Style',
-        options: 'Full Color,Silhouette',
+        title: 'Choose Wood',
+        input_type: 'swatch',
+        property: 'Wood',
+        options: 'Maple,Walnut',
         required: true,
         form_id: product_form_id
       -%}
       {%- render 'ls-customizer-step',
         step_number: 3,
-        title: 'Select Size',
+        title: 'Choose Orientation',
         input_type: 'button-group',
-        property: 'Size',
-        options: '8×10,11×14,16×20,18×24,24×36',
+        property: 'Orientation',
+        options: 'Portrait,Landscape',
         required: true,
         form_id: product_form_id
       -%}
       {%- render 'ls-customizer-step',
         step_number: 4,
-        title: 'Upload Your Photo',
-        input_type: 'file',
-        property: 'Photo',
+        title: 'Choose Style',
+        input_type: 'button-group',
+        property: 'Style',
+        options: 'Silhouette,Full Print',
         required: true,
         form_id: product_form_id
       -%}
       {%- render 'ls-customizer-step',
         step_number: 5,
-        title: 'Add Your Text',
-        input_type: 'text-fields',
-        property: 'Text',
-        text_fields: 'Names|50,Date|30,Quote or Message|150',
+        title: 'Choose Printing Effect',
+        input_type: 'button-group',
+        property: 'Printing Effect',
+        options: 'Flat,Raised,3D Textured,Brush Stroke',
         required: true,
         form_id: product_form_id
       -%}
+      {%- render 'ls-customizer-step',
+        step_number: 6,
+        title: 'Add Your Text (Optional)',
+        input_type: 'text-fields',
+        property: 'Text',
+        text_fields: 'Line 1|25,Line 2|25',
+        required: false,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 7,
+        title: 'Choose Your Font',
+        input_type: 'button-group',
+        property: 'Font',
+        options: 'Arial,Breesh,Dalena,Fabitha Script,Times New Roman,Twinkle Magic',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 8,
+        title: 'Temple Name',
+        input_type: 'text-fields',
+        property: 'Temple Name',
+        text_fields: 'Temple Name|60',
+        required: true,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 9,
+        title: 'Upload Your Photo (Optional — we can supply a photo of your temple)',
+        input_type: 'file',
+        property: 'Photo',
+        required: false,
+        form_id: product_form_id
+      -%}
+      {%- render 'ls-customizer-step',
+        step_number: 10,
+        title: 'Add a Frame (Optional)',
+        input_type: 'button-group',
+        property: 'Frame',
+        options: 'Black,White',
+        required: false,
+        form_id: product_form_id
+      -%}
+
 
     {%- comment -%} ===================== TEMPLE NIGHT LIGHT ===================== {%- endcomment -%}
     {%- when 'temple-night-light' -%}
